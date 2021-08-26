@@ -1,0 +1,21 @@
+{
+  "name": "infinitum-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "viniciusrodrigues1a <viniciusrodrigues.aro@gmail.com>",
+  "contributors": [
+    {
+      "name": "Júlio Rangel",
+      "url": "https://github.com/RangelJulio"
+    },
+    {
+      "name": "Gabriel Menoni",
+      "url": "https://github.com/GabrielMenoni"
+    },
+    {
+      "name": "Estevão Zanoti",
+      "url": "https://github.com/EstevaoZanoti"
+    }
+  ],
+  "license": "MIT"
+}
