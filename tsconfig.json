@@ -15,6 +15,7 @@
       "@modules/*": ["modules/*"],
       "@shared/*": ["shared/*"]
     },
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
