@@ -1,7 +1,7 @@
 {
   "name": "infinitum-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "viniciusrodrigues1a <viniciusrodrigues.aro@gmail.com>",
   "contributors": [
     {
@@ -17,5 +17,34 @@
       "url": "https://github.com/EstevaoZanoti"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "run:dev": "ts-node-dev --transpile-only --ignore-watch node_modules,coverage,dist src/index.ts",
+    "test:unit": "jest --config ./jest.config.js .",
+    "test:unit:coverage": "yarn test:unit --coverage --coverageDirectory coverage/unit",
+    "test:unit:dev": "yarn test:unit --watch",
+    "test:integration": "jest --config ./tests/jest.config.js --runInBand .",
+    "test:integration:coverage": "yarn test:integration --coverage --coverageDirectory coverage/integration",
+    "test:integration:dev": "yarn test:integration --watch",
+    "lint:check": "eslint --config ./.eslintrc.json --ext .js,.ts ./",
+    "lint:fix": "eslint --config ./.eslintrc.json --fix --ext .js,.ts ./",
+    "format:check": "prettier --config ./.prettierrc.json --check ./",
+    "format:fix": "prettier --config ./.prettierrc.json --write ./"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-typescript": "^14.0.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jest": "^24.4.0",
+    "jest": "^27.0.6",
+    "prettier": "2.3.2",
+    "ts-jest": "^27.0.5",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  }
 }
