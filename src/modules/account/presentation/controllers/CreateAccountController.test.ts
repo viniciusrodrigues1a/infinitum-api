@@ -23,6 +23,7 @@ describe("createAccount controller", () => {
     const request: CreateAccountControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
+      password: "pa55",
     };
 
     const response = await sut.handleRequest(request);
@@ -37,6 +38,7 @@ describe("createAccount controller", () => {
     const request: CreateAccountControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
+      password: "pa55",
     };
     createAccountUseCaseMock.create.mockImplementationOnce(() => {
       throw new Error("Supposedly unhandled server side error");
@@ -54,6 +56,7 @@ describe("createAccount controller", () => {
     const request: CreateAccountControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
+      password: "pa55",
     };
     const errorThrown = new EmailAlreadyInUseError(request.email);
     createAccountUseCaseMock.create.mockImplementationOnce(() => {
@@ -73,6 +76,7 @@ describe("createAccount controller", () => {
     const request: CreateAccountControllerRequest = {
       name: "Jorge",
       email: "notanemail",
+      password: "pa55",
     };
     createAccountUseCaseMock.create.mockImplementationOnce(() => {
       throw new InvalidEmailError();

@@ -1,5 +1,5 @@
 import { InvalidEmailError } from "@modules/account/entities/errors";
-import { CreateAccountUseCase } from "@modules/account/use-cases";
+import { IRegisterAccountRepository } from "@modules/account/infra/repositories";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import {
   badRequestResponse,
@@ -11,17 +11,21 @@ import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 export type CreateAccountControllerRequest = {
   name: string;
   email: string;
+  password: string;
 };
 
 export class CreateAccountController {
-  constructor(private readonly createAccountUseCase: CreateAccountUseCase) {}
+  constructor(
+    private readonly registerAccountRepository: IRegisterAccountRepository
+  ) {}
 
   async handleRequest({
     name,
     email,
+    password,
   }: CreateAccountControllerRequest): Promise<HttpResponse> {
     try {
-      await this.createAccountUseCase.create({ name, email });
+      await this.registerAccountRepository.create({ name, email, password });
 
       return noContentResponse();
     } catch (err) {
