@@ -30,4 +30,11 @@ export class ExpressServer {
       console.log(`Server running on port ${port}`)
     );
   }
+
+  public close(): void {
+    if (!this.server) {
+      throw new Error("Can't close server because it is not running");
+    }
+    this.server.close();
+  }
 }
