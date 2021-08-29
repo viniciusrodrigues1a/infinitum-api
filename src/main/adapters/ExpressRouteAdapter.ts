@@ -9,6 +9,11 @@ export function ExpressRouteAdapter(
       request.body
     );
 
-    response.status(statusCode).json(body);
+    let jsonResponse = body;
+    if (body instanceof Error) {
+      jsonResponse = { error: { message: body.message } };
+    }
+
+    response.status(statusCode).json(jsonResponse);
   };
 }
