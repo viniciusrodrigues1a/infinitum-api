@@ -7,7 +7,8 @@ class KnexControllerFactoryImpl implements IControllerFactory {
 
   makeCreateAccountController(): CreateAccountController {
     return new CreateAccountController(
-      this.repositoryFactory.makeRegisterAccountRepository()
+      this.repositoryFactory.makeRegisterAccountRepository(),
+      this.repositoryFactory.makeDoesAccountExistRepository()
     );
   }
 }
