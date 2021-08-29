@@ -30,5 +30,6 @@ module.exports = {
     migrations: {
       directory: path.resolve(databasePath, "migrations"),
     },
+    useNullAsDefault: true,
   },
 };
