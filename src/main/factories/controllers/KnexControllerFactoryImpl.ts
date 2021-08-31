@@ -1,5 +1,5 @@
 import { CreateAccountController } from "@modules/account/presentation/controllers";
-import { ILanguage } from "@modules/account/presentation/languages/ILanguage";
+import { ILanguage } from "../../adapters/utils";
 import { IRepositoryFactory, knexRepositoryFactoryImpl } from "../repositories";
 import { IControllerFactory } from "./IControllerFactory";
 
@@ -8,8 +8,8 @@ class KnexControllerFactoryImpl implements IControllerFactory {
 
   makeCreateAccountController(language: ILanguage): CreateAccountController {
     return new CreateAccountController(
-      this.repositoryFactory.makeRegisterAccountRepository(language),
-      this.repositoryFactory.makeDoesAccountExistRepository(language),
+      this.repositoryFactory.makeRegisterAccountRepository(),
+      this.repositoryFactory.makeDoesAccountExistRepository(),
       language
     );
   }
