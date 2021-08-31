@@ -1,9 +1,6 @@
-import { IAccountLanguage } from "@modules/account/presentation/languages";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { Request, Response } from "express";
-import { AcceptLanguageHeaderUtil } from "./utils";
-
-type ILanguage = IAccountLanguage;
+import { AcceptLanguageHeaderUtil, ILanguage } from "./utils";
 
 export function ExpressRouteAdapter(
   makeController: (language: ILanguage) => any
@@ -14,8 +11,9 @@ export function ExpressRouteAdapter(
     const parsedHeader = headerUtil.parseAcceptLanguage(
       acceptLanguageHeader as string | undefined
     );
-    const language = headerUtil.findBestMatchingLanguage(parsedHeader);
-    const controller = makeController(language);
+    const languageMatch = headerUtil.findBestMatchingLanguage(parsedHeader);
+    response.setHeader("Content-Language", languageMatch.tag);
+    const controller = makeController(languageMatch.language);
 
     const { statusCode, body }: HttpResponse = await controller.handleRequest(
       request.body
