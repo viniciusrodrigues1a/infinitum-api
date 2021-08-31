@@ -1,6 +1,8 @@
+import { IInvalidEmailErrorLanguage } from "../interfaces/languages";
+
 export class InvalidEmailError extends Error {
-  constructor() {
-    const message = `Email não é válido`;
+  constructor(language: IInvalidEmailErrorLanguage) {
+    const message = language.getInvalidEmailErrorMessage();
     super(message);
     this.message = message;
   }

@@ -4,6 +4,7 @@ import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
+import { ILanguage } from "../languages/ILanguage";
 import {
   CreateAccountController,
   CreateAccountControllerRequest,
@@ -12,12 +13,19 @@ import {
 function makeSut() {
   const registerAccountRepositoryMock = mock<IRegisterAccountRepository>();
   const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
+  const languageMock = mock<ILanguage>();
   const sut = new CreateAccountController(
     registerAccountRepositoryMock,
-    doesAccountExistRepositoryMock
+    doesAccountExistRepositoryMock,
+    languageMock
   );
 
-  return { sut, registerAccountRepositoryMock, doesAccountExistRepositoryMock };
+  return {
+    sut,
+    registerAccountRepositoryMock,
+    doesAccountExistRepositoryMock,
+    languageMock,
+  };
 }
 
 describe("createAccount controller", () => {
@@ -57,7 +65,7 @@ describe("createAccount controller", () => {
   it("should return HttpStatusCodes.badRequest when Account already exists", async () => {
     expect.assertions(2);
 
-    const { sut, doesAccountExistRepositoryMock } = makeSut();
+    const { sut, doesAccountExistRepositoryMock, languageMock } = makeSut();
     const request: CreateAccountControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
@@ -69,14 +77,14 @@ describe("createAccount controller", () => {
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body).toStrictEqual(
-      new EmailAlreadyInUseError(request.email)
+      new EmailAlreadyInUseError(request.email, languageMock)
     );
   });
 
   it("should return HttpStatusCodes.badRequest when InvalidEmailError is thrown", async () => {
     expect.assertions(2);
 
-    const { sut } = makeSut();
+    const { sut, languageMock } = makeSut();
     const request: CreateAccountControllerRequest = {
       name: "Jorge",
       email: "notanemail",
@@ -86,6 +94,6 @@ describe("createAccount controller", () => {
     const response = await sut.handleRequest(request);
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body).toStrictEqual(new InvalidEmailError());
+    expect(response.body).toStrictEqual(new InvalidEmailError(languageMock));
   });
 });

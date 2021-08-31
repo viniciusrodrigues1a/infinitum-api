@@ -1,5 +1,5 @@
+import { Account } from "@modules/account/entities/Account";
 import { InvalidEmailError } from "@modules/account/entities/errors";
-import { Email } from "@modules/account/entities/value-objects/Email";
 import { IRegisterAccountRepository } from "@modules/account/infra/repositories";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
@@ -9,6 +9,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { ILanguage } from "../languages/ILanguage";
 
 export type CreateAccountControllerRequest = {
   name: string;
@@ -19,7 +20,8 @@ export type CreateAccountControllerRequest = {
 export class CreateAccountController {
   constructor(
     private readonly registerAccountRepository: IRegisterAccountRepository,
-    private readonly doesAccountExistRepository: IDoesAccountExistRepository
+    private readonly doesAccountExistRepository: IDoesAccountExistRepository,
+    private readonly language: ILanguage
   ) {}
 
   async handleRequest({
@@ -28,12 +30,12 @@ export class CreateAccountController {
     password,
   }: CreateAccountControllerRequest): Promise<HttpResponse> {
     try {
-      const validatedEmail = new Email(email).value;
+      const account = new Account(name, email, this.language);
 
       const accountAlreadyExists =
-        await this.doesAccountExistRepository.doesAccountExist(validatedEmail);
+        await this.doesAccountExistRepository.doesAccountExist(account.email);
       if (accountAlreadyExists) {
-        throw new EmailAlreadyInUseError(email);
+        throw new EmailAlreadyInUseError(email, this.language);
       }
 
       await this.registerAccountRepository.create({ name, email, password });
@@ -43,9 +45,8 @@ export class CreateAccountController {
       if (
         err instanceof EmailAlreadyInUseError ||
         err instanceof InvalidEmailError
-      ) {
+      )
         return badRequestResponse(err);
-      }
 
       return serverErrorResponse();
     }

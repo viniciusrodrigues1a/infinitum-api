@@ -1,11 +1,12 @@
 import { InvalidEmailError } from "../errors";
+import { IInvalidEmailErrorLanguage } from "../interfaces/languages";
 
 export class Email {
   value: string;
 
-  constructor(email: string) {
+  constructor(email: string, language: IInvalidEmailErrorLanguage) {
     if (!this.isEmailValid(email)) {
-      throw new InvalidEmailError();
+      throw new InvalidEmailError(language);
     }
 
     this.value = email;
