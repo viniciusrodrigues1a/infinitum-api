@@ -4,7 +4,7 @@ import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
-import { ILanguage } from "../languages/ILanguage";
+import { IAccountLanguage } from "../languages";
 import {
   CreateAccountController,
   CreateAccountControllerRequest,
@@ -13,7 +13,7 @@ import {
 function makeSut() {
   const registerAccountRepositoryMock = mock<IRegisterAccountRepository>();
   const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
-  const languageMock = mock<ILanguage>();
+  const languageMock = mock<IAccountLanguage>();
   const sut = new CreateAccountController(
     registerAccountRepositoryMock,
     doesAccountExistRepositoryMock,

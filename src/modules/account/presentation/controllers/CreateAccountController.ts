@@ -9,7 +9,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
-import { ILanguage } from "../languages/ILanguage";
+import { IAccountLanguage } from "../languages";
 
 export type CreateAccountControllerRequest = {
   name: string;
@@ -21,7 +21,7 @@ export class CreateAccountController {
   constructor(
     private readonly registerAccountRepository: IRegisterAccountRepository,
     private readonly doesAccountExistRepository: IDoesAccountExistRepository,
-    private readonly language: ILanguage
+    private readonly language: IAccountLanguage
   ) {}
 
   async handleRequest({

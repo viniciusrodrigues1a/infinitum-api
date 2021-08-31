@@ -25,6 +25,7 @@
     "lines-between-class-members": "off",
     "jest/no-hooks": "off",
     "@typescript-eslint/lines-between-class-members": "off",
+    "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-unused-vars": [
       "error",
       { "argsIgnorePattern": "^_" }

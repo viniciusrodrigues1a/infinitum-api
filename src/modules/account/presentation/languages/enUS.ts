@@ -1,11 +1,11 @@
 import { IAccountLanguage } from "./IAccountLanguage";
 
-export class PTBRLanguage implements IAccountLanguage {
+export class ENUSLanguage implements IAccountLanguage {
   getInvalidEmailErrorMessage(): string {
-    return "Email não é válido";
+    return "Email is not valid";
   }
 
   getEmailAlreadyInUseErrorMessage(_email: string): string {
-    return "Email já está em uso";
+    return "Email is already in use";
   }
 }
