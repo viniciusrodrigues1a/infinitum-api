@@ -1,11 +1,23 @@
+import { IAccountLanguage } from "@modules/account/presentation/languages";
+import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
+import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { connection, configuration } from "@shared/infra/database/connection";
+import { mock } from "jest-mock-extended";
 import { RegisterAccountRepositoryDTO } from "../DTOs/RegisterAccountRepositoryDTO";
 import { KnexRegisterAccountRepository } from "./KnexRegisterAccountRepository";
 
 function makeSut() {
-  const sut = new KnexRegisterAccountRepository();
+  const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
+  const languageMock = mock<IAccountLanguage>();
+  languageMock.getInvalidEmailErrorMessage.mockReturnValue("Error");
+  languageMock.getEmailAlreadyInUseErrorMessage.mockReturnValue("Error");
+  const sut = new KnexRegisterAccountRepository(
+    doesAccountExistRepositoryMock,
+    languageMock,
+    languageMock
+  );
 
-  return { sut };
+  return { sut, doesAccountExistRepositoryMock, languageMock };
 }
 
 describe("createAccount repository using Knex", () => {
@@ -24,12 +36,15 @@ describe("createAccount repository using Knex", () => {
   it("should insert an Account", async () => {
     expect.assertions(1);
 
-    const { sut } = makeSut();
+    const { sut, doesAccountExistRepositoryMock } = makeSut();
     const accountDTO: RegisterAccountRepositoryDTO = {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
     };
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(
+      false
+    );
 
     await sut.create(accountDTO);
 
@@ -41,5 +56,43 @@ describe("createAccount repository using Knex", () => {
       name: accountDTO.name,
       email: accountDTO.email,
     });
+  });
+
+  it("should throw EmailAlreadyInUseError if account has been created before", async () => {
+    expect.assertions(1);
+
+    const { sut, doesAccountExistRepositoryMock, languageMock } = makeSut();
+    const accountDTO: RegisterAccountRepositoryDTO = {
+      name: "Jorge",
+      email: "jorge@email.com",
+      password: "pa55",
+    };
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
+
+    const when = () => sut.create(accountDTO);
+
+    await expect(when).rejects.toThrow(
+      new EmailAlreadyInUseError(accountDTO.email, languageMock)
+    );
+  });
+
+  it("should throw InvalidEmailError if email is invalid", async () => {
+    expect.assertions(1);
+
+    const { sut, doesAccountExistRepositoryMock, languageMock } = makeSut();
+    const accountDTO: RegisterAccountRepositoryDTO = {
+      name: "Jorge",
+      email: "1238yewqhi",
+      password: "pa55",
+    };
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(
+      false
+    );
+
+    const when = () => sut.create(accountDTO);
+
+    await expect(when).rejects.toThrow(
+      new EmailAlreadyInUseError(accountDTO.email, languageMock)
+    );
   });
 });

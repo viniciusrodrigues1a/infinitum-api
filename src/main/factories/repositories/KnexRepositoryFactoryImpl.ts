@@ -3,6 +3,7 @@ import {
   KnexDoesAccountExistRepository,
   KnexRegisterAccountRepository,
 } from "@modules/account/infra/repositories";
+import { IAccountLanguage } from "@modules/account/presentation/languages";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
@@ -11,8 +12,14 @@ class KnexRepositoryFactoryImpl implements IRepositoryFactory {
     return new KnexDoesAccountExistRepository();
   }
 
-  makeRegisterAccountRepository(): IRegisterAccountRepository {
-    return new KnexRegisterAccountRepository();
+  makeRegisterAccountRepository(
+    language: IAccountLanguage
+  ): IRegisterAccountRepository {
+    return new KnexRegisterAccountRepository(
+      this.makeDoesAccountExistRepository(),
+      language,
+      language
+    );
   }
 }
 
