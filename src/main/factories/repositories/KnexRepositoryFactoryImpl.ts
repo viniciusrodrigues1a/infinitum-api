@@ -16,13 +16,13 @@ import {
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
-  makeFindOneaccountRepository(): IFindOneAccountRepository {
+  makeFindOneAccountRepository(): IFindOneAccountRepository {
     return new KnexFindOneAccountRepository();
   }
 
   makeLoginRepository(language: IAccountLanguage): ILoginRepository {
     return new KnexLoginRepository(
-      this.makeFindOneaccountRepository(),
+      this.makeFindOneAccountRepository(),
       language
     );
   }

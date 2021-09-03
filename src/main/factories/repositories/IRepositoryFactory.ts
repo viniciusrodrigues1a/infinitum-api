@@ -10,5 +10,5 @@ export interface IRepositoryFactory {
   makeRegisterRepository(language: IAccountLanguage): IRegisterRepository;
   makeLoginRepository(language: IAccountLanguage): ILoginRepository;
   makeDoesAccountExistRepository(): IDoesAccountExistRepository;
-  makeFindOneaccountRepository(): IFindOneAccountRepository;
+  makeFindOneAccountRepository(): IFindOneAccountRepository;
 }
