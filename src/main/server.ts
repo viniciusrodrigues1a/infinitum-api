@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Server } from "http";
 import "@shared/infra/database/connection";
 import express from "express";
-import { accountRoutes } from "./routes";
+import { authRoutes } from "./routes";
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ export class ExpressServer {
   }
 
   private useRoutes() {
-    this.app.use("/accounts", accountRoutes);
+    this.app.use("/auth", authRoutes);
   }
 
   public start(): void {

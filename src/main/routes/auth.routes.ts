@@ -2,16 +2,16 @@ import { Router } from "express";
 import { ExpressRouteAdapter } from "../adapters/ExpressRouteAdapter";
 import { knexControllerFactoryImpl } from "../factories/controllers";
 
-export const accountRoutes = Router();
+export const authRoutes = Router();
 
-accountRoutes.post(
+authRoutes.post(
   "/register",
   ExpressRouteAdapter((language) =>
     knexControllerFactoryImpl.makeRegisterController(language)
   )
 );
 
-accountRoutes.post(
+authRoutes.post(
   "/login",
   ExpressRouteAdapter((language) =>
     knexControllerFactoryImpl.makeLoginController(language)
