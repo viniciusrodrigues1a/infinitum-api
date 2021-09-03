@@ -19,5 +19,5 @@ export const badRequestResponse = (error: Error): HttpResponse => ({
 
 export const serverErrorResponse = (): HttpResponse => ({
   statusCode: HttpStatusCodes.serverError,
-  body: { message: "Internal server error" },
+  body: new Error("Internal server error"),
 });
