@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { Server } from "http";
-import "@shared/infra/database/connection";
 import express from "express";
 import { authRoutes } from "./routes";
 
