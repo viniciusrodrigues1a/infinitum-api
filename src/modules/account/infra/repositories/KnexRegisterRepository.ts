@@ -5,16 +5,14 @@ import { IInvalidEmailErrorLanguage } from "@modules/account/entities/interfaces
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IEmailAlreadyInUseErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
-import { RegisterAccountRepositoryDTO } from "../DTOs/RegisterAccountRepositoryDTO";
+import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
 import { pbkdf2 } from "../cryptography";
 
-export interface IRegisterAccountRepository {
-  create(data: RegisterAccountRepositoryDTO): Promise<void>;
+export interface IRegisterRepository {
+  create(data: RegisterRepositoryDTO): Promise<void>;
 }
 
-export class KnexRegisterAccountRepository
-  implements IRegisterAccountRepository
-{
+export class KnexRegisterRepository implements IRegisterRepository {
   constructor(
     private readonly doesAccountExistRepository: IDoesAccountExistRepository,
     private readonly invalidEmailErrorLanguage: IInvalidEmailErrorLanguage,
@@ -25,7 +23,7 @@ export class KnexRegisterAccountRepository
     name,
     email,
     password,
-  }: RegisterAccountRepositoryDTO): Promise<void> {
+  }: RegisterRepositoryDTO): Promise<void> {
     const account = new Account(name, email, this.invalidEmailErrorLanguage);
 
     const accountAlreadyExists =

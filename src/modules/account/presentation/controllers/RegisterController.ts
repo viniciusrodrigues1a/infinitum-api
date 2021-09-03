@@ -1,5 +1,5 @@
 import { InvalidEmailError } from "@modules/account/entities/errors";
-import { IRegisterAccountRepository } from "@modules/account/infra/repositories";
+import { IRegisterRepository } from "@modules/account/infra/repositories/KnexRegisterRepository";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import {
   badRequestResponse,
@@ -8,22 +8,22 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 
-export type CreateAccountControllerRequest = {
+export type RegisterControllerRequest = {
   name: string;
   email: string;
   password: string;
 };
 
-export class CreateAccountController {
+export class RegisterController {
   constructor(
-    private readonly registerAccountRepository: IRegisterAccountRepository
+    private readonly registerAccountRepository: IRegisterRepository
   ) {}
 
   async handleRequest({
     name,
     email,
     password,
-  }: CreateAccountControllerRequest): Promise<HttpResponse> {
+  }: RegisterControllerRequest): Promise<HttpResponse> {
     try {
       await this.registerAccountRepository.create({ name, email, password });
 

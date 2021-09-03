@@ -1,2 +1,2 @@
-export * from "./KnexRegisterAccountRepository";
+export * from "./KnexRegisterRepository";
 export * from "./KnexDoesAccountExistRepository";

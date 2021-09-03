@@ -1,6 +1,6 @@
-import { CreateAccountController } from "@modules/account/presentation/controllers";
+import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
 import { ILanguage } from "../../adapters/utils";
 
 export interface IControllerFactory {
-  makeCreateAccountController(language: ILanguage): CreateAccountController;
+  makeRegisterController(language: ILanguage): RegisterController;
 }

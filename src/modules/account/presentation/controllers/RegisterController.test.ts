@@ -1,19 +1,19 @@
 import { InvalidEmailError } from "@modules/account/entities/errors";
-import { IRegisterAccountRepository } from "@modules/account/infra/repositories";
+import { IRegisterRepository } from "@modules/account/infra/repositories/KnexRegisterRepository";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
 import { IAccountLanguage } from "../languages";
 import {
-  CreateAccountController,
-  CreateAccountControllerRequest,
-} from "./CreateAccountController";
+  RegisterController,
+  RegisterControllerRequest,
+} from "./RegisterController";
 
 const languageMock = mock<IAccountLanguage>();
 
 function makeSut() {
-  const registerAccountRepositoryMock = mock<IRegisterAccountRepository>();
-  const sut = new CreateAccountController(registerAccountRepositoryMock);
+  const registerAccountRepositoryMock = mock<IRegisterRepository>();
+  const sut = new RegisterController(registerAccountRepositoryMock);
 
   return {
     sut,
@@ -26,7 +26,7 @@ describe("createAccount controller", () => {
     expect.assertions(1);
 
     const { sut } = makeSut();
-    const request: CreateAccountControllerRequest = {
+    const request: RegisterControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
@@ -41,7 +41,7 @@ describe("createAccount controller", () => {
     expect.assertions(1);
 
     const { sut, registerAccountRepositoryMock } = makeSut();
-    const request: CreateAccountControllerRequest = {
+    const request: RegisterControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
@@ -59,7 +59,7 @@ describe("createAccount controller", () => {
     expect.assertions(2);
 
     const { sut, registerAccountRepositoryMock } = makeSut();
-    const request: CreateAccountControllerRequest = {
+    const request: RegisterControllerRequest = {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
@@ -78,7 +78,7 @@ describe("createAccount controller", () => {
     expect.assertions(2);
 
     const { sut, registerAccountRepositoryMock } = makeSut();
-    const request: CreateAccountControllerRequest = {
+    const request: RegisterControllerRequest = {
       name: "Jorge",
       email: "notanemail",
       password: "pa55",

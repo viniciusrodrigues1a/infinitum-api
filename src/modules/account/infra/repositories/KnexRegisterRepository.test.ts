@@ -3,15 +3,15 @@ import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { connection, configuration } from "@shared/infra/database/connection";
 import { mock } from "jest-mock-extended";
-import { RegisterAccountRepositoryDTO } from "../DTOs/RegisterAccountRepositoryDTO";
-import { KnexRegisterAccountRepository } from "./KnexRegisterAccountRepository";
+import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
+import { KnexRegisterRepository } from "./KnexRegisterRepository";
 
 function makeSut() {
   const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
   const languageMock = mock<IAccountLanguage>();
   languageMock.getInvalidEmailErrorMessage.mockReturnValue("Error");
   languageMock.getEmailAlreadyInUseErrorMessage.mockReturnValue("Error");
-  const sut = new KnexRegisterAccountRepository(
+  const sut = new KnexRegisterRepository(
     doesAccountExistRepositoryMock,
     languageMock,
     languageMock
@@ -37,7 +37,7 @@ describe("createAccount repository using Knex", () => {
     expect.assertions(1);
 
     const { sut, doesAccountExistRepositoryMock } = makeSut();
-    const accountDTO: RegisterAccountRepositoryDTO = {
+    const accountDTO: RegisterRepositoryDTO = {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
@@ -62,7 +62,7 @@ describe("createAccount repository using Knex", () => {
     expect.assertions(1);
 
     const { sut, doesAccountExistRepositoryMock, languageMock } = makeSut();
-    const accountDTO: RegisterAccountRepositoryDTO = {
+    const accountDTO: RegisterRepositoryDTO = {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
@@ -80,7 +80,7 @@ describe("createAccount repository using Knex", () => {
     expect.assertions(1);
 
     const { sut, doesAccountExistRepositoryMock, languageMock } = makeSut();
-    const accountDTO: RegisterAccountRepositoryDTO = {
+    const accountDTO: RegisterRepositoryDTO = {
       name: "Jorge",
       email: "1238yewqhi",
       password: "pa55",

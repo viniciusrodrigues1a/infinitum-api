@@ -7,6 +7,6 @@ export const accountRoutes = Router();
 accountRoutes.post(
   "/",
   ExpressRouteAdapter((language) =>
-    knexControllerFactoryImpl.makeCreateAccountController(language)
+    knexControllerFactoryImpl.makeRegisterController(language)
   )
 );

@@ -4,7 +4,7 @@ import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interf
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
 import { jwtToken } from "../authentication";
 import { pbkdf2 } from "../cryptography";
-import { RegisterAccountRepositoryDTO } from "../DTOs/RegisterAccountRepositoryDTO";
+import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
 import { InvalidPasswordError } from "./errors";
 
 export class KnexLoginRepository {
@@ -17,7 +17,7 @@ export class KnexLoginRepository {
   async login({
     email,
     password,
-  }: Omit<RegisterAccountRepositoryDTO, "name">): Promise<string> {
+  }: Omit<RegisterRepositoryDTO, "name">): Promise<string> {
     const account = (await this.findOneAccountRepository.findOneAccount(
       email
     )) as any;
