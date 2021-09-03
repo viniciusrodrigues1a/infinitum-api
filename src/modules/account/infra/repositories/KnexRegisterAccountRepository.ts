@@ -6,7 +6,7 @@ import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfac
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IEmailAlreadyInUseErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { RegisterAccountRepositoryDTO } from "../DTOs/RegisterAccountRepositoryDTO";
-import { Pbkdf2 } from "../cryptography";
+import { pbkdf2 } from "../cryptography";
 
 export interface IRegisterAccountRepository {
   create(data: RegisterAccountRepositoryDTO): Promise<void>;
@@ -39,7 +39,7 @@ export class KnexRegisterAccountRepository
 
     const uuid = crypto.randomUUID();
 
-    const { hash, salt, iterations } = new Pbkdf2().hash(password);
+    const { hash, salt, iterations } = pbkdf2.hash(password);
 
     await connection("account").insert({
       id: uuid,
