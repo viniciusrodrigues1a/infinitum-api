@@ -1,11 +1,12 @@
 import { IAccountLanguage } from "./IAccountLanguage";
 
 export class PTBRLanguage implements IAccountLanguage {
+  getInvalidCredentialsErrorMessage(): string {
+    return "Email ou senha inválidos";
+  }
+
   getAccountNotFoundErrorMessage(_identifier: string): string {
     return "Conta especificada não existe";
-  }
-  getInvalidPasswordErrorMessage(): string {
-    return "Email ou senha inválidos";
   }
 
   getInvalidEmailErrorMessage(): string {

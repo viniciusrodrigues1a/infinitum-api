@@ -1,12 +1,12 @@
 import { IAccountLanguage } from "./IAccountLanguage";
 
 export class ENUSLanguage implements IAccountLanguage {
-  getAccountNotFoundErrorMessage(_identifier: string): string {
-    return "Account couldn't be found";
+  getInvalidCredentialsErrorMessage(): string {
+    return "Invalid email or password";
   }
 
-  getInvalidPasswordErrorMessage(): string {
-    return "Invalid email or password";
+  getAccountNotFoundErrorMessage(_identifier: string): string {
+    return "Account couldn't be found";
   }
 
   getInvalidEmailErrorMessage(): string {

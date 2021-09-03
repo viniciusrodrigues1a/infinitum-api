@@ -1,22 +1,18 @@
-import { IInvalidPasswordErrorLanguage } from "@modules/account/presentation/languages/IInvalidPasswordErrorLanguage";
-import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
-import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
+import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
 import { mock } from "jest-mock-extended";
 import { jwtToken } from "../authentication";
 import { pbkdf2 } from "../cryptography/Pbkdf2";
-import { InvalidPasswordError } from "./errors";
+import { InvalidCredentialsError } from "./errors/InvalidCredentialsError";
 import { KnexLoginRepository } from "./KnexLoginRepository";
 
 function makeSut() {
   const findOneAccountRepositoryMock = mock<IFindOneAccountRepository>();
-  const accountNotFoundErrorLanguageMock =
-    mock<IAccountNotFoundErrorLanguage>();
-  const invalidPasswordErrorLanguage = mock<IInvalidPasswordErrorLanguage>();
+  const invalidCredentialsErrorLanguageMock =
+    mock<IInvalidCredentialsErrorLanguage>();
   const sut = new KnexLoginRepository(
     findOneAccountRepositoryMock,
-    accountNotFoundErrorLanguageMock,
-    invalidPasswordErrorLanguage
+    invalidCredentialsErrorLanguageMock
   );
 
   return { sut, findOneAccountRepositoryMock };
@@ -50,7 +46,7 @@ describe("login repository using Knex and JWT", () => {
     expect(decoded.id).toBe(accountId);
   });
 
-  it("should throw InvalidPasswordError if password doesn't match", async () => {
+  it("should throw InvalidCredentialsError if password doesn't match", async () => {
     expect.assertions(1);
 
     const { sut, findOneAccountRepositoryMock } = makeSut();
@@ -66,10 +62,10 @@ describe("login repository using Knex and JWT", () => {
 
     const when = () => sut.login(credentials);
 
-    await expect(when).rejects.toThrow(InvalidPasswordError);
+    await expect(when).rejects.toThrow(InvalidCredentialsError);
   });
 
-  it("should throw AccountNotFoundError if there's no account with provided email", async () => {
+  it("should throw InvalidCredentialsError if there's no account with provided email", async () => {
     expect.assertions(1);
 
     const { sut, findOneAccountRepositoryMock } = makeSut();
@@ -83,6 +79,6 @@ describe("login repository using Knex and JWT", () => {
 
     const when = () => sut.login(credentials);
 
-    await expect(when).rejects.toThrow(AccountNotFoundError);
+    await expect(when).rejects.toThrow(InvalidCredentialsError);
   });
 });

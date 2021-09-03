@@ -3,10 +3,10 @@ import {
   IAccountNotFoundErrorLanguage,
   IEmailAlreadyInUseErrorLanguage,
 } from "@modules/account/use-cases/interfaces/languages";
-import { IInvalidPasswordErrorLanguage } from "./IInvalidPasswordErrorLanguage";
+import { IInvalidCredentialsErrorLanguage } from "./IInvalidCredentialsErrorLanguage";
 
 export interface IAccountLanguage
   extends IInvalidEmailErrorLanguage,
     IEmailAlreadyInUseErrorLanguage,
-    IInvalidPasswordErrorLanguage,
+    IInvalidCredentialsErrorLanguage,
     IAccountNotFoundErrorLanguage {}

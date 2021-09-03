@@ -23,7 +23,6 @@ class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   makeLoginRepository(language: IAccountLanguage): ILoginRepository {
     return new KnexLoginRepository(
       this.makeFindOneaccountRepository(),
-      language,
       language
     );
   }

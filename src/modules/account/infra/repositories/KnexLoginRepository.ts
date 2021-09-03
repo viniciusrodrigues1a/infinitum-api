@@ -1,11 +1,9 @@
-import { IInvalidPasswordErrorLanguage } from "@modules/account/presentation/languages/IInvalidPasswordErrorLanguage";
-import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
-import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
+import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
 import { jwtToken } from "../authentication";
 import { pbkdf2 } from "../cryptography";
 import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
-import { InvalidPasswordError } from "./errors";
+import { InvalidCredentialsError } from "./errors/InvalidCredentialsError";
 
 export interface ILoginRepository {
   login(data: Omit<RegisterRepositoryDTO, "name">): Promise<string>;
@@ -14,8 +12,7 @@ export interface ILoginRepository {
 export class KnexLoginRepository implements ILoginRepository {
   constructor(
     private readonly findOneAccountRepository: IFindOneAccountRepository,
-    private readonly accountNotFoundErrorLanguage: IAccountNotFoundErrorLanguage,
-    private readonly invalidPasswordErrorLanguage: IInvalidPasswordErrorLanguage
+    private readonly invalidCredentialsErrorLanguage: IInvalidCredentialsErrorLanguage
   ) {}
 
   async login({
@@ -27,7 +24,7 @@ export class KnexLoginRepository implements ILoginRepository {
     )) as any;
 
     if (!account) {
-      throw new AccountNotFoundError(email, this.accountNotFoundErrorLanguage);
+      throw new InvalidCredentialsError(this.invalidCredentialsErrorLanguage);
     }
 
     const doesPasswordMatch = pbkdf2.compare(password, {
@@ -36,7 +33,7 @@ export class KnexLoginRepository implements ILoginRepository {
       iterations: account.iterations,
     });
     if (!doesPasswordMatch) {
-      throw new InvalidPasswordError(this.invalidPasswordErrorLanguage);
+      throw new InvalidCredentialsError(this.invalidCredentialsErrorLanguage);
     }
 
     return jwtToken.sign({ id: account.id });
