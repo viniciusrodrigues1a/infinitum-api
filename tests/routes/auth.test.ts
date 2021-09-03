@@ -23,7 +23,7 @@ describe("account registering endpoint", () => {
       password: "jorgepa55",
     };
 
-    const response = await api.post("/accounts/").send(body);
+    const response = await api.post("/auth/register/").send(body);
 
     expect(response.statusCode).toBe(204);
   });
@@ -37,7 +37,7 @@ describe("account registering endpoint", () => {
       password: "jorgepa55",
     };
 
-    const response = await api.post("/accounts/").send(body);
+    const response = await api.post("/auth/register/").send(body);
 
     expect(response.statusCode).toBe(400);
   });
@@ -52,7 +52,7 @@ describe("account registering endpoint", () => {
     };
     await api.post("/accounts/").send(body);
 
-    const response = await api.post("/accounts/").send(body);
+    const response = await api.post("/auth/register/").send(body);
 
     expect(response.statusCode).toBe(400);
   });
