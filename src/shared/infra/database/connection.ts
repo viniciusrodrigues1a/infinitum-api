@@ -1,4 +1,4 @@
-import knex from "knex";
+import knex, { Knex } from "knex";
 
 import knexfile from "../../../../knexfile";
 
@@ -13,6 +13,10 @@ if (
   configuration.connection.host = "postgreshost"; // docker-compose hostname
 }
 
-const connection = knex(configuration);
+let connection = knex(configuration);
+
+export function reconnect(): void {
+  connection = knex(configuration);
+}
 
 export { connection, configuration };
