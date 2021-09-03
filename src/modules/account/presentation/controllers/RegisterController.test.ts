@@ -21,7 +21,7 @@ function makeSut() {
   };
 }
 
-describe("createAccount controller", () => {
+describe("register controller", () => {
   it("should return HttpStatusCodes.noContent", async () => {
     expect.assertions(1);
 
