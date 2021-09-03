@@ -1,8 +1,4 @@
-import {
-  reconnect,
-  connection,
-  configuration,
-} from "@shared/infra/database/connection";
+import { connection, configuration } from "@shared/infra/database/connection";
 import { api } from "../helpers";
 
 describe("/auth/ endpoint", () => {
@@ -111,66 +107,53 @@ describe("/auth/ endpoint", () => {
       expect(response.statusCode).toBe(400);
     });
   });
-});
 
-describe("login endpoint", () => {
-  beforeEach(async () => {
-    reconnect();
-    await connection.migrate.latest(configuration.migrations);
-  });
+  describe("login endpoint", () => {
+    it("should return 200 and a token", async () => {
+      expect.assertions(2);
 
-  afterEach(async () => {
-    await connection.migrate.rollback(configuration.migrations);
-  });
+      const body = {
+        email: "jorge@email.com",
+        password: "jorgepa55",
+      };
+      await api.post("/auth/register/").send({ name: "jorge", ...body });
 
-  afterAll(async () => {
-    await connection.destroy();
-  });
+      const response = await api.post("/auth/login/").send(body);
 
-  it("should return 200 and a token", async () => {
-    expect.assertions(2);
+      expect(response.statusCode).toBe(200);
+      expect(typeof response.body.token).toBe("string");
+    });
 
-    const body = {
-      email: "jorge@email.com",
-      password: "jorgepa55",
-    };
-    await api.post("/auth/register/").send({ name: "jorge", ...body });
+    it("should return 400 if email is wrong", async () => {
+      expect.assertions(1);
 
-    const response = await api.post("/auth/login/").send(body);
+      const body = {
+        email: "jorge@email.com",
+        password: "jorgepa55",
+      };
+      await api.post("/auth/register/").send({ name: "jorge", ...body });
 
-    expect(response.statusCode).toBe(200);
-    expect(typeof response.body.token).toBe("string");
-  });
+      const response = await api
+        .post("/auth/login/")
+        .send({ email: "wrong@email.com", password: body.password });
 
-  it("should return 400 if email is wrong", async () => {
-    expect.assertions(1);
+      expect(response.statusCode).toBe(400);
+    });
 
-    const body = {
-      email: "jorge@email.com",
-      password: "jorgepa55",
-    };
-    await api.post("/auth/register/").send({ name: "jorge", ...body });
+    it("should return 400 if password is wrong", async () => {
+      expect.assertions(1);
 
-    const response = await api
-      .post("/auth/login/")
-      .send({ email: "wrong@email.com", password: body.password });
+      const body = {
+        email: "jorge@email.com",
+        password: "jorgepa55",
+      };
+      await api.post("/auth/register/").send({ name: "jorge", ...body });
 
-    expect(response.statusCode).toBe(400);
-  });
+      const response = await api
+        .post("/auth/login/")
+        .send({ email: body.email, password: "wrongpa55" });
 
-  it("should return 400 if password is wrong", async () => {
-    expect.assertions(1);
-
-    const body = {
-      email: "jorge@email.com",
-      password: "jorgepa55",
-    };
-    await api.post("/auth/register/").send({ name: "jorge", ...body });
-
-    const response = await api
-      .post("/auth/login/")
-      .send({ email: body.email, password: "wrongpa55" });
-
-    expect(response.statusCode).toBe(400);
+      expect(response.statusCode).toBe(400);
+    });
   });
 });
