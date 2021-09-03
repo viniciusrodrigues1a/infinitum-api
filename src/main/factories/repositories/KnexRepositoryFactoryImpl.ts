@@ -1,13 +1,33 @@
-import { KnexDoesAccountExistRepository } from "@modules/account/infra/repositories";
+import {
+  ILoginRepository,
+  KnexDoesAccountExistRepository,
+  KnexFindOneAccountRepository,
+  KnexLoginRepository,
+} from "@modules/account/infra/repositories";
 import {
   IRegisterRepository,
   KnexRegisterRepository,
 } from "@modules/account/infra/repositories/KnexRegisterRepository";
 import { IAccountLanguage } from "@modules/account/presentation/languages";
-import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
+import {
+  IDoesAccountExistRepository,
+  IFindOneAccountRepository,
+} from "@modules/account/use-cases/interfaces/repositories";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeFindOneaccountRepository(): IFindOneAccountRepository {
+    return new KnexFindOneAccountRepository();
+  }
+
+  makeLoginRepository(language: IAccountLanguage): ILoginRepository {
+    return new KnexLoginRepository(
+      this.makeFindOneaccountRepository(),
+      language,
+      language
+    );
+  }
+
   makeDoesAccountExistRepository(): IDoesAccountExistRepository {
     return new KnexDoesAccountExistRepository();
   }
