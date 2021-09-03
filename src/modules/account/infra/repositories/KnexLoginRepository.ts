@@ -7,7 +7,11 @@ import { pbkdf2 } from "../cryptography";
 import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
 import { InvalidPasswordError } from "./errors";
 
-export class KnexLoginRepository {
+export interface ILoginRepository {
+  login(data: Omit<RegisterRepositoryDTO, "name">): Promise<string>;
+}
+
+export class KnexLoginRepository implements ILoginRepository {
   constructor(
     private readonly findOneAccountRepository: IFindOneAccountRepository,
     private readonly accountNotFoundErrorLanguage: IAccountNotFoundErrorLanguage,
