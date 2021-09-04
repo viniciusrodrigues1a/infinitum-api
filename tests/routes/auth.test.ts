@@ -1,5 +1,8 @@
+import { InvalidEmailError } from "@modules/account/entities/errors";
+import { InvalidCredentialsError } from "@modules/account/infra/repositories/errors/InvalidCredentialsError";
+import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { connection, configuration } from "@shared/infra/database/connection";
-import { api } from "../helpers";
+import { api, defaultLanguage } from "../helpers";
 
 describe("/auth/ endpoint", () => {
   beforeEach(async () => {
@@ -30,7 +33,7 @@ describe("/auth/ endpoint", () => {
     });
 
     it("should return 400 if email is invalid", async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const body = {
         name: "Jorge",
@@ -41,10 +44,13 @@ describe("/auth/ endpoint", () => {
       const response = await api.post("/auth/register/").send(body);
 
       expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe(
+        new InvalidEmailError(defaultLanguage).message
+      );
     });
 
     it("should return 400 if email is in use", async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const body = {
         name: "Jorge",
@@ -56,6 +62,9 @@ describe("/auth/ endpoint", () => {
       const response = await api.post("/auth/register/").send(body);
 
       expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe(
+        new EmailAlreadyInUseError(body.email, defaultLanguage).message
+      );
     });
   });
 
@@ -76,7 +85,7 @@ describe("/auth/ endpoint", () => {
     });
 
     it("should return 400 if email is wrong", async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const body = {
         email: "jorge@email.com",
@@ -89,10 +98,13 @@ describe("/auth/ endpoint", () => {
         .send({ email: "wrong@email.com", password: body.password });
 
       expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe(
+        new InvalidCredentialsError(defaultLanguage).message
+      );
     });
 
     it("should return 400 if password is wrong", async () => {
-      expect.assertions(1);
+      expect.assertions(2);
 
       const body = {
         email: "jorge@email.com",
@@ -105,6 +117,9 @@ describe("/auth/ endpoint", () => {
         .send({ email: body.email, password: "wrongpa55" });
 
       expect(response.statusCode).toBe(400);
+      expect(response.body.error.message).toBe(
+        new InvalidCredentialsError(defaultLanguage).message
+      );
     });
   });
 });
