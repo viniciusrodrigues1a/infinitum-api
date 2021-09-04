@@ -16,7 +16,7 @@ type LanguageMatch = { tag: string; language: ILanguage };
 
 export type ILanguage = IAccountLanguage;
 
-export class AcceptLanguageHeaderUtil {
+class AcceptLanguageHeaderUtil {
   private languages: Languages = {
     "pt-br": new PTBRLanguage(),
     pt: new PTBRLanguage(),
@@ -64,3 +64,5 @@ export class AcceptLanguageHeaderUtil {
     return Number(weightString);
   }
 }
+
+export const acceptLanguageHeaderUtil = new AcceptLanguageHeaderUtil();
