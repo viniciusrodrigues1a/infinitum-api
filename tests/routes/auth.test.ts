@@ -48,10 +48,10 @@ describe("/auth/ endpoint", () => {
 
       const body = {
         name: "Jorge",
-        email: "notanemail",
+        email: "jorge@email.com",
         password: "jorgepa55",
       };
-      await api.post("/accounts/").send(body);
+      await api.post("/auth/register/").send(body);
 
       const response = await api.post("/auth/register/").send(body);
 
