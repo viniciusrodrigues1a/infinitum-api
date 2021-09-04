@@ -1,4 +1,3 @@
-import { ILoginRepository } from "@modules/account/infra/repositories";
 import { InvalidCredentialsError } from "@modules/account/infra/repositories/errors/InvalidCredentialsError";
 import {
   badRequestResponse,
@@ -6,6 +5,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { ILoginRepository } from "../interfaces/repositories";
 
 type LoginControllerRequest = {
   email: string;

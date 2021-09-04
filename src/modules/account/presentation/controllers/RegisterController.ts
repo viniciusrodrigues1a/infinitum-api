@@ -1,5 +1,4 @@
 import { InvalidEmailError } from "@modules/account/entities/errors";
-import { IRegisterRepository } from "@modules/account/infra/repositories/KnexRegisterRepository";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import {
   badRequestResponse,
@@ -7,6 +6,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IRegisterRepository } from "../interfaces/repositories";
 
 export type RegisterControllerRequest = {
   name: string;

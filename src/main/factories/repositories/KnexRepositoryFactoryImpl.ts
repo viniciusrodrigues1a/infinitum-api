@@ -1,13 +1,13 @@
 import {
-  ILoginRepository,
   KnexDoesAccountExistRepository,
   KnexFindOneAccountRepository,
   KnexLoginRepository,
 } from "@modules/account/infra/repositories";
+import { KnexRegisterRepository } from "@modules/account/infra/repositories/KnexRegisterRepository";
 import {
+  ILoginRepository,
   IRegisterRepository,
-  KnexRegisterRepository,
-} from "@modules/account/infra/repositories/KnexRegisterRepository";
+} from "@modules/account/presentation/interfaces/repositories";
 import { IAccountLanguage } from "@modules/account/presentation/languages";
 import {
   IDoesAccountExistRepository,

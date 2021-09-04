@@ -1,13 +1,10 @@
+import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
+import { ILoginRepository } from "@modules/account/presentation/interfaces/repositories";
 import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
 import { jwtToken } from "../authentication";
 import { pbkdf2 } from "../cryptography";
-import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
 import { InvalidCredentialsError } from "./errors/InvalidCredentialsError";
-
-export interface ILoginRepository {
-  login(data: Omit<RegisterRepositoryDTO, "name">): Promise<string>;
-}
 
 export class KnexLoginRepository implements ILoginRepository {
   constructor(

@@ -1,5 +1,7 @@
-import { ILoginRepository } from "@modules/account/infra/repositories/KnexLoginRepository";
-import { IRegisterRepository } from "@modules/account/infra/repositories/KnexRegisterRepository";
+import {
+  ILoginRepository,
+  IRegisterRepository,
+} from "@modules/account/presentation/interfaces/repositories";
 import { IAccountLanguage } from "@modules/account/presentation/languages";
 import {
   IDoesAccountExistRepository,

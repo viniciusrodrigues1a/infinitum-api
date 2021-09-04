@@ -1,7 +1,7 @@
-import { ILoginRepository } from "@modules/account/infra/repositories";
 import { InvalidCredentialsError } from "@modules/account/infra/repositories/errors/InvalidCredentialsError";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
+import { ILoginRepository } from "../interfaces/repositories";
 import { IAccountLanguage } from "../languages";
 import { LoginController } from "./LoginController";
 

@@ -1,8 +1,8 @@
 import { InvalidEmailError } from "@modules/account/entities/errors";
-import { IRegisterRepository } from "@modules/account/infra/repositories/KnexRegisterRepository";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
+import { IRegisterRepository } from "../interfaces/repositories";
 import { IAccountLanguage } from "../languages";
 import {
   RegisterController,

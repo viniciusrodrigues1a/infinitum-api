@@ -5,12 +5,9 @@ import { IInvalidEmailErrorLanguage } from "@modules/account/entities/interfaces
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IEmailAlreadyInUseErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
-import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
+import { IRegisterRepository } from "@modules/account/presentation/interfaces/repositories";
+import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
 import { pbkdf2 } from "../cryptography";
-
-export interface IRegisterRepository {
-  create(data: RegisterRepositoryDTO): Promise<void>;
-}
 
 export class KnexRegisterRepository implements IRegisterRepository {
   constructor(

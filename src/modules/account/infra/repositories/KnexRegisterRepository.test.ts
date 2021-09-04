@@ -1,9 +1,9 @@
+import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
 import { IAccountLanguage } from "@modules/account/presentation/languages";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { connection, configuration } from "@shared/infra/database/connection";
 import { mock } from "jest-mock-extended";
-import { RegisterRepositoryDTO } from "../DTOs/RegisterRepositoryDTO";
 import { KnexRegisterRepository } from "./KnexRegisterRepository";
 
 function makeSut() {
