@@ -15,9 +15,10 @@ export function ExpressRouteAdapter(
     response.setHeader("Content-Language", languageMatch.tag);
     const controller = makeController(languageMatch.language);
 
-    const { statusCode, body }: HttpResponse = await controller.handleRequest(
-      request.body
-    );
+    const { statusCode, body }: HttpResponse = await controller.handleRequest({
+      ...request.body,
+      ...request.query,
+    });
 
     let jsonResponse = body;
     if (body instanceof Error) {
