@@ -2,9 +2,11 @@ import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { CreateProjectDTO } from "@modules/project/use-cases/DTOs";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import {
+  badRequestResponse,
   noContentResponse,
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
 
 type CreateProjectControllerRequest = Omit<
   CreateProjectDTO,
@@ -32,6 +34,8 @@ export class CreateProjectController {
 
       return noContentResponse();
     } catch (err) {
+      if (err instanceof AccountNotFoundError) return badRequestResponse(err);
+
       return serverErrorResponse();
     }
   }
