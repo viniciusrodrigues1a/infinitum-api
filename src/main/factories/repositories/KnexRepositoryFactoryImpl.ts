@@ -9,10 +9,8 @@ import {
   IRegisterRepository,
 } from "@modules/account/presentation/interfaces/repositories";
 import { IAccountLanguage } from "@modules/account/presentation/languages";
-import {
-  IDoesAccountExistRepository,
-  IFindOneAccountRepository,
-} from "@modules/account/use-cases/interfaces/repositories";
+import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories";
+import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
