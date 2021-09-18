@@ -1,7 +1,10 @@
 import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { CreateProjectDTO } from "@modules/project/use-cases/DTOs";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
-import { noContentResponse } from "@shared/presentation/http/httpHelper";
+import {
+  noContentResponse,
+  serverErrorResponse,
+} from "@shared/presentation/http/httpHelper";
 
 type CreateProjectControllerRequest = Omit<
   CreateProjectDTO,
@@ -18,14 +21,18 @@ export class CreateProjectController {
     finishesAt,
     accountEmailRequestingCreation,
   }: CreateProjectControllerRequest): Promise<HttpResponse> {
-    await this.createProjectUseCase.create({
-      name,
-      description,
-      beginsAt,
-      finishesAt,
-      accountEmailRequestingCreation,
-    });
+    try {
+      await this.createProjectUseCase.create({
+        name,
+        description,
+        beginsAt,
+        finishesAt,
+        accountEmailRequestingCreation,
+      });
 
-    return noContentResponse();
+      return noContentResponse();
+    } catch (err) {
+      return serverErrorResponse();
+    }
   }
 }
