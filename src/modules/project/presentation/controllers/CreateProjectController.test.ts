@@ -2,8 +2,13 @@ import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountN
 import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { IMissingParamsErrorLanguage } from "@shared/presentation/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import { CreateProjectController } from "./CreateProjectController";
+import {
+  CreateProjectController,
+  CreateProjectControllerRequest,
+} from "./CreateProjectController";
+import { ICreateProjectControllerLanguage } from "./interfaces/languages";
 
 const accountNotFoundErrorLanguageMock = mock<IAccountNotFoundErrorLanguage>();
 accountNotFoundErrorLanguageMock.getAccountNotFoundErrorMessage.mockReturnValue(
@@ -12,9 +17,30 @@ accountNotFoundErrorLanguageMock.getAccountNotFoundErrorMessage.mockReturnValue(
 
 function makeSut() {
   const createProjectUseCaseMock = mock<CreateProjectUseCase>();
-  const sut = new CreateProjectController(createProjectUseCaseMock);
+  const createProjectControllerLanguageMock =
+    mock<ICreateProjectControllerLanguage>();
+  createProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage.mockReturnValue(
+    "name"
+  );
+  createProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage.mockReturnValue(
+    "description"
+  );
+  const missingParamsErrorLanguageMock = mock<IMissingParamsErrorLanguage>();
+  missingParamsErrorLanguageMock.getMissingParamsErrorMessage.mockReturnValue(
+    "mocked missingParams message"
+  );
+  const sut = new CreateProjectController(
+    createProjectUseCaseMock,
+    createProjectControllerLanguageMock,
+    missingParamsErrorLanguageMock
+  );
 
-  return { sut, createProjectUseCaseMock };
+  return {
+    sut,
+    createProjectUseCaseMock,
+    createProjectControllerLanguageMock,
+    missingParamsErrorLanguageMock,
+  };
 }
 
 describe("createProject controller", () => {
@@ -75,5 +101,23 @@ describe("createProject controller", () => {
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body).toBeInstanceOf(AccountNotFoundError);
+  });
+
+  it("should return HttpStatusCodes.badRequest if name is missing", async () => {
+    expect.assertions(2);
+
+    const { sut, createProjectControllerLanguageMock } = makeSut();
+    const givenProject = {
+      description: "my project's description",
+      accountEmailRequestingCreation: "jorge@email.com",
+    } as CreateProjectControllerRequest;
+
+    const response = await sut.handleRequest(givenProject);
+
+    const expectedParamsMissing = [
+      createProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage(),
+    ];
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body.params).toStrictEqual(expectedParamsMissing);
   });
 });
