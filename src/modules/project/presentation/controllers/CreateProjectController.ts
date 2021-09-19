@@ -32,11 +32,11 @@ export class CreateProjectController {
   }: CreateProjectControllerRequest): Promise<HttpResponse> {
     const paramsMissing = [];
 
-    if (!name)
+    if (typeof name !== "string")
       paramsMissing.push(
         this.createProjectControllerLanguage.getMissingParamsErrorNameParamMessage()
       );
-    if (!description)
+    if (typeof description !== "string")
       paramsMissing.push(
         this.createProjectControllerLanguage.getMissingParamsErrorDescriptionParamMessage()
       );

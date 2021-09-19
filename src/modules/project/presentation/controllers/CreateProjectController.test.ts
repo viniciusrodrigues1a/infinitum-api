@@ -103,11 +103,12 @@ describe("createProject controller", () => {
     expect(response.body).toBeInstanceOf(AccountNotFoundError);
   });
 
-  it("should return HttpStatusCodes.badRequest if name is missing", async () => {
+  it("should return HttpStatusCodes.badRequest if name is not a string", async () => {
     expect.assertions(2);
 
     const { sut, createProjectControllerLanguageMock } = makeSut();
     const givenProject = {
+      name: new Date() as unknown,
       description: "my project's description",
       accountEmailRequestingCreation: "jorge@email.com",
     } as CreateProjectControllerRequest;
@@ -121,12 +122,13 @@ describe("createProject controller", () => {
     expect(response.body.params).toStrictEqual(expectedParamsMissing);
   });
 
-  it("should return HttpStatusCodes.badRequest if description is missing", async () => {
+  it("should return HttpStatusCodes.badRequest if description is not a string", async () => {
     expect.assertions(2);
 
     const { sut, createProjectControllerLanguageMock } = makeSut();
     const givenProject = {
       name: "my project",
+      description: 12345 as unknown,
       accountEmailRequestingCreation: "jorge@email.com",
     } as CreateProjectControllerRequest;
 
@@ -139,11 +141,13 @@ describe("createProject controller", () => {
     expect(response.body.params).toStrictEqual(expectedParamsMissing);
   });
 
-  it("should return HttpStatusCodes.badRequest if name AND description are missing", async () => {
+  it("should return HttpStatusCodes.badRequest if name AND description are not a string", async () => {
     expect.assertions(2);
 
     const { sut, createProjectControllerLanguageMock } = makeSut();
     const givenProject = {
+      name: 123 as unknown,
+      description: [1, 2] as unknown,
       accountEmailRequestingCreation: "jorge@email.com",
     } as CreateProjectControllerRequest;
 
