@@ -120,4 +120,40 @@ describe("createProject controller", () => {
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body.params).toStrictEqual(expectedParamsMissing);
   });
+
+  it("should return HttpStatusCodes.badRequest if description is missing", async () => {
+    expect.assertions(2);
+
+    const { sut, createProjectControllerLanguageMock } = makeSut();
+    const givenProject = {
+      name: "my project",
+      accountEmailRequestingCreation: "jorge@email.com",
+    } as CreateProjectControllerRequest;
+
+    const response = await sut.handleRequest(givenProject);
+
+    const expectedParamsMissing = [
+      createProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage(),
+    ];
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body.params).toStrictEqual(expectedParamsMissing);
+  });
+
+  it("should return HttpStatusCodes.badRequest if name AND description are missing", async () => {
+    expect.assertions(2);
+
+    const { sut, createProjectControllerLanguageMock } = makeSut();
+    const givenProject = {
+      accountEmailRequestingCreation: "jorge@email.com",
+    } as CreateProjectControllerRequest;
+
+    const response = await sut.handleRequest(givenProject);
+
+    const expectedParamsMissing = [
+      createProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage(),
+      createProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage(),
+    ];
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body.params).toStrictEqual(expectedParamsMissing);
+  });
 });

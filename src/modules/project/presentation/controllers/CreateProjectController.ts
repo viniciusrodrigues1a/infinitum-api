@@ -30,14 +30,20 @@ export class CreateProjectController {
     finishesAt,
     accountEmailRequestingCreation,
   }: CreateProjectControllerRequest): Promise<HttpResponse> {
+    const paramsMissing = [];
+
     if (!name)
+      paramsMissing.push(
+        this.createProjectControllerLanguage.getMissingParamsErrorNameParamMessage()
+      );
+    if (!description)
+      paramsMissing.push(
+        this.createProjectControllerLanguage.getMissingParamsErrorDescriptionParamMessage()
+      );
+
+    if (paramsMissing.length > 0)
       return badRequestResponse(
-        new MissingParamsError(
-          [
-            this.createProjectControllerLanguage.getMissingParamsErrorNameParamMessage(),
-          ],
-          this.missingParamsErrorLanguage
-        )
+        new MissingParamsError(paramsMissing, this.missingParamsErrorLanguage)
       );
 
     try {
