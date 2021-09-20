@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { ExpressRouteAdapter } from "../adapters/ExpressRouteAdapter";
+import { ExpressControllerAdapter } from "../adapters";
 import { knexControllerFactoryImpl } from "../factories/controllers";
 
 export const accountsRoutes = Router();
 
 accountsRoutes.get(
   "/",
-  ExpressRouteAdapter((language) =>
+  ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeFindOneAccountController(language)
   )
 );

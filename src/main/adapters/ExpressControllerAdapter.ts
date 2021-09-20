@@ -2,7 +2,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { Request, Response } from "express";
 
-export function ExpressRouteAdapter(
+export function ExpressControllerAdapter(
   makeController: (language: ILanguage) => any
 ): (request: Request, response: Response) => Promise<void> {
   return async (request: Request, response: Response) => {
