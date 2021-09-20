@@ -24,7 +24,7 @@ export class FindOneAccountController {
     } catch (err) {
       if (err instanceof AccountNotFoundError) return notFoundResponse(err);
 
-      return serverErrorResponse();
+      return serverErrorResponse(err);
     }
   }
 }

@@ -27,7 +27,7 @@ export class LoginController {
       if (err instanceof InvalidCredentialsError)
         return badRequestResponse(err);
 
-      return serverErrorResponse();
+      return serverErrorResponse(err);
     }
   }
 }

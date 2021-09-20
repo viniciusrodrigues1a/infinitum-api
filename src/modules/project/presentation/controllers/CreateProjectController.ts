@@ -62,7 +62,7 @@ export class CreateProjectController {
     } catch (err) {
       if (err instanceof NotFutureDateError) return badRequestResponse(err);
 
-      return serverErrorResponse();
+      return serverErrorResponse(err);
     }
   }
 }

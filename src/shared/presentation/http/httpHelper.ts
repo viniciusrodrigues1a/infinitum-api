@@ -27,7 +27,8 @@ export const notFoundResponse = (error: Error): HttpResponse => ({
   body: error,
 });
 
-export const serverErrorResponse = (): HttpResponse => ({
+export const serverErrorResponse = (error: Error): HttpResponse => ({
   statusCode: HttpStatusCodes.serverError,
   body: new Error("Internal server error"),
+  debug: error.message,
 });

@@ -8,15 +8,16 @@ export function ExpressRouteAdapter(
   return async (request: Request, response: Response) => {
     const controller = makeController(request.language);
 
-    const { statusCode, body }: HttpResponse = await controller.handleRequest({
-      ...request.body,
-      ...request.query,
-      accountEmailMakingRequest: request.authorizedAccountEmail,
-    });
+    const { statusCode, body, debug }: HttpResponse =
+      await controller.handleRequest({
+        ...request.body,
+        ...request.query,
+        accountEmailMakingRequest: request.authorizedAccountEmail,
+      });
 
     let jsonResponse = body;
     if (body instanceof Error) {
-      jsonResponse = { error: { message: body.message } };
+      jsonResponse = { error: { message: body.message, debugMessage: debug } };
     }
 
     response.status(statusCode).json(jsonResponse);

@@ -35,7 +35,7 @@ export class RegisterController {
       )
         return badRequestResponse(err);
 
-      return serverErrorResponse();
+      return serverErrorResponse(err);
     }
   }
 }
