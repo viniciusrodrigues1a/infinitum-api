@@ -1,3 +1,4 @@
+import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/errors";
 import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { CreateProjectDTO } from "@modules/project/use-cases/DTOs";
 import { NotFutureDateError } from "@shared/entities/errors";
@@ -60,7 +61,11 @@ export class CreateProjectController {
 
       return noContentResponse();
     } catch (err) {
-      if (err instanceof NotFutureDateError) return badRequestResponse(err);
+      if (
+        err instanceof NotFutureDateError ||
+        err instanceof BeginsAtMustBeBeforeFinishesAtError
+      )
+        return badRequestResponse(err);
 
       return serverErrorResponse(err);
     }

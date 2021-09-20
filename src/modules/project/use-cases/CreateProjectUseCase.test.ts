@@ -3,6 +3,7 @@ import { mock } from "jest-mock-extended";
 import { CreateProjectUseCase } from "./CreateProjectUseCase";
 import { ICreateProjectRepository } from "./interfaces/repositories";
 import { Project } from "../entities/Project";
+import { IBeginsAtMustBeBeforeFinishesAtErrorLanguage } from "../entities/interfaces/languages";
 
 jest.mock("../entities/Project");
 
@@ -12,15 +13,22 @@ function makeSut() {
   notFutureDateErrorLanguageMock.getNotFutureDateErrorMessage.mockReturnValue(
     "mocked date err msg"
   );
+  const beginsAtMustBeBeforeFinishesAtErrorLanguageMock =
+    mock<IBeginsAtMustBeBeforeFinishesAtErrorLanguage>();
+  beginsAtMustBeBeforeFinishesAtErrorLanguageMock.getBeginsAtMustBeBeforeFinishesAtErrorMessage.mockReturnValue(
+    "mocked err message"
+  );
   const sut = new CreateProjectUseCase(
     createProjectRepositoryMock,
-    notFutureDateErrorLanguageMock
+    notFutureDateErrorLanguageMock,
+    beginsAtMustBeBeforeFinishesAtErrorLanguageMock
   );
 
   return {
     sut,
     createProjectRepositoryMock,
     notFutureDateErrorLanguageMock,
+    beginsAtMustBeBeforeFinishesAtErrorLanguageMock,
   };
 }
 

@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getBeginsAtMustBeBeforeFinishesAtErrorMessage(): string {
+    return "End date must not be before start date for project";
+  }
+
   getMissingParamsErrorNameParamMessage(): string {
     return "name";
   }

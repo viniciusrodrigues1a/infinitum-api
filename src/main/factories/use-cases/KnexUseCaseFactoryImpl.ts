@@ -10,6 +10,7 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeCreateProjectUseCase(language: ILanguage): CreateProjectUseCase {
     return new CreateProjectUseCase(
       this.repositoryFactory.makeCreateProjectRepository(),
+      language,
       language
     );
   }

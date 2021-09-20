@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getBeginsAtMustBeBeforeFinishesAtErrorMessage(): string {
+    return "Data de término não pode ser antes da data de começo";
+  }
+
   getMissingParamsErrorNameParamMessage(): string {
     return "nome";
   }

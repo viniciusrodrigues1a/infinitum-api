@@ -1,12 +1,14 @@
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { Project } from "../entities";
+import { IBeginsAtMustBeBeforeFinishesAtErrorLanguage } from "../entities/interfaces/languages";
 import { CreateProjectDTO } from "./DTOs";
 import { ICreateProjectRepository } from "./interfaces/repositories";
 
 export class CreateProjectUseCase {
   constructor(
     private readonly createProjectRepository: ICreateProjectRepository,
-    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage
+    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
+    private readonly beginsAtMustBeBeforeFinishesAtErrorLanguage: IBeginsAtMustBeBeforeFinishesAtErrorLanguage
   ) {}
 
   async create({
@@ -27,7 +29,8 @@ export class CreateProjectUseCase {
         participants,
         issues,
       },
-      this.notFutureDateErrorLanguage
+      this.notFutureDateErrorLanguage,
+      this.beginsAtMustBeBeforeFinishesAtErrorLanguage
     );
 
     await this.createProjectRepository.createProject({
