@@ -8,17 +8,23 @@ import {
   ILoginRepository,
   IRegisterRepository,
 } from "@modules/account/presentation/interfaces/repositories";
-import { IAccountLanguage } from "@modules/account/presentation/languages";
+import { ILanguage } from "@modules/account/presentation/languages";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories";
+import { KnexCreateProjectRepository } from "@modules/project/infra/repositories";
+import { ICreateProjectRepository } from "@modules/project/use-cases/interfaces/repositories";
 import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeCreateProjectRepository(): ICreateProjectRepository {
+    return new KnexCreateProjectRepository();
+  }
+
   makeFindOneAccountRepository(): IFindOneAccountRepository {
     return new KnexFindOneAccountRepository();
   }
 
-  makeLoginRepository(language: IAccountLanguage): ILoginRepository {
+  makeLoginRepository(language: ILanguage): ILoginRepository {
     return new KnexLoginRepository(
       this.makeFindOneAccountRepository(),
       language
@@ -29,7 +35,7 @@ class KnexRepositoryFactoryImpl implements IRepositoryFactory {
     return new KnexDoesAccountExistRepository();
   }
 
-  makeRegisterRepository(language: IAccountLanguage): IRegisterRepository {
+  makeRegisterRepository(language: ILanguage): IRegisterRepository {
     return new KnexRegisterRepository(
       this.makeDoesAccountExistRepository(),
       language,

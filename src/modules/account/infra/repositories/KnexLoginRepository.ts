@@ -33,6 +33,6 @@ export class KnexLoginRepository implements ILoginRepository {
       throw new InvalidCredentialsError(this.invalidCredentialsErrorLanguage);
     }
 
-    return jwtToken.sign({ id: account.id });
+    return jwtToken.sign({ email });
   }
 }

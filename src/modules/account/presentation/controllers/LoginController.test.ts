@@ -2,10 +2,10 @@ import { InvalidCredentialsError } from "@modules/account/infra/repositories/err
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
 import { ILoginRepository } from "../interfaces/repositories";
-import { IAccountLanguage } from "../languages";
+import { ILanguage } from "../languages";
 import { LoginController } from "./LoginController";
 
-const languageMock = mock<IAccountLanguage>();
+const languageMock = mock<ILanguage>();
 
 function makeSut() {
   const loginRepositoryMock = mock<ILoginRepository>();

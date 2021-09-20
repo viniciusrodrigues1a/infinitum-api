@@ -1,4 +1,4 @@
-import jwt, { Secret, JwtPayload, SignOptions } from "jsonwebtoken";
+import jwt, { Secret, JwtPayload, SignOptions, Algorithm } from "jsonwebtoken";
 
 type JwtConfig = {
   privateKey: Secret;
@@ -17,13 +17,16 @@ class JwtToken {
   };
 
   sign(payload: JwtPayload): string {
-    return jwt.sign(payload, this._config.privateKey);
+    return jwt.sign(payload, this._config.privateKey, this._config.signOptions);
   }
 
   verify(token: string): Promise<JwtPayload> {
     return new Promise((resolve, reject) =>
-      jwt.verify(token, this._config.publicKey, (error, data) =>
-        error ? reject(error) : resolve(data || {})
+      jwt.verify(
+        token,
+        this._config.publicKey,
+        { algorithms: [this._config.signOptions.algorithm as Algorithm] },
+        (error, data) => (error ? reject(error) : resolve(data || {}))
       )
     );
   }

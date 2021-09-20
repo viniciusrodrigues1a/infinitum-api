@@ -41,6 +41,7 @@
           "match": true
         }
       }
-    ]
+    ],
+    "jest/unbound-method": "off"
   }
 }

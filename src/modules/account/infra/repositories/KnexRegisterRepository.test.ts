@@ -1,5 +1,5 @@
 import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
-import { IAccountLanguage } from "@modules/account/presentation/languages";
+import { ILanguage } from "@modules/account/presentation/languages";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { connection, configuration } from "@shared/infra/database/connection";
 import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
@@ -8,7 +8,7 @@ import { KnexRegisterRepository } from "./KnexRegisterRepository";
 
 function makeSut() {
   const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
-  const languageMock = mock<IAccountLanguage>();
+  const languageMock = mock<ILanguage>();
   languageMock.getInvalidEmailErrorMessage.mockReturnValue("Error");
   languageMock.getEmailAlreadyInUseErrorMessage.mockReturnValue("Error");
   const sut = new KnexRegisterRepository(

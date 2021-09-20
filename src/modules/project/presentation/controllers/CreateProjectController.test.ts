@@ -1,6 +1,6 @@
-import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
-import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { CreateProjectUseCase } from "@modules/project/use-cases";
+import { NotFutureDateError } from "@shared/entities/errors";
+import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IMissingParamsErrorLanguage } from "@shared/presentation/interfaces/languages";
 import { mock } from "jest-mock-extended";
@@ -10,9 +10,9 @@ import {
 } from "./CreateProjectController";
 import { ICreateProjectControllerLanguage } from "./interfaces/languages";
 
-const accountNotFoundErrorLanguageMock = mock<IAccountNotFoundErrorLanguage>();
-accountNotFoundErrorLanguageMock.getAccountNotFoundErrorMessage.mockReturnValue(
-  "mocked error message"
+const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
+notFutureDateErrorLanguageMock.getNotFutureDateErrorMessage.mockReturnValue(
+  "mocked date err msg"
 );
 
 function makeSut() {
@@ -51,7 +51,7 @@ describe("createProject controller", () => {
     const givenProject = {
       name: "my project",
       description: "my project's description",
-      accountEmailRequestingCreation: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
     };
 
     const response = await sut.handleRequest(givenProject);
@@ -70,7 +70,7 @@ describe("createProject controller", () => {
     const givenProject = {
       name: "my project",
       description: "my project's description",
-      accountEmailRequestingCreation: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
     };
     createProjectUseCaseMock.create.mockImplementationOnce(() => {
       throw new Error("unhandled server side err");
@@ -81,28 +81,6 @@ describe("createProject controller", () => {
     expect(response.statusCode).toBe(HttpStatusCodes.serverError);
   });
 
-  it("should return HttpStatusCodes.badRequest if AccountNotFoundError is thrown", async () => {
-    expect.assertions(2);
-
-    const { sut, createProjectUseCaseMock } = makeSut();
-    const givenProject = {
-      name: "my project",
-      description: "my project's description",
-      accountEmailRequestingCreation: "jorge@email.com",
-    };
-    createProjectUseCaseMock.create.mockImplementationOnce(() => {
-      throw new AccountNotFoundError(
-        givenProject.accountEmailRequestingCreation,
-        accountNotFoundErrorLanguageMock
-      );
-    });
-
-    const response = await sut.handleRequest(givenProject);
-
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body).toBeInstanceOf(AccountNotFoundError);
-  });
-
   it("should return HttpStatusCodes.badRequest if name is not a string", async () => {
     expect.assertions(2);
 
@@ -110,7 +88,7 @@ describe("createProject controller", () => {
     const givenProject = {
       name: new Date() as unknown,
       description: "my project's description",
-      accountEmailRequestingCreation: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
     } as CreateProjectControllerRequest;
 
     const response = await sut.handleRequest(givenProject);
@@ -129,7 +107,7 @@ describe("createProject controller", () => {
     const givenProject = {
       name: "my project",
       description: 12345 as unknown,
-      accountEmailRequestingCreation: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
     } as CreateProjectControllerRequest;
 
     const response = await sut.handleRequest(givenProject);
@@ -148,7 +126,7 @@ describe("createProject controller", () => {
     const givenProject = {
       name: 123 as unknown,
       description: [1, 2] as unknown,
-      accountEmailRequestingCreation: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
     } as CreateProjectControllerRequest;
 
     const response = await sut.handleRequest(givenProject);
@@ -159,5 +137,31 @@ describe("createProject controller", () => {
     ];
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body.params).toStrictEqual(expectedParamsMissing);
+  });
+
+  it("should return HttpStatusCodes.badRequest if NotFutureDateError is thrown", async () => {
+    expect.assertions(2);
+
+    const { sut, createProjectUseCaseMock } = makeSut();
+    const nowMs = new Date().getTime();
+    const finishesAt = new Date(nowMs - 86400 * 1000);
+    const givenProject = {
+      name: "my project",
+      description: "my project's description",
+      finishesAt: finishesAt.toISOString(),
+      accountEmailMakingRequest: "jorge@email.com",
+    } as CreateProjectControllerRequest;
+    const errorThrown = new NotFutureDateError(
+      finishesAt,
+      notFutureDateErrorLanguageMock
+    );
+    createProjectUseCaseMock.create.mockImplementationOnce(() => {
+      throw errorThrown;
+    });
+
+    const response = await sut.handleRequest(givenProject);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toStrictEqual(errorThrown);
   });
 });

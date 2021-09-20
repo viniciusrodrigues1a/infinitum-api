@@ -1,6 +1,6 @@
-import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
 import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { CreateProjectDTO } from "@modules/project/use-cases/DTOs";
+import { NotFutureDateError } from "@shared/entities/errors";
 import { MissingParamsError } from "@shared/presentation/errors";
 import {
   badRequestResponse,
@@ -13,8 +13,11 @@ import { ICreateProjectControllerLanguage } from "./interfaces/languages";
 
 export type CreateProjectControllerRequest = Omit<
   CreateProjectDTO,
-  "issues" | "participants"
->;
+  "issues" | "participants" | "beginsAt" | "finishesAt"
+> & {
+  beginsAt?: string;
+  finishesAt?: string;
+};
 
 export class CreateProjectController {
   constructor(
@@ -28,7 +31,7 @@ export class CreateProjectController {
     description,
     beginsAt,
     finishesAt,
-    accountEmailRequestingCreation,
+    accountEmailMakingRequest,
   }: CreateProjectControllerRequest): Promise<HttpResponse> {
     const paramsMissing = [];
 
@@ -50,14 +53,14 @@ export class CreateProjectController {
       await this.createProjectUseCase.create({
         name,
         description,
-        beginsAt,
-        finishesAt,
-        accountEmailRequestingCreation,
+        beginsAt: beginsAt ? new Date(beginsAt) : undefined,
+        finishesAt: finishesAt ? new Date(finishesAt) : undefined,
+        accountEmailMakingRequest,
       });
 
       return noContentResponse();
     } catch (err) {
-      if (err instanceof AccountNotFoundError) return badRequestResponse(err);
+      if (err instanceof NotFutureDateError) return badRequestResponse(err);
 
       return serverErrorResponse();
     }

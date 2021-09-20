@@ -1,5 +1,5 @@
-import { CreateProjectDTO } from "../../DTOs";
+import { CreateProjectRepositoryDTO } from "../../DTOs";
 
 export interface ICreateProjectRepository {
-  createProject(data: CreateProjectDTO): Promise<void>;
+  createProject(data: CreateProjectRepositoryDTO): Promise<void>;
 }

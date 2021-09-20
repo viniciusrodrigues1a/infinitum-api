@@ -20,7 +20,7 @@ function makeSut() {
 
 describe("login repository using Knex and JWT", () => {
   beforeAll(() => {
-    jwtToken._config.signOptions.algorithm = undefined;
+    jwtToken._config.signOptions.algorithm = "HS256";
     jwtToken._config.privateKey = "secret-key";
     jwtToken._config.publicKey = "secret-key";
   });
@@ -30,9 +30,10 @@ describe("login repository using Knex and JWT", () => {
 
     const { sut, findOneAccountRepositoryMock } = makeSut();
     const credentials = { email: "jorge@email.com", password: "pa55word" };
-    const accountId = "account-id-0";
     findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      id: accountId,
+      id: "account-id-0",
+      name: "jorge",
+      email: credentials.email,
       password_hash: "hash",
       salt: "salt",
       iterations: 10,
@@ -43,7 +44,7 @@ describe("login repository using Knex and JWT", () => {
     const token = await sut.login(credentials);
 
     const decoded = await jwtToken.verify(token);
-    expect(decoded.id).toBe(accountId);
+    expect(decoded.email).toBe(credentials.email);
   });
 
   it("should throw InvalidCredentialsError if password doesn't match", async () => {

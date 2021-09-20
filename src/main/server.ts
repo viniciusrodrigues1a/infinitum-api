@@ -1,7 +1,8 @@
 import dotenv from "dotenv";
 import { Server } from "http";
 import express from "express";
-import { accountsRoutes, authRoutes } from "./routes";
+import { accountsRoutes, authRoutes, projectsRoutes } from "./routes";
+import { knexMiddlewareFactoryImpl } from "./factories/middlewares/KnexMiddlewareFactoryImpl";
 
 dotenv.config();
 
@@ -16,11 +17,15 @@ export class ExpressServer {
 
   private useMiddlewares() {
     this.app.use(express.json());
+    this.app.use(
+      knexMiddlewareFactoryImpl.makeLanguageMiddleware().handleRequest
+    );
   }
 
   private useRoutes() {
     this.app.use("/auth", authRoutes);
     this.app.use("/accounts", accountsRoutes);
+    this.app.use("/projects", projectsRoutes);
   }
 
   public start(): void {

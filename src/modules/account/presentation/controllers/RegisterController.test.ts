@@ -3,13 +3,13 @@ import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { mock } from "jest-mock-extended";
 import { IRegisterRepository } from "../interfaces/repositories";
-import { IAccountLanguage } from "../languages";
+import { ILanguage } from "../languages";
 import {
   RegisterController,
   RegisterControllerRequest,
 } from "./RegisterController";
 
-const languageMock = mock<IAccountLanguage>();
+const languageMock = mock<ILanguage>();
 
 function makeSut() {
   const registerAccountRepositoryMock = mock<IRegisterRepository>();

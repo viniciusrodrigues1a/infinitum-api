@@ -1,10 +1,7 @@
 /* eslint-disable no-restricted-syntax  */
 
-import {
-  ENUSLanguage,
-  IAccountLanguage,
-  PTBRLanguage,
-} from "@modules/account/presentation/languages";
+import { ILanguage } from "@modules/account/presentation/languages";
+import { languagesFactory } from "../../factories/languages/LanguagesFactory";
 
 type ParsedAcceptLanguage = { tag: string; weight: number };
 
@@ -14,14 +11,15 @@ type Languages = {
 
 type LanguageMatch = { tag: string; language: ILanguage };
 
-export type ILanguage = IAccountLanguage;
+const ptBR = languagesFactory.makePTBRLanguage();
+const enUS = languagesFactory.makeENUSLanguage();
 
 class AcceptLanguageHeaderUtil {
   private languages: Languages = {
-    "pt-br": new PTBRLanguage(),
-    pt: new PTBRLanguage(),
-    "en-us": new ENUSLanguage(),
-    en: new ENUSLanguage(),
+    "pt-br": ptBR,
+    pt: ptBR,
+    "en-us": enUS,
+    en: enUS,
   };
 
   public parseAcceptLanguage(
