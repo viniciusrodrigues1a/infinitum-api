@@ -1,6 +1,4 @@
-import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
-import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
 import { Project } from "../entities";
 import { CreateProjectDTO } from "./DTOs";
 import { ICreateProjectRepository } from "./interfaces/repositories";
