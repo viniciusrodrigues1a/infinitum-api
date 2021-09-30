@@ -4,5 +4,5 @@ export const permissions: PermissionsType = {
   espectator: [],
   member: [],
   admin: [],
-  owner: [],
+  owner: ["DELETE_PROJECT"],
 };

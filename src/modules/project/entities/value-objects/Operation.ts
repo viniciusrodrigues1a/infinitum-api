@@ -1,1 +1,1 @@
-export type Operation = "";
+export type Operation = "DELETE_PROJECT";
