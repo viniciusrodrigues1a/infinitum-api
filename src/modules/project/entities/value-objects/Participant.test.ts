@@ -1,6 +1,11 @@
+import { mock } from "jest-mock-extended";
+import { IInvalidRoleNameErrorLanguage } from "../interfaces/languages";
 import { Operation } from "./Operation";
 import { Participant } from "./Participant";
+import { Role } from "./Role";
 import { RoleNameType } from "./type-defs";
+
+const invalidRoleNameErrorLanguageMock = mock<IInvalidRoleNameErrorLanguage>();
 
 describe("value-object Participant.can method", () => {
   it("should return false if role doesn't have that permission", () => {
@@ -8,13 +13,11 @@ describe("value-object Participant.can method", () => {
 
     const givenOperation = "UPDATE_OPERATION" as Operation;
     const account = { name: "jorge", email: "jorge@email.com" };
-    const role = {
-      name: "member" as RoleNameType,
-      permissions: ["LIST_OPERATION" as Operation],
-    };
+    const role = new Role("member", invalidRoleNameErrorLanguageMock);
+    role.permissions = [];
     const participant = new Participant(account, role);
 
-    const can = participant.can(givenOperation);
+    const can = participant.role.can(givenOperation);
 
     expect(can).toBe(false);
   });
@@ -24,13 +27,11 @@ describe("value-object Participant.can method", () => {
 
     const givenOperation = "UPDATE_OPERATION" as Operation;
     const account = { name: "jorge", email: "jorge@email.com" };
-    const role = {
-      name: "admin" as RoleNameType,
-      permissions: ["UPDATE_OPERATION" as Operation],
-    };
+    const role = new Role("member", invalidRoleNameErrorLanguageMock);
+    role.permissions = [givenOperation];
     const participant = new Participant(account, role);
 
-    const can = participant.can(givenOperation);
+    const can = participant.role.can(givenOperation);
 
     expect(can).toBe(true);
   });
