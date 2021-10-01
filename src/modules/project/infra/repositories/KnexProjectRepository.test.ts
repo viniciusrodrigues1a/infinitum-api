@@ -8,8 +8,21 @@ function makeSut() {
 }
 
 describe("project repository using Knex", () => {
+  let accountId: string;
+  let accountEmail: string;
   beforeEach(async () => {
     await connection.migrate.latest(configuration.migrations);
+
+    accountId = "account-id-0";
+    accountEmail = "jorge@email.com";
+    await connection("account").insert({
+      id: accountId,
+      email: accountEmail,
+      name: "jorge",
+      password_hash: "hash",
+      salt: "salt",
+      iterations: 1,
+    });
   });
 
   afterEach(async () => {
@@ -21,19 +34,6 @@ describe("project repository using Knex", () => {
   });
 
   describe("doesProjectExist method", () => {
-    let accountId: string;
-    beforeEach(async () => {
-      accountId = "account-id-0";
-      await connection("account").insert({
-        id: accountId,
-        name: "jorge",
-        email: "jorge@email.com",
-        password_hash: "hash",
-        salt: "salt",
-        iterations: 1,
-      });
-    });
-
     it("should return true if project exists", async () => {
       expect.assertions(1);
 
@@ -63,19 +63,6 @@ describe("project repository using Knex", () => {
   });
 
   describe("deleteProject method", () => {
-    let accountId: string;
-    beforeEach(async () => {
-      accountId = "account-id-0";
-      await connection("account").insert({
-        id: accountId,
-        name: "jorge",
-        email: "jorge@email.com",
-        password_hash: "hash",
-        salt: "salt",
-        iterations: 1,
-      });
-    });
-
     it("should delete a project", async () => {
       expect.assertions(1);
 
@@ -99,19 +86,6 @@ describe("project repository using Knex", () => {
   });
 
   describe("createProject method", () => {
-    let accountEmail: string;
-    beforeEach(async () => {
-      accountEmail = "jorge@email.com";
-      await connection("account").insert({
-        id: "account-id-0",
-        name: "jorge",
-        email: accountEmail,
-        password_hash: "hash",
-        salt: "salt",
-        iterations: 1,
-      });
-    });
-
     it("should insert a Project with beings_at and finishes_at as null", async () => {
       expect.assertions(1);
 
