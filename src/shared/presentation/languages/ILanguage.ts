@@ -4,9 +4,17 @@ import {
   IAccountNotFoundErrorLanguage,
   IEmailAlreadyInUseErrorLanguage,
 } from "@modules/account/use-cases/interfaces/languages";
-import { IBeginsAtMustBeBeforeFinishesAtErrorLanguage } from "@modules/project/entities/interfaces/languages";
+import {
+  IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
+  IInvalidRoleNameErrorLanguage,
+} from "@modules/project/entities/interfaces/languages";
 import { ICreateProjectControllerLanguage } from "@modules/project/presentation/controllers/interfaces/languages";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
+import {
+  INotParticipantInProjectErrorLanguage,
+  IProjectNotFoundErrorLanguage,
+  IRoleInsufficientPermissionErrorLanguage,
+} from "@shared/use-cases/interfaces/languages";
 import { IMissingParamsErrorLanguage } from "../interfaces/languages";
 
 export interface ILanguage
@@ -17,4 +25,8 @@ export interface ILanguage
     INotFutureDateErrorLanguage,
     ICreateProjectControllerLanguage,
     IMissingParamsErrorLanguage,
-    IBeginsAtMustBeBeforeFinishesAtErrorLanguage {}
+    IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
+    IProjectNotFoundErrorLanguage,
+    INotParticipantInProjectErrorLanguage,
+    IInvalidRoleNameErrorLanguage,
+    IRoleInsufficientPermissionErrorLanguage {}

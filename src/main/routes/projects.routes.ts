@@ -8,12 +8,22 @@ import { knexControllerFactoryImpl } from "../factories/controllers";
 
 export const projectsRoutes = Router();
 
-projectsRoutes.post(
-  "/",
+projectsRoutes.use(
   ExpressMiddlewareAdapter((language) =>
     knexMiddlewareFactoryImpl.makeAuthorizationMiddleware(language as any)
-  ),
+  )
+);
+
+projectsRoutes.post(
+  "/",
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeCreateProjectController(language)
+  )
+);
+
+projectsRoutes.delete(
+  "/:projectId",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeDeleteProjectController(language)
   )
 );

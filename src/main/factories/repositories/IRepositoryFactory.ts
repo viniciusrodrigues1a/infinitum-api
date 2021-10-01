@@ -1,3 +1,4 @@
+import { KnexAccountRepository } from "@modules/account/infra/repositories";
 import {
   ILoginRepository,
   IRegisterRepository,
@@ -7,6 +8,7 @@ import {
   IFindOneAccountRepository,
   IDoesAccountExistRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
+import { KnexProjectRepository } from "@modules/project/infra/repositories";
 import { ICreateProjectRepository } from "@modules/project/use-cases/interfaces/repositories";
 
 export interface IRepositoryFactory {
@@ -15,4 +17,6 @@ export interface IRepositoryFactory {
   makeDoesAccountExistRepository(): IDoesAccountExistRepository;
   makeFindOneAccountRepository(): IFindOneAccountRepository;
   makeCreateProjectRepository(): ICreateProjectRepository;
+  makeProjectRepository(): KnexProjectRepository;
+  makeAccountRepository(): KnexAccountRepository;
 }

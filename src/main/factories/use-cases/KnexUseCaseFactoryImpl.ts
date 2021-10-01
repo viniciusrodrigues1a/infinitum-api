@@ -1,11 +1,28 @@
 import { ILanguage } from "@modules/account/presentation/languages";
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
-import { CreateProjectUseCase } from "@modules/project/use-cases";
+import {
+  CreateProjectUseCase,
+  DeleteProjectUseCase,
+} from "@modules/project/use-cases";
 import { IRepositoryFactory, knexRepositoryFactoryImpl } from "../repositories";
 import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeDeleteProjectUseCase(language: ILanguage): DeleteProjectUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new DeleteProjectUseCase(
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeCreateProjectUseCase(language: ILanguage): CreateProjectUseCase {
     return new CreateProjectUseCase(

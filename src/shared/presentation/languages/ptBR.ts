@@ -1,6 +1,24 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getNotParticipantInProjectErrorMessage(
+    participantIdentifier: string
+  ): string {
+    return `Usuário ${participantIdentifier} não faz parte deste projeto`;
+  }
+
+  getInvalidRoleNameErrorLanguage(_name: string): string {
+    throw new Error("Method not implemented.");
+  }
+
+  getRoleInsufficientPermissionErrorMessage(_roleIdentifier: string): string {
+    return "Você não possui permissão";
+  }
+
+  getProjectNotFoundErrorMessage(_identifier: string): string {
+    return "Projeto não encontrado";
+  }
+
   getBeginsAtMustBeBeforeFinishesAtErrorMessage(): string {
     return "Data de término não pode ser antes da data de começo";
   }

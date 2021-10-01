@@ -1,6 +1,24 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getNotParticipantInProjectErrorMessage(
+    participantIdentifier: string
+  ): string {
+    return `Account ${participantIdentifier} doesn't participate in this project`;
+  }
+
+  getInvalidRoleNameErrorLanguage(_name: string): string {
+    return "Role is invalid";
+  }
+
+  getRoleInsufficientPermissionErrorMessage(_roleIdentifier: string): string {
+    return "You don't have permission";
+  }
+
+  getProjectNotFoundErrorMessage(_identifier: string): string {
+    return "Project not found";
+  }
+
   getBeginsAtMustBeBeforeFinishesAtErrorMessage(): string {
     return "End date must not be before start date for project";
   }

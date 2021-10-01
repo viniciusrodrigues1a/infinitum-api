@@ -12,6 +12,7 @@ export function ExpressControllerAdapter(
       await controller.handleRequest({
         ...request.body,
         ...request.query,
+        ...request.params,
         accountEmailMakingRequest: request.authorizedAccountEmail,
       });
 

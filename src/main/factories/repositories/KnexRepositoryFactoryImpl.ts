@@ -44,11 +44,11 @@ class KnexRepositoryFactoryImpl implements IRepositoryFactory {
     );
   }
 
-  private makeAccountRepository(): KnexAccountRepository {
+  public makeAccountRepository(): KnexAccountRepository {
     return new KnexAccountRepository();
   }
 
-  private makeProjectRepository(): KnexProjectRepository {
+  public makeProjectRepository(): KnexProjectRepository {
     return new KnexProjectRepository();
   }
 }
