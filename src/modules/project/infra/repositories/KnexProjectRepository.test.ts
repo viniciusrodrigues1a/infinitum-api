@@ -20,6 +20,48 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("doesProjectExist method", () => {
+    let accountId: string;
+    beforeEach(async () => {
+      accountId = "account-id-0";
+      await connection("account").insert({
+        id: accountId,
+        name: "jorge",
+        email: "jorge@email.com",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      });
+    });
+
+    it("should return true if project exists", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: "my project's description",
+      });
+
+      const bool = await sut.doesProjectExist(projectId);
+
+      expect(bool).toBe(true);
+    });
+
+    it("should return false if project doesn't exist", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const bool = await sut.doesProjectExist("inexistent-project-id-876182");
+
+      expect(bool).toBe(false);
+    });
+  });
+
   describe("deleteProject method", () => {
     let accountId: string;
     beforeEach(async () => {

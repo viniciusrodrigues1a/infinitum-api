@@ -2,12 +2,25 @@ import { CreateProjectRepositoryDTO } from "@modules/project/use-cases/DTOs";
 import {
   ICreateProjectRepository,
   IDeleteProjectRepository,
+  IDoesProjectExistRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 
 export class KnexProjectRepository
-  implements ICreateProjectRepository, IDeleteProjectRepository
+  implements
+    ICreateProjectRepository,
+    IDeleteProjectRepository,
+    IDoesProjectExistRepository
 {
+  async doesProjectExist(projectId: string): Promise<boolean> {
+    const project = await connection("project")
+      .select("id")
+      .where({ id: projectId })
+      .first();
+
+    return !!project;
+  }
+
   async deleteProject(projectId: string): Promise<void> {
     await connection("project").where({ id: projectId }).del();
   }
