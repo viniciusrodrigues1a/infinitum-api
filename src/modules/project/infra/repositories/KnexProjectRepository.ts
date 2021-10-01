@@ -2,16 +2,41 @@ import { CreateProjectRepositoryDTO } from "@modules/project/use-cases/DTOs";
 import {
   ICreateProjectRepository,
   IDeleteProjectRepository,
+  IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
+import { DoesParticipantExistRepositoryDTO } from "@shared/use-cases/DTOs";
 
 export class KnexProjectRepository
   implements
     ICreateProjectRepository,
     IDeleteProjectRepository,
-    IDoesProjectExistRepository
+    IDoesProjectExistRepository,
+    IDoesParticipantExistRepository
 {
+  async doesParticipantExist({
+    accountEmail,
+    projectId,
+  }: DoesParticipantExistRepositoryDTO): Promise<boolean> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    const accountProjectRelationshipExists = await connection(
+      "account_project_project_role"
+    )
+      .select("*")
+      .where({
+        account_id: accountId,
+        project_id: projectId,
+      })
+      .first();
+
+    return !!accountProjectRelationshipExists;
+  }
+
   async doesProjectExist(projectId: string): Promise<boolean> {
     const project = await connection("project")
       .select("id")

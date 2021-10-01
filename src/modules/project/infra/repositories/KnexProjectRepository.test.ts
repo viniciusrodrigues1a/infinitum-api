@@ -33,6 +33,43 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("doesParticipantExist method", () => {
+    it("should return true if participant exists", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: "my project's description",
+      });
+      await connection("account_project_project_role").insert({
+        account_id: accountId,
+        project_id: projectId,
+        project_role_id: "role-id-0",
+      });
+
+      const bool = await sut.doesParticipantExist({ accountEmail, projectId });
+
+      expect(bool).toBe(true);
+    });
+
+    it("should return false if participant doesn't exist", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const bool = await sut.doesParticipantExist({
+        accountEmail,
+        projectId: "inexistent-project-id-1312456",
+      });
+
+      expect(bool).toBe(false);
+    });
+  });
+
   describe("doesProjectExist method", () => {
     it("should return true if project exists", async () => {
       expect.assertions(1);
