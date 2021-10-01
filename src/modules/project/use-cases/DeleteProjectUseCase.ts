@@ -8,15 +8,15 @@ import {
   IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
-import {
-  IDoesParticipantExistRepository,
-  IDoesProjectExistRepository,
-  IFindParticipantRoleInProjectRepository,
-} from "@shared/use-cases/interfaces/repositories";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
 import { Role } from "../entities/value-objects";
 import { DeleteProjectDTO } from "./DTOs/DeleteProjectDTO";
-import { IDeleteProjectRepository } from "./interfaces/repositories";
+import {
+  IDeleteProjectRepository,
+  IDoesParticipantExistRepository,
+  IDoesProjectExistRepository,
+  IFindParticipantRoleInProjectRepository,
+} from "./interfaces/repositories";
 
 export class DeleteProjectUseCase {
   constructor(

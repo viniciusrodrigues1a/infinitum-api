@@ -6,7 +6,7 @@ import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IEmailAlreadyInUseErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { IRegisterRepository } from "@modules/account/presentation/interfaces/repositories";
 import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
-import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
+import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { pbkdf2 } from "../cryptography";
 
 export class KnexRegisterRepository implements IRegisterRepository {

@@ -1,12 +1,12 @@
 import { jwtToken } from "@modules/account/infra/authentication";
 import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
+import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories/IDoesAccountExistRepository";
 import {
   badRequestResponse,
   notFoundResponse,
   unauthorizedResponse,
 } from "@shared/presentation/http/httpHelper";
 import { ILanguage } from "@shared/presentation/languages/ILanguage";
-import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
 import { NextFunction, Request, Response } from "express";
 import { IAuthorizationMiddlewareLanguage } from "../languages";
 

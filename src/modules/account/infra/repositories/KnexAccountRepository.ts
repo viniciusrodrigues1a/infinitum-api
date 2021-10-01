@@ -1,7 +1,9 @@
 import { Account } from "@modules/account/entities/Account";
-import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories";
+import {
+  IDoesAccountExistRepository,
+  IFindOneAccountRepository,
+} from "@modules/account/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
-import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
 
 export class KnexAccountRepository
   implements IDoesAccountExistRepository, IFindOneAccountRepository

@@ -8,16 +8,16 @@ import {
   IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
-import {
-  IDoesParticipantExistRepository,
-  IDoesProjectExistRepository,
-  IFindParticipantRoleInProjectRepository,
-} from "@shared/use-cases/interfaces/repositories";
 import { mock } from "jest-mock-extended";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
 import * as RoleModule from "../entities/value-objects";
 import { DeleteProjectUseCase } from "./DeleteProjectUseCase";
-import { IDeleteProjectRepository } from "./interfaces/repositories";
+import {
+  IDeleteProjectRepository,
+  IDoesParticipantExistRepository,
+  IDoesProjectExistRepository,
+  IFindParticipantRoleInProjectRepository,
+} from "./interfaces/repositories";
 
 jest.mock("../entities/value-objects/Role");
 

@@ -8,10 +8,12 @@ import {
   IRegisterRepository,
 } from "@modules/account/presentation/interfaces/repositories";
 import { ILanguage } from "@modules/account/presentation/languages";
-import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories";
+import {
+  IDoesAccountExistRepository,
+  IFindOneAccountRepository,
+} from "@modules/account/use-cases/interfaces/repositories";
 import { KnexProjectRepository } from "@modules/project/infra/repositories/KnexProjectRepository";
 import { ICreateProjectRepository } from "@modules/project/use-cases/interfaces/repositories";
-import { IDoesAccountExistRepository } from "@shared/use-cases/interfaces/repositories";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
