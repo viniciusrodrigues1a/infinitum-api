@@ -1,2 +1,1 @@
-export * from "./KnexCreateProjectRepository";
-export * from "./KnexDeleteProjectRepository";
+export * from "./KnexProjectRepository";

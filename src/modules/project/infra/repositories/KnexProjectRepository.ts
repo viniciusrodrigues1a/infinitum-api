@@ -1,8 +1,17 @@
 import { CreateProjectRepositoryDTO } from "@modules/project/use-cases/DTOs";
-import { ICreateProjectRepository } from "@modules/project/use-cases/interfaces/repositories";
+import {
+  ICreateProjectRepository,
+  IDeleteProjectRepository,
+} from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 
-export class KnexCreateProjectRepository implements ICreateProjectRepository {
+export class KnexProjectRepository
+  implements ICreateProjectRepository, IDeleteProjectRepository
+{
+  async deleteProject(projectId: string): Promise<void> {
+    await connection("project").where({ id: projectId }).del();
+  }
+
   async createProject({
     projectId,
     name,
