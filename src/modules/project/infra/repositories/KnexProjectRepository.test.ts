@@ -33,6 +33,35 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findParticipantRole method", () => {
+    it("should return the string 'member'", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: "my project's description",
+      });
+      const roleId = "role-id-0";
+      await connection("project_role").insert({
+        id: roleId,
+        name: "member",
+      });
+      await connection("account_project_project_role").insert({
+        account_id: accountId,
+        project_id: projectId,
+        project_role_id: roleId,
+      });
+
+      const role = await sut.findParticipantRole({ accountEmail, projectId });
+
+      expect(role).toBe("member");
+    });
+  });
+
   describe("doesParticipantExist method", () => {
     it("should return true if participant exists", async () => {
       expect.assertions(1);
