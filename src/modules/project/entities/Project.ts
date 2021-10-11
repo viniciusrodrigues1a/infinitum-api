@@ -23,11 +23,12 @@ export class Project {
       finishesAt,
       participants,
       issues,
+      projectId,
     }: ProjectDTO,
     notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
     beginsAtMustBeBeforeFinishesAtErrorLanguage: IBeginsAtMustBeBeforeFinishesAtErrorLanguage
   ) {
-    this.projectId = new Id().value;
+    this.projectId = projectId || new Id().value;
     this.name = name;
     this.description = description;
     this.createdAt = new Date();

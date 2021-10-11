@@ -10,6 +10,8 @@ import {
 import { mock } from "jest-mock-extended";
 import * as RoleModule from "@modules/project/entities/value-objects/Role";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
+import { Project } from "@modules/project/entities";
+import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
@@ -17,7 +19,12 @@ import {
   IUpdateProjectRepository,
 } from "./interfaces/repositories";
 import { UpdateProjectUseCase } from "./UpdateProjectUseCase";
-import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
+import {
+  IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
+  IInvalidRoleNameErrorLanguage,
+} from "../entities/interfaces/languages";
+
+jest.mock("@modules/project/entities/Project");
 
 function makeSut() {
   const updateProjectRepositoryMock = mock<IUpdateProjectRepository>();
@@ -34,6 +41,9 @@ function makeSut() {
     mock<IInvalidRoleNameErrorLanguage>();
   const roleInsufficientPermissionErrorLanguageMock =
     mock<IRoleInsufficientPermissionErrorLanguage>();
+  const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
+  const beginsAtMustBeBeforeFinishesAtErrorLanguageMock =
+    mock<IBeginsAtMustBeBeforeFinishesAtErrorLanguage>();
   const sut = new UpdateProjectUseCase(
     updateProjectRepositoryMock,
     doesProjectExistRepositoryMock,
@@ -42,7 +52,9 @@ function makeSut() {
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
     invalidRoleNameErrorLanguageMock,
-    roleInsufficientPermissionErrorLanguageMock
+    roleInsufficientPermissionErrorLanguageMock,
+    notFutureDateErrorLanguageMock,
+    beginsAtMustBeBeforeFinishesAtErrorLanguageMock
   );
 
   return {
@@ -77,8 +89,8 @@ describe("updateProject use-case", () => {
     jest.resetAllMocks();
   });
 
-  it("should be able to update a project", async () => {
-    expect.assertions(1);
+  it("should be able to update a project and instantiate Project", async () => {
+    expect.assertions(2);
 
     const {
       sut,
@@ -104,6 +116,7 @@ describe("updateProject use-case", () => {
     await sut.updateProject(givenRequest);
 
     expect(updateProjectRepositoryMock.updateProject).toHaveBeenCalledTimes(1);
+    expect(Project).toHaveBeenCalledTimes(1);
   });
 
   it("should throw ProjectNotFoundError if project cannot be found", async () => {

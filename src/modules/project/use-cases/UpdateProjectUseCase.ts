@@ -1,3 +1,4 @@
+import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -8,7 +9,11 @@ import {
   IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
-import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
+import { Project } from "../entities";
+import {
+  IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
+  IInvalidRoleNameErrorLanguage,
+} from "../entities/interfaces/languages";
 import { Role } from "../entities/value-objects";
 import { UpdateProjectUseCaseDTO } from "./DTOs";
 import {
@@ -27,7 +32,9 @@ export class UpdateProjectUseCase {
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
-    private readonly roleInsufficientPermissionErrorLanguage: IRoleInsufficientPermissionErrorLanguage
+    private readonly roleInsufficientPermissionErrorLanguage: IRoleInsufficientPermissionErrorLanguage,
+    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
+    private readonly beginsAtMustBeBeforeFinishesAtErrorLanguage: IBeginsAtMustBeBeforeFinishesAtErrorLanguage
   ) {}
 
   async updateProject({
@@ -72,12 +79,18 @@ export class UpdateProjectUseCase {
         this.roleInsufficientPermissionErrorLanguage
       );
 
-    await this.updateProjectRepository.updateProject({
-      projectId,
-      name,
-      description,
-      beginsAt,
-      finishesAt,
-    });
+    const project = new Project(
+      {
+        projectId,
+        name: name as string,
+        description: description as string,
+        beginsAt,
+        finishesAt,
+      },
+      this.notFutureDateErrorLanguage,
+      this.beginsAtMustBeBeforeFinishesAtErrorLanguage
+    );
+
+    await this.updateProjectRepository.updateProject(project);
   }
 }
