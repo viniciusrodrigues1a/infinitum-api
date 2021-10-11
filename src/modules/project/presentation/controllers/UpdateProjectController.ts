@@ -2,6 +2,7 @@ import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/e
 import { UpdateProjectUseCase } from "@modules/project/use-cases";
 import { UpdateProjectUseCaseDTO } from "@modules/project/use-cases/DTOs";
 import { NotFutureDateError } from "@shared/entities/errors";
+import { MissingParamsError } from "@shared/presentation/errors";
 import {
   badRequestResponse,
   noContentResponse,
@@ -16,6 +17,7 @@ import {
   ProjectNotFoundError,
 } from "@shared/use-cases/errors";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
+import { IUpdateProjectControllerLanguage } from "./interfaces/languages";
 
 export type UpdateProjectControllerRequest = Omit<
   UpdateProjectUseCaseDTO,
@@ -26,7 +28,10 @@ export type UpdateProjectControllerRequest = Omit<
 };
 
 export class UpdateProjectController implements IController {
-  constructor(private readonly updateProjectUseCase: UpdateProjectUseCase) {}
+  constructor(
+    private readonly updateProjectUseCase: UpdateProjectUseCase,
+    private readonly updateProjectControllerLanguage: IUpdateProjectControllerLanguage
+  ) {}
 
   async handleRequest({
     projectId,
@@ -36,6 +41,25 @@ export class UpdateProjectController implements IController {
     beginsAt,
     finishesAt,
   }: UpdateProjectControllerRequest): Promise<HttpResponse> {
+    const paramsMissing = [];
+
+    if (name !== undefined && typeof name !== "string")
+      paramsMissing.push(
+        this.updateProjectControllerLanguage.getMissingParamsErrorNameParamMessage()
+      );
+    if (description !== undefined && typeof description !== "string")
+      paramsMissing.push(
+        this.updateProjectControllerLanguage.getMissingParamsErrorDescriptionParamMessage()
+      );
+
+    if (paramsMissing.length > 0)
+      return badRequestResponse(
+        new MissingParamsError(
+          paramsMissing,
+          this.updateProjectControllerLanguage
+        )
+      );
+
     try {
       await this.updateProjectUseCase.updateProject({
         projectId,
