@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { ExpressControllerAdapter } from "../adapters";
-import { knexControllerFactoryImpl } from "../factories/controllers";
+import { ExpressControllerAdapter } from "@main/adapters";
+import { knexControllerFactoryImpl } from "@main/factories/controllers";
 
 export const accountsRoutes = Router();
 

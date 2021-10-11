@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { connection } from "@shared/infra/database/connection";
-import { ExpressServer } from "./server";
+import { ExpressServer } from "@main/server";
 
 enum ExitStatus {
   Failure = 1,

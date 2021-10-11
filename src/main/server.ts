@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 import { Server } from "http";
 import express from "express";
-import { accountsRoutes, authRoutes, projectsRoutes } from "./routes";
-import { knexMiddlewareFactoryImpl } from "./factories/middlewares/KnexMiddlewareFactoryImpl";
+import { accountsRoutes, authRoutes, projectsRoutes } from "@main/routes";
+import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 
 dotenv.config();
 

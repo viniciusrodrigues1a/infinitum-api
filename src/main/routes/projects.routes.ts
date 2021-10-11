@@ -2,9 +2,9 @@ import { Router } from "express";
 import {
   ExpressControllerAdapter,
   ExpressMiddlewareAdapter,
-} from "../adapters";
-import { knexMiddlewareFactoryImpl } from "../factories/middlewares/KnexMiddlewareFactoryImpl";
-import { knexControllerFactoryImpl } from "../factories/controllers";
+} from "@main/adapters";
+import { knexControllerFactoryImpl } from "@main/factories/controllers";
+import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 
 export const projectsRoutes = Router();
 

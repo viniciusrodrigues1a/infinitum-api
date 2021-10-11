@@ -1,6 +1,6 @@
+import { AuthorizationMiddleware, LanguageMiddleware } from "@main/middlewares";
+import { IAuthorizationMiddlewareLanguage } from "@main/languages";
 import { ILanguage } from "@shared/presentation/languages/ILanguage";
-import { IAuthorizationMiddlewareLanguage } from "main/languages";
-import { AuthorizationMiddleware, LanguageMiddleware } from "../../middlewares";
 
 export interface IMiddlewareFactory {
   makeAuthorizationMiddleware(

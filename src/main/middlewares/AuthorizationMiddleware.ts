@@ -1,3 +1,5 @@
+import { NextFunction, Request, Response } from "express";
+import { IAuthorizationMiddlewareLanguage } from "@main/languages";
 import { jwtToken } from "@modules/account/infra/authentication";
 import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories/IDoesAccountExistRepository";
@@ -7,13 +9,10 @@ import {
   unauthorizedResponse,
 } from "@shared/presentation/http/httpHelper";
 import { ILanguage } from "@shared/presentation/languages/ILanguage";
-import { NextFunction, Request, Response } from "express";
-import { IAuthorizationMiddlewareLanguage } from "../languages";
 
 export class AuthorizationMiddleware {
   constructor(
-    private readonly doesAccountExistRepository: IDoesAccountExistRepository,
-    private readonly language: IAuthorizationMiddlewareLanguage & ILanguage
+    private readonly doesAccountExistRepository: IDoesAccountExistRepository
   ) {}
 
   async handleRequest(

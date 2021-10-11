@@ -10,10 +10,11 @@
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "paths": {
-      "@modules/*": ["modules/*"],
-      "@shared/*": ["shared/*"]
+      "@modules/*": ["src/modules/*"],
+      "@shared/*": ["src/shared/*"],
+      "@main/*": ["src/main/*"]
     },
     "resolveJsonModule": true,
     "esModuleInterop": true,

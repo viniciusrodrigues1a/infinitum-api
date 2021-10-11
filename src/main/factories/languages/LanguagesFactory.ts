@@ -1,8 +1,10 @@
 import { ILanguage } from "@shared/presentation/languages/ILanguage";
 import { PTBRLanguage } from "@shared/presentation/languages/ptBR";
 import { ENUSLanguage } from "@shared/presentation/languages/enUS";
-import { PTBRAuthorizationMiddlewareLanguage } from "../../languages/PTBRAuthorizationMiddlewareLanguage";
-import { ENUSAuthorizationMiddlewareLanguage } from "../../languages/ENUSAuthorizationMiddlewareLanguage";
+import {
+  ENUSAuthorizationMiddlewareLanguage,
+  PTBRAuthorizationMiddlewareLanguage,
+} from "@main/languages";
 
 function mergeTwoClassInstances(obj1: any, obj2: any): any {
   const merged: any = {};

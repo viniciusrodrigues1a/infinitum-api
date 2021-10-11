@@ -6,8 +6,14 @@ import {
   CreateProjectController,
   DeleteProjectController,
 } from "@modules/project/presentation/controllers";
-import { IRepositoryFactory, knexRepositoryFactoryImpl } from "../repositories";
-import { IUseCaseFactory, knexUseCaseFactoryImpl } from "../use-cases";
+import {
+  IRepositoryFactory,
+  knexRepositoryFactoryImpl,
+} from "@main/factories/repositories";
+import {
+  IUseCaseFactory,
+  knexUseCaseFactoryImpl,
+} from "@main/factories/use-cases";
 import { IControllerFactory } from "./IControllerFactory";
 
 class KnexControllerFactoryImpl implements IControllerFactory {

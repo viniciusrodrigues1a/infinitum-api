@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax  */
 
+import { languagesFactory } from "@main/factories/languages/LanguagesFactory";
 import { ILanguage } from "@modules/account/presentation/languages";
-import { languagesFactory } from "../../factories/languages/LanguagesFactory";
 
 type ParsedAcceptLanguage = { tag: string; weight: number };
 

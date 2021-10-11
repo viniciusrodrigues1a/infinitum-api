@@ -1,18 +1,16 @@
-import { ILanguage } from "@shared/presentation/languages/ILanguage";
-import { IAuthorizationMiddlewareLanguage } from "../../languages";
-import { AuthorizationMiddleware, LanguageMiddleware } from "../../middlewares";
-import { IRepositoryFactory, knexRepositoryFactoryImpl } from "../repositories";
+import { AuthorizationMiddleware, LanguageMiddleware } from "@main/middlewares";
+import {
+  IRepositoryFactory,
+  knexRepositoryFactoryImpl,
+} from "@main/factories/repositories";
 import { IMiddlewareFactory } from "./IMiddlewareFactory";
 
 class KnexMiddlewareFactoryImpl implements IMiddlewareFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
 
-  makeAuthorizationMiddleware(
-    language: IAuthorizationMiddlewareLanguage & ILanguage
-  ): AuthorizationMiddleware {
+  makeAuthorizationMiddleware(): AuthorizationMiddleware {
     return new AuthorizationMiddleware(
-      this.repositoryFactory.makeDoesAccountExistRepository(),
-      language
+      this.repositoryFactory.makeDoesAccountExistRepository()
     );
   }
 

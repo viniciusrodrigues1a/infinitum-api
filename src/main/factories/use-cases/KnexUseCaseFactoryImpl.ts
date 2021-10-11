@@ -4,7 +4,10 @@ import {
   CreateProjectUseCase,
   DeleteProjectUseCase,
 } from "@modules/project/use-cases";
-import { IRepositoryFactory, knexRepositoryFactoryImpl } from "../repositories";
+import {
+  IRepositoryFactory,
+  knexRepositoryFactoryImpl,
+} from "@main/factories/repositories";
 import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
