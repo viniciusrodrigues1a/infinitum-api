@@ -75,11 +75,13 @@ export class UpdateProjectController implements IController {
       if (err instanceof ProjectNotFoundError) return notFoundResponse(err);
       if (
         err instanceof NotFutureDateError ||
-        err instanceof BeginsAtMustBeBeforeFinishesAtError ||
-        err instanceof NotParticipantInProjectError
+        err instanceof BeginsAtMustBeBeforeFinishesAtError
       )
         return badRequestResponse(err);
-      if (err instanceof RoleInsufficientPermissionError)
+      if (
+        err instanceof RoleInsufficientPermissionError ||
+        err instanceof NotParticipantInProjectError
+      )
         return unauthorizedResponse(err);
 
       return serverErrorResponse(err);

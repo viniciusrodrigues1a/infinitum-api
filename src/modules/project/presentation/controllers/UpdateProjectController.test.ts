@@ -143,7 +143,7 @@ describe("updateProject controller", () => {
     expect(response.body).toBe(errorThrown);
   });
 
-  it("should return HttpStatusCodes.badRequest if NotParticipantInProjectError is thrown", async () => {
+  it("should return HttpStatusCodes.unauthorized if NotParticipantInProjectError is thrown", async () => {
     expect.assertions(2);
 
     const { sut, updateProjectUseCaseMock } = makeSut();
@@ -162,7 +162,7 @@ describe("updateProject controller", () => {
 
     const response = await sut.handleRequest(givenRequest);
 
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.statusCode).toBe(HttpStatusCodes.unauthorized);
     expect(response.body).toBe(errorThrown);
   });
 
