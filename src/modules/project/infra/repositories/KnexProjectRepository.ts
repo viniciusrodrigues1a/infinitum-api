@@ -1,10 +1,14 @@
-import { CreateProjectRepositoryDTO } from "@modules/project/use-cases/DTOs";
+import {
+  CreateProjectRepositoryDTO,
+  UpdateProjectRepositoryDTO,
+} from "@modules/project/use-cases/DTOs";
 import {
   ICreateProjectRepository,
   IDeleteProjectRepository,
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import {
@@ -18,8 +22,26 @@ export class KnexProjectRepository
     IDeleteProjectRepository,
     IDoesProjectExistRepository,
     IDoesParticipantExistRepository,
-    IFindParticipantRoleInProjectRepository
+    IFindParticipantRoleInProjectRepository,
+    IUpdateProjectRepository
 {
+  async updateProject({
+    projectId,
+    name,
+    beginsAt,
+    finishesAt,
+    description,
+  }: UpdateProjectRepositoryDTO): Promise<void> {
+    await connection("project")
+      .update({
+        name,
+        description,
+        beginsAt,
+        finishesAt,
+      })
+      .where({ id: projectId });
+  }
+
   async findParticipantRole({
     accountEmail,
     projectId,

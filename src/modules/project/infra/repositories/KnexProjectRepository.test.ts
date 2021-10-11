@@ -33,6 +33,58 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("updateProject method", () => {
+    it("should update a project", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: "my project's description",
+      });
+
+      const updatedProjectName = "updated project name";
+      await sut.updateProject({ projectId, name: updatedProjectName });
+
+      const project = await connection("project")
+        .select("*")
+        .where({ id: projectId })
+        .first();
+      expect(project.name).toBe(updatedProjectName);
+    });
+
+    it("should not update undefined fields", async () => {
+      expect.assertions(2);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      const oldProjectDescription = "my project's description";
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: oldProjectDescription,
+      });
+
+      const updatedProjectName = "updated project name";
+      await sut.updateProject({
+        projectId,
+        name: updatedProjectName,
+        description: undefined,
+      });
+
+      const project = await connection("project")
+        .select("*")
+        .where({ id: projectId })
+        .first();
+      expect(project.name).toBe(updatedProjectName);
+      expect(project.description).toBe(oldProjectDescription);
+    });
+  });
+
   describe("findParticipantRole method", () => {
     it("should return the string 'member'", async () => {
       expect.assertions(1);
