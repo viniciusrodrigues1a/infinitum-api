@@ -70,12 +70,19 @@ export class KnexProjectRepository
   }
 
   async doesProjectExist(projectId: string): Promise<boolean> {
-    const project = await connection("project")
-      .select("id")
-      .where({ id: projectId })
-      .first();
+    try {
+      const project = await connection("project")
+        .select("id")
+        .where({ id: projectId })
+        .first();
 
-    return !!project;
+      return !!project;
+    } catch (err) {
+      if (err.message.includes("invalid input syntax for type uuid"))
+        return false;
+
+      throw err;
+    }
   }
 
   async deleteProject(projectId: string): Promise<void> {
