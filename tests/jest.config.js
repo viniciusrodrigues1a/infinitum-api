@@ -12,6 +12,6 @@ module.exports = {
   clearMocks: true,
   testMatch: ["<rootDir>/tests/**/*.test.ts"],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: "<rootDir>/src/",
+    prefix: "<rootDir>/",
   }),
 };

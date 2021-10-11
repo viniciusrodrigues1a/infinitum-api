@@ -9,8 +9,8 @@ import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 export const projectsRoutes = Router();
 
 projectsRoutes.use(
-  ExpressMiddlewareAdapter((language) =>
-    knexMiddlewareFactoryImpl.makeAuthorizationMiddleware(language as any)
+  ExpressMiddlewareAdapter(() =>
+    knexMiddlewareFactoryImpl.makeAuthorizationMiddleware()
   )
 );
 
