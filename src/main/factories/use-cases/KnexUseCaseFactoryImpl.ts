@@ -3,6 +3,7 @@ import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccount
 import {
   CreateProjectUseCase,
   DeleteProjectUseCase,
+  UpdateProjectUseCase,
 } from "@modules/project/use-cases";
 import {
   IRepositoryFactory,
@@ -12,6 +13,22 @@ import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeUpdateProjectUseCase(language: ILanguage): UpdateProjectUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new UpdateProjectUseCase(
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeDeleteProjectUseCase(language: ILanguage): DeleteProjectUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

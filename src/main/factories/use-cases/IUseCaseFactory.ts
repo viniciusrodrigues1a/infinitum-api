@@ -3,10 +3,12 @@ import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccount
 import {
   CreateProjectUseCase,
   DeleteProjectUseCase,
+  UpdateProjectUseCase,
 } from "@modules/project/use-cases";
 
 export interface IUseCaseFactory {
   makeFindOneAccountUseCase(language: ILanguage): FindOneAccountUseCase;
   makeCreateProjectUseCase(language: ILanguage): CreateProjectUseCase;
   makeDeleteProjectUseCase(language: ILanguage): DeleteProjectUseCase;
+  makeUpdateProjectUseCase(language: ILanguage): UpdateProjectUseCase;
 }

@@ -27,3 +27,10 @@ projectsRoutes.delete(
     knexControllerFactoryImpl.makeDeleteProjectController(language)
   )
 );
+
+projectsRoutes.put(
+  "/:projectId",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeUpdateProjectController(language)
+  )
+);
