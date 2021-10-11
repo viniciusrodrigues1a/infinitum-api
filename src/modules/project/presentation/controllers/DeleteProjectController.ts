@@ -8,13 +8,14 @@ import {
   unauthorizedResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IController } from "@shared/presentation/interfaces/controllers";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
 } from "@shared/use-cases/errors";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
 
-export class DeleteProjectController {
+export class DeleteProjectController implements IController {
   constructor(private readonly deleteProjectUseCase: DeleteProjectUseCase) {}
 
   async handleRequest({

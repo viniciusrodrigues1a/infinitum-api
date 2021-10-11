@@ -1,9 +1,10 @@
 import { ILanguage } from "@modules/account/presentation/languages";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IController } from "@shared/presentation/interfaces/controllers";
 import { Request, Response } from "express";
 
 export function ExpressControllerAdapter(
-  makeController: (language: ILanguage) => any
+  makeController: (language: ILanguage) => IController
 ): (request: Request, response: Response) => Promise<void> {
   return async (request: Request, response: Response) => {
     const controller = makeController(request.language);

@@ -6,6 +6,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IController } from "@shared/presentation/interfaces/controllers";
 import { IRegisterRepository } from "../interfaces/repositories";
 
 export type RegisterControllerRequest = {
@@ -14,7 +15,7 @@ export type RegisterControllerRequest = {
   password: string;
 };
 
-export class RegisterController {
+export class RegisterController implements IController {
   constructor(
     private readonly registerAccountRepository: IRegisterRepository
   ) {}

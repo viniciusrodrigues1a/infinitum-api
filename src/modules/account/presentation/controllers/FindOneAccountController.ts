@@ -6,12 +6,13 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IController } from "@shared/presentation/interfaces/controllers";
 
 type FindOneAccountControllerRequest = {
   email: string;
 };
 
-export class FindOneAccountController {
+export class FindOneAccountController implements IController {
   constructor(private readonly findOneAccountUseCase: FindOneAccountUseCase) {}
 
   async handleRequest({

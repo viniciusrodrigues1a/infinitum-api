@@ -9,6 +9,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IController } from "@shared/presentation/interfaces/controllers";
 import { IMissingParamsErrorLanguage } from "@shared/presentation/interfaces/languages";
 import { ICreateProjectControllerLanguage } from "./interfaces/languages";
 
@@ -20,7 +21,7 @@ export type CreateProjectControllerRequest = Omit<
   finishesAt?: string;
 };
 
-export class CreateProjectController {
+export class CreateProjectController implements IController {
   constructor(
     private readonly createProjectUseCase: CreateProjectUseCase,
     private readonly createProjectControllerLanguage: ICreateProjectControllerLanguage,

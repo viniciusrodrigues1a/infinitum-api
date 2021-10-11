@@ -5,6 +5,7 @@ import {
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
+import { IController } from "@shared/presentation/interfaces/controllers";
 import { ILoginRepository } from "../interfaces/repositories";
 
 type LoginControllerRequest = {
@@ -12,7 +13,7 @@ type LoginControllerRequest = {
   password: string;
 };
 
-export class LoginController {
+export class LoginController implements IController {
   constructor(private readonly loginRepository: ILoginRepository) {}
 
   async handleRequest({
