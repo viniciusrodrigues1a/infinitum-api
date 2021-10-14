@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { Server } from "http";
 import express from "express";
+import cors from "cors";
 import { accountsRoutes, authRoutes, projectsRoutes } from "@main/routes";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 
@@ -16,6 +17,7 @@ export class ExpressServer {
   }
 
   private useMiddlewares() {
+    this.app.use(cors());
     this.app.use(express.json());
     this.app.use(
       knexMiddlewareFactoryImpl.makeLanguageMiddleware().handleRequest
