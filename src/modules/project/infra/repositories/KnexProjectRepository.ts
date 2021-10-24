@@ -1,3 +1,4 @@
+import { Project } from "@modules/project/entities";
 import {
   CreateProjectRepositoryDTO,
   UpdateProjectRepositoryDTO,
@@ -8,6 +9,7 @@ import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IListProjectsOwnedByAccountRepository,
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
@@ -23,8 +25,37 @@ export class KnexProjectRepository
     IDoesProjectExistRepository,
     IDoesParticipantExistRepository,
     IFindParticipantRoleInProjectRepository,
-    IUpdateProjectRepository
+    IUpdateProjectRepository,
+    IListProjectsOwnedByAccountRepository
 {
+  async listProjects(
+    accountEmail: string
+  ): Promise<Omit<Project, "participants">[]> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    const projects = await connection("project")
+      .select("*")
+      .where({ owner_id: accountId });
+
+    const mappedProjects = projects.map(
+      (p) =>
+        ({
+          projectId: p.id,
+          name: p.name,
+          description: p.description,
+          beginsAt: p.begins_at,
+          finishesAt: p.finishes_at,
+          createdAt: p.created_at,
+          issues: [],
+        } as Omit<Project, "participants">)
+    );
+
+    return mappedProjects;
+  }
+
   async updateProject({
     projectId,
     name,

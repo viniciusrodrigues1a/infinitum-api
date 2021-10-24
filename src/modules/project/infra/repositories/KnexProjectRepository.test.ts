@@ -33,6 +33,46 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("listProjects", () => {
+    it("should return an array of projects associated to an account", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      await connection("project").insert(project);
+
+      const projects = await sut.listProjects(accountEmail);
+
+      expect(projects[0].projectId).toBe(project.id);
+    });
+
+    it("should return an empty array if account has no projects", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const givenEmail = "newaccount@email.com";
+      await connection("account").insert({
+        id: "account-id-123421",
+        email: givenEmail,
+        name: "new account",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      });
+
+      const projects = await sut.listProjects(givenEmail);
+
+      expect(projects).toHaveLength(0);
+    });
+
+    it.todo("should return an array of projects joined with issues");
+  });
+
   describe("updateProject method", () => {
     it("should update a project", async () => {
       expect.assertions(1);
