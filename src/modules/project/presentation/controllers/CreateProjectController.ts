@@ -5,7 +5,7 @@ import { NotFutureDateError } from "@shared/entities/errors";
 import { MissingParamsError } from "@shared/presentation/errors";
 import {
   badRequestResponse,
-  noContentResponse,
+  createdResponse,
   serverErrorResponse,
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
@@ -52,7 +52,7 @@ export class CreateProjectController implements IController {
       );
 
     try {
-      await this.createProjectUseCase.create({
+      const id = await this.createProjectUseCase.create({
         name,
         description,
         beginsAt: beginsAt ? new Date(beginsAt) : undefined,
@@ -60,7 +60,7 @@ export class CreateProjectController implements IController {
         accountEmailMakingRequest,
       });
 
-      return noContentResponse();
+      return createdResponse({ id });
     } catch (err) {
       if (
         err instanceof NotFutureDateError ||

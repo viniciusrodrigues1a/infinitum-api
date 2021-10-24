@@ -19,7 +19,7 @@ export class CreateProjectUseCase {
     participants,
     issues,
     accountEmailMakingRequest,
-  }: CreateProjectDTO): Promise<void> {
+  }: CreateProjectDTO): Promise<string> {
     const project = new Project(
       {
         name,
@@ -37,5 +37,7 @@ export class CreateProjectUseCase {
       ...project,
       ownerEmail: accountEmailMakingRequest,
     });
+
+    return project.projectId;
   }
 }

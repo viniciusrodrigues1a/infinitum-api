@@ -7,6 +7,11 @@ export const okResponse = (body: any): HttpResponse => ({
   body,
 });
 
+export const createdResponse = (body: any): HttpResponse => ({
+  statusCode: HttpStatusCodes.created,
+  body,
+});
+
 export const noContentResponse = (): HttpResponse => ({
   statusCode: HttpStatusCodes.noContent,
   body: null,

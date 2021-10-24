@@ -51,8 +51,8 @@ function makeSut() {
 }
 
 describe("createProject controller", () => {
-  it("should return HttpStatusCodes.noContent", async () => {
-    expect.assertions(2);
+  it("should return HttpStatusCodes.created with the project id", async () => {
+    expect.assertions(3);
 
     const { sut, createProjectUseCaseMock } = makeSut();
     const givenProject = {
@@ -63,7 +63,8 @@ describe("createProject controller", () => {
 
     const response = await sut.handleRequest(givenProject);
 
-    expect(response.statusCode).toBe(HttpStatusCodes.noContent);
+    expect(response.statusCode).toBe(HttpStatusCodes.created);
+    expect(response.body).toHaveProperty("id");
     expect(createProjectUseCaseMock.create).toHaveBeenNthCalledWith(
       1,
       givenProject
