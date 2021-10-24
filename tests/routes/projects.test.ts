@@ -202,7 +202,7 @@ describe("/projects/ endpoint", () => {
     });
   });
 
-  describe("delete and update route", () => {
+  describe("routes that require a project being already inserted", () => {
     let projectId: string;
     beforeEach(async () => {
       await api
@@ -465,6 +465,21 @@ describe("/projects/ endpoint", () => {
         ).message;
         expect(response.statusCode).toBe(400);
         expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+    });
+
+    describe("method GET /", () => {
+      it("should return 200", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api.get("/projects").set(givenAuthHeader);
+
+        expect(response.body[0].projectId).toBe(projectId);
+        expect(response.statusCode).toBe(200);
       });
     });
   });
