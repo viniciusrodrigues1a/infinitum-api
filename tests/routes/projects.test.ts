@@ -41,7 +41,7 @@ describe("/projects/ endpoint", () => {
   });
 
   describe("method POST", () => {
-    it("should return 204", async () => {
+    it("should return 201", async () => {
       expect.assertions(1);
 
       const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
@@ -55,10 +55,10 @@ describe("/projects/ endpoint", () => {
         .set(givenAuthHeader)
         .send(givenBody);
 
-      expect(response.statusCode).toBe(204);
+      expect(response.statusCode).toBe(201);
     });
 
-    it("should return 204 when provided with beginsAt and finishesAt", async () => {
+    it("should return 201 when provided with beginsAt and finishesAt", async () => {
       expect.assertions(1);
 
       const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
@@ -76,7 +76,7 @@ describe("/projects/ endpoint", () => {
         .set(givenAuthHeader)
         .send(givenBody);
 
-      expect(response.statusCode).toBe(204);
+      expect(response.statusCode).toBe(201);
     });
 
     it("should return 400 if finishesAt date is in the past", async () => {
