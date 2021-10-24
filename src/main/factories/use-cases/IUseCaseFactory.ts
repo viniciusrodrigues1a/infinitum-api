@@ -3,6 +3,7 @@ import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccount
 import {
   CreateProjectUseCase,
   DeleteProjectUseCase,
+  ListProjectsOwnedByAccountUseCase,
   UpdateProjectUseCase,
 } from "@modules/project/use-cases";
 
@@ -11,4 +12,5 @@ export interface IUseCaseFactory {
   makeCreateProjectUseCase(language: ILanguage): CreateProjectUseCase;
   makeDeleteProjectUseCase(language: ILanguage): DeleteProjectUseCase;
   makeUpdateProjectUseCase(language: ILanguage): UpdateProjectUseCase;
+  makeListProjectsOwnedByAccountUseCase(): ListProjectsOwnedByAccountUseCase;
 }

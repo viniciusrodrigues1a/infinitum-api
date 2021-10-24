@@ -34,3 +34,10 @@ projectsRoutes.put(
     knexControllerFactoryImpl.makeUpdateProjectController(language)
   )
 );
+
+projectsRoutes.get(
+  "/",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeListProjectsOwnedByAccountController()
+  )
+);

@@ -5,6 +5,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import {
   CreateProjectController,
   DeleteProjectController,
+  ListProjectsOwnedByAccountController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 import {
@@ -20,6 +21,12 @@ import { IControllerFactory } from "./IControllerFactory";
 class KnexControllerFactoryImpl implements IControllerFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
+
+  makeListProjectsOwnedByAccountController(): ListProjectsOwnedByAccountController {
+    return new ListProjectsOwnedByAccountController(
+      this.useCaseFactory.makeListProjectsOwnedByAccountUseCase()
+    );
+  }
 
   makeUpdateProjectController(language: ILanguage): UpdateProjectController {
     return new UpdateProjectController(

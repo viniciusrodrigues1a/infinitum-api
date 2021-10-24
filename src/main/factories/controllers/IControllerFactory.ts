@@ -5,6 +5,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import {
   CreateProjectController,
   DeleteProjectController,
+  ListProjectsOwnedByAccountController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 
@@ -15,4 +16,5 @@ export interface IControllerFactory {
   makeCreateProjectController(language: ILanguage): CreateProjectController;
   makeDeleteProjectController(language: ILanguage): DeleteProjectController;
   makeUpdateProjectController(language: ILanguage): UpdateProjectController;
+  makeListProjectsOwnedByAccountController(): ListProjectsOwnedByAccountController;
 }
