@@ -10,7 +10,7 @@ export class Issue {
   createdAt: Date;
   expiresAt: Date | undefined;
   owner: Account;
-  assignedTo: Account;
+  assignedTo: Account | undefined;
 
   constructor(
     {
@@ -32,6 +32,6 @@ export class Issue {
       ? new FutureDate(expiresAt, notFutureDateErrorLanguage).value
       : undefined;
     this.owner = owner;
-    this.assignedTo = assignedTo;
+    this.assignedTo = assignedTo || undefined;
   }
 }
