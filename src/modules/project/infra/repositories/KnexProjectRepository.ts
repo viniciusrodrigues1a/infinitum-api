@@ -14,6 +14,7 @@ import {
   IListProjectsOwnedByAccountRepository,
   IUpdateProjectRepository,
   IHasProjectBegunRepository,
+  IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import {
@@ -31,8 +32,18 @@ export class KnexProjectRepository
     IUpdateProjectRepository,
     IListProjectsOwnedByAccountRepository,
     ICreateIssueGroupForProjectRepository,
-    IHasProjectBegunRepository
+    IHasProjectBegunRepository,
+    IIsProjectArchivedRepository
 {
+  async isProjectArchived(projectId: string): Promise<boolean> {
+    const { archived: isArchived } = await connection("project")
+      .select("archived")
+      .where({ id: projectId })
+      .first();
+
+    return !!isArchived;
+  }
+
   async hasProjectBegun(projectId: string): Promise<boolean> {
     const { begins_at: beginsAt } = await connection("project")
       .select("begins_at")

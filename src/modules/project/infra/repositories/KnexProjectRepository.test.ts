@@ -33,7 +33,62 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
-  describe("hasProjectBegun", () => {
+  describe("isProjectArchived method", () => {
+    it("should return true if archived is true", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.isProjectArchived(project.id);
+
+      expect(response).toBe(true);
+    });
+
+    it("should return false if archived is false", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: false,
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.isProjectArchived(project.id);
+
+      expect(response).toBe(false);
+    });
+
+    it("should return false if archived is null", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.isProjectArchived(project.id);
+
+      expect(response).toBe(false);
+    });
+  });
+
+  describe("hasProjectBegun method", () => {
     it("should return true if begins_at is in the past", async () => {
       expect.assertions(1);
 
