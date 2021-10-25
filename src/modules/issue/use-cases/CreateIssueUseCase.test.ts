@@ -11,7 +11,6 @@ import {
 } from "@shared/use-cases/interfaces/languages";
 import { IInvalidRoleNameErrorLanguage } from "@modules/project/entities/interfaces/languages";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
-import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -35,7 +34,6 @@ jest.mock("../../project/entities/value-objects/Role");
 function makeSut() {
   const createIssueRepositoryMock = mock<ICreateIssueRepository>();
   const doesProjectExistRepositoryMock = mock<IDoesProjectExistRepository>();
-  const findOneAccountRepositoryMock = mock<IFindOneAccountRepository>();
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const hasProjectBegunRepositoryMock = mock<IHasProjectBegunRepository>();
@@ -58,7 +56,6 @@ function makeSut() {
   const sut = new CreateIssueUseCase(
     createIssueRepositoryMock,
     doesProjectExistRepositoryMock,
-    findOneAccountRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasProjectBegunRepositoryMock,
     isProjectArchivedRepositoryMock,
@@ -76,7 +73,6 @@ function makeSut() {
     sut,
     createIssueRepositoryMock,
     doesProjectExistRepositoryMock,
-    findOneAccountRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasProjectBegunRepositoryMock,
     isProjectArchivedRepositoryMock,
@@ -109,7 +105,6 @@ describe("createIssue use-case", () => {
       sut,
       createIssueRepositoryMock,
       doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
@@ -122,10 +117,6 @@ describe("createIssue use-case", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      name: "jorge",
-      email: givenIssue.accountEmailMakingRequest,
-    });
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -145,11 +136,7 @@ describe("createIssue use-case", () => {
   it("should throw ProjectNotFoundError if project cannot be found", async () => {
     expect.assertions(1);
 
-    const {
-      sut,
-      doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
-    } = makeSut();
+    const { sut, doesProjectExistRepositoryMock } = makeSut();
     const givenIssue = {
       projectId: "project-id-0",
       title: "My issue",
@@ -159,38 +146,10 @@ describe("createIssue use-case", () => {
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(
       false
     );
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      name: "jorge",
-      email: givenIssue.accountEmailMakingRequest,
-    });
 
     const when = () => sut.create(givenIssue);
 
     await expect(when).rejects.toBeInstanceOf(ProjectNotFoundError);
-  });
-
-  it("should throw NotParticipantInProjectError if account cannot be found", async () => {
-    expect.assertions(1);
-
-    const {
-      sut,
-      doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
-    } = makeSut();
-    const givenIssue = {
-      projectId: "project-id-0",
-      title: "My issue",
-      description: "My issue's description",
-      accountEmailMakingRequest: "jorge@email.com",
-    };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce(
-      undefined
-    );
-
-    const when = () => sut.create(givenIssue);
-
-    await expect(when).rejects.toBeInstanceOf(NotParticipantInProjectError);
   });
 
   it("should throw NotParticipantInProjectError if account doesn't participate in project", async () => {
@@ -199,7 +158,6 @@ describe("createIssue use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
       doesParticipantExistRepositoryMock,
     } = makeSut();
     const givenIssue = {
@@ -209,10 +167,6 @@ describe("createIssue use-case", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      name: "jorge",
-      email: givenIssue.accountEmailMakingRequest,
-    });
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       false
     );
@@ -228,7 +182,6 @@ describe("createIssue use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
     } = makeSut();
@@ -239,10 +192,6 @@ describe("createIssue use-case", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      name: "jorge",
-      email: givenIssue.accountEmailMakingRequest,
-    });
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -259,7 +208,6 @@ describe("createIssue use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
@@ -271,10 +219,6 @@ describe("createIssue use-case", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      name: "jorge",
-      email: givenIssue.accountEmailMakingRequest,
-    });
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -294,7 +238,6 @@ describe("createIssue use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
-      findOneAccountRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
@@ -307,10 +250,6 @@ describe("createIssue use-case", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
-    findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce({
-      name: "jorge",
-      email: givenIssue.accountEmailMakingRequest,
-    });
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );

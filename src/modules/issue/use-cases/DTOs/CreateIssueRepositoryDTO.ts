@@ -1,7 +1,8 @@
 import { IssueDTO } from "@modules/issue/entities/DTOs";
-import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
 
-export type CreateIssueUseCaseDTO = AccountMakingRequestDTO &
-  Required<Omit<IssueDTO, "assignedTo">> & {
-    projectId: string;
-  };
+export type CreateIssueRepositoryDTO = Required<
+  Omit<IssueDTO, "assignedToEmail" | "expiresAt">
+> & {
+  projectId: string;
+  expiresAt?: Date;
+};

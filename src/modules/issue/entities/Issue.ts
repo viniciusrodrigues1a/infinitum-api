@@ -1,4 +1,3 @@
-import { Account } from "@modules/account/entities/Account";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { FutureDate, Id } from "@shared/entities/value-objects";
 import { IssueDTO } from "./DTOs";
@@ -9,15 +8,15 @@ export class Issue {
   description: string;
   createdAt: Date;
   expiresAt: Date | undefined;
-  owner: Account;
-  assignedTo: Account | undefined;
+  ownerEmail: string;
+  assignedToEmail: string | undefined;
 
   constructor(
     {
       title,
       description,
-      owner,
-      assignedTo,
+      ownerEmail,
+      assignedToEmail,
       issueId,
       expiresAt,
       createdAt,
@@ -31,7 +30,7 @@ export class Issue {
     this.expiresAt = expiresAt
       ? new FutureDate(expiresAt, notFutureDateErrorLanguage).value
       : undefined;
-    this.owner = owner;
-    this.assignedTo = assignedTo || undefined;
+    this.ownerEmail = ownerEmail;
+    this.assignedToEmail = assignedToEmail || undefined;
   }
 }

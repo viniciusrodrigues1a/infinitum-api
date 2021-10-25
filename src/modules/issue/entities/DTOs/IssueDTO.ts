@@ -1,11 +1,9 @@
-import { Account } from "@modules/account/entities/Account";
-
 export type IssueDTO = {
   title: string;
   description: string;
-  owner: Account;
+  ownerEmail: string;
   issueId?: string;
   createdAt?: Date;
   expiresAt?: Date;
-  assignedTo?: Account;
+  assignedToEmail?: string;
 };

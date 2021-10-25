@@ -34,7 +34,6 @@ export class CreateIssueUseCase {
   constructor(
     private readonly createIssueRepository: ICreateIssueRepository,
     private readonly doesProjectExistRepository: IDoesProjectExistRepository,
-    private readonly findOneAccountRepository: IFindOneAccountRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasProjectBegunRepository: IHasProjectBegunRepository,
     private readonly isProjectArchivedRepository: IIsProjectArchivedRepository,
@@ -65,15 +64,12 @@ export class CreateIssueUseCase {
       );
     }
 
-    const owner = await this.findOneAccountRepository.findOneAccount(
-      accountEmailMakingRequest
-    );
     const doesParticipantExist =
       await this.doesParticipantExistRepository.doesParticipantExist({
         projectId,
         accountEmail: accountEmailMakingRequest,
       });
-    if (!owner || !doesParticipantExist) {
+    if (!doesParticipantExist) {
       throw new NotParticipantInProjectError(
         accountEmailMakingRequest,
         this.notParticipantInProjectErrorLanguage
@@ -106,11 +102,19 @@ export class CreateIssueUseCase {
     }
 
     const issue = new Issue(
-      { title, description, expiresAt, owner },
+      { title, description, expiresAt, ownerEmail: accountEmailMakingRequest },
       this.notFutureDateErrorLanguageMock
     );
 
-    await this.createIssueRepository.createIssue(issue);
+    await this.createIssueRepository.createIssue({
+      ownerEmail: issue.ownerEmail,
+      expiresAt: issue.expiresAt,
+      description: issue.description,
+      title: issue.title,
+      issueId: issue.issueId,
+      createdAt: issue.createdAt,
+      projectId,
+    });
 
     return issue.issueId;
   }
