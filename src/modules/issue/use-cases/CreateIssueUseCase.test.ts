@@ -19,8 +19,6 @@ import {
 } from "@shared/use-cases/errors";
 import * as RoleModule from "@modules/project/entities/value-objects";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
-import { ICreateIssueRepository } from "./interfaces/repositories";
-import { CreateIssueUseCase } from "./CreateIssueUseCase";
 import {
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
@@ -29,8 +27,12 @@ import {
   ProjectHasntBegunError,
   ProjectIsArchivedError,
 } from "@modules/project/use-cases/errors";
+import { ICreateIssueRepository } from "./interfaces/repositories";
+import { CreateIssueUseCase } from "./CreateIssueUseCase";
+import { Issue } from "../entities";
 
 jest.mock("../../project/entities/value-objects/Role");
+jest.mock("../entities/Issue");
 
 function makeSut() {
   const createIssueRepositoryMock = mock<ICreateIssueRepository>();
@@ -265,5 +267,39 @@ describe("createIssue use-case", () => {
     const when = () => sut.create(givenIssue);
 
     await expect(when).rejects.toBeInstanceOf(RoleInsufficientPermissionError);
+  });
+
+  it("should instantiate Issue", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      doesProjectExistRepositoryMock,
+      doesParticipantExistRepositoryMock,
+      hasProjectBegunRepositoryMock,
+      isProjectArchivedRepositoryMock,
+      findParticipantRoleInProjectRepositoryMock,
+    } = makeSut();
+    const givenIssue = {
+      projectId: "project-id-0",
+      title: "My issue",
+      description: "My issue's description",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
+      true
+    );
+    hasProjectBegunRepositoryMock.hasProjectBegun.mockResolvedValueOnce(true);
+    isProjectArchivedRepositoryMock.isProjectArchived.mockResolvedValueOnce(
+      false
+    );
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockResolvedValueOnce(
+      "roleWithPermission"
+    );
+
+    await sut.create(givenIssue);
+
+    expect(Issue).toHaveBeenCalledTimes(1);
   });
 });
