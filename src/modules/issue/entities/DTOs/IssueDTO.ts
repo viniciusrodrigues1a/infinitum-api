@@ -7,4 +7,5 @@ export type IssueDTO = {
   createdAt?: Date;
   expiresAt?: Date;
   owner: Account;
+  assignedTo: Account;
 };

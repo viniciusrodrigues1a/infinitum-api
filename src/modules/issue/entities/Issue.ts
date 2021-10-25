@@ -10,9 +10,18 @@ export class Issue {
   createdAt: Date;
   expiresAt: Date | undefined;
   owner: Account;
+  assignedTo: Account;
 
   constructor(
-    { title, description, owner, issueId, expiresAt, createdAt }: IssueDTO,
+    {
+      title,
+      description,
+      owner,
+      assignedTo,
+      issueId,
+      expiresAt,
+      createdAt,
+    }: IssueDTO,
     notFutureDateErrorLanguage: INotFutureDateErrorLanguage
   ) {
     this.issueId = issueId || new Id().value;
@@ -23,5 +32,6 @@ export class Issue {
       ? new FutureDate(expiresAt, notFutureDateErrorLanguage).value
       : undefined;
     this.owner = owner;
+    this.assignedTo = assignedTo;
   }
 }

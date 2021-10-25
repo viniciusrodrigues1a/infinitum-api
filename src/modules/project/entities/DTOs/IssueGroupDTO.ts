@@ -1,4 +1,4 @@
-import { Issue } from "@modules/issue/Issue";
+import { Issue } from "@modules/issue/entities";
 
 export type IssueGroupDTO = {
   issueGroupId?: string;

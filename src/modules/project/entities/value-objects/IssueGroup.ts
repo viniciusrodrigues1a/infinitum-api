@@ -1,4 +1,4 @@
-import { Issue } from "@modules/issue/Issue";
+import { Issue } from "@modules/issue/entities";
 import { Id } from "@shared/entities/value-objects";
 import { IssueGroupDTO } from "../DTOs/IssueGroupDTO";
 
