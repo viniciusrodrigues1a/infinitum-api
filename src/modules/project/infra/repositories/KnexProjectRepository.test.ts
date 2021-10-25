@@ -71,6 +71,8 @@ describe("project repository using Knex", () => {
     });
 
     it.todo("should return an array of projects joined with issues");
+
+    it.todo("should return an array of projects joined with participants");
   });
 
   describe("updateProject method", () => {

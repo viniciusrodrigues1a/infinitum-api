@@ -28,32 +28,78 @@ export class KnexProjectRepository
     IUpdateProjectRepository,
     IListProjectsOwnedByAccountRepository
 {
-  async listProjects(
-    accountEmail: string
-  ): Promise<Omit<Project, "participants">[]> {
+  async listProjects(accountEmail: string): Promise<Project[]> {
     const { id: accountId } = await connection("account")
       .select("id")
       .where({ email: accountEmail })
       .first();
 
     const projects = await connection("project")
-      .select("*")
+      .leftJoin(
+        "account_project_project_role",
+        "project.id",
+        "=",
+        "account_project_project_role.project_id"
+      )
+      .leftJoin(
+        "account",
+        "account_project_project_role.account_id",
+        "=",
+        "account.id"
+      )
+      .leftJoin(
+        "project_role",
+        "account_project_project_role.project_role_id",
+        "=",
+        "project_role.id"
+      )
+      .select(
+        "project.*",
+        "account.name as account_name",
+        "account.email as account_email",
+        "account_project_project_role.account_id",
+        "project_role.name as project_role_name"
+      )
       .where({ owner_id: accountId });
 
-    const mappedProjects = projects.map(
-      (p) =>
-        ({
-          projectId: p.id,
-          name: p.name,
-          description: p.description,
-          beginsAt: p.begins_at,
-          finishesAt: p.finishes_at,
-          createdAt: p.created_at,
-          issues: [],
-        } as Omit<Project, "participants">)
-    );
+    const reducedProjects = projects.reduce((acc: Array<any>, val) => {
+      const index = acc.findIndex((p) => p.projectId === val.id);
 
-    return mappedProjects;
+      if (index !== -1) {
+        acc[index].participants = [
+          ...acc[index].participants,
+          {
+            id: val.account_id,
+            name: val.account_name,
+            email: val.account_email,
+            projectRoleName: val.project_role_name,
+          },
+        ];
+      } else {
+        acc.push({
+          projectId: val.id,
+          name: val.name,
+          description: val.description,
+          beginsAt: val.begins_at,
+          finishesAt: val.finishes_at,
+          createdAt: val.created_at,
+          archived: val.archived,
+          issues: [],
+          participants: [
+            {
+              id: val.account_id,
+              name: val.account_name,
+              email: val.account_email,
+              projectRoleName: val.project_role_name,
+            },
+          ],
+        });
+      }
+
+      return acc;
+    }, []);
+
+    return reducedProjects;
   }
 
   async updateProject({

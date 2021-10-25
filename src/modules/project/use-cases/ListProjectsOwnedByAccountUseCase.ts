@@ -6,7 +6,7 @@ export class ListProjectsOwnedByAccountUseCase {
     private readonly listProjectsOwnedByAccountRepository: IListProjectsOwnedByAccountRepository
   ) {}
 
-  async list(accountEmail: string): Promise<Omit<Project, "participants">[]> {
+  async list(accountEmail: string): Promise<Project[]> {
     const projects =
       await this.listProjectsOwnedByAccountRepository.listProjects(
         accountEmail
