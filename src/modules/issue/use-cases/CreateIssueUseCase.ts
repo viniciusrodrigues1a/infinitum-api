@@ -38,7 +38,7 @@ export class CreateIssueUseCase {
     private readonly hasProjectBegunRepository: IHasProjectBegunRepository,
     private readonly isProjectArchivedRepository: IIsProjectArchivedRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
-    private readonly notFutureDateErrorLanguageMock: INotFutureDateErrorLanguage,
+    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly projectHasntBegunErrorLanguage: IProjectHasntBegunErrorLanguage,
@@ -52,7 +52,6 @@ export class CreateIssueUseCase {
     title,
     description,
     expiresAt,
-
     accountEmailMakingRequest,
   }: CreateIssueUseCaseDTO): Promise<string> {
     const doesProjectExist =
@@ -103,7 +102,7 @@ export class CreateIssueUseCase {
 
     const issue = new Issue(
       { title, description, expiresAt, ownerEmail: accountEmailMakingRequest },
-      this.notFutureDateErrorLanguageMock
+      this.notFutureDateErrorLanguage
     );
 
     await this.createIssueRepository.createIssue({
