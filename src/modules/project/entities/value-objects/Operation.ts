@@ -1,1 +1,4 @@
-export type Operation = "DELETE_PROJECT" | "UPDATE_PROJECT";
+export type Operation =
+  | "DELETE_PROJECT"
+  | "UPDATE_PROJECT"
+  | "CREATE_ISSUE_GROUP";

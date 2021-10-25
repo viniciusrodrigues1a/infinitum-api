@@ -1,9 +1,11 @@
 import { Project } from "@modules/project/entities";
 import {
+  CreateIssueGroupForProjectRepositoryDTO,
   CreateProjectRepositoryDTO,
   UpdateProjectRepositoryDTO,
 } from "@modules/project/use-cases/DTOs";
 import {
+  ICreateIssueGroupForProjectRepository,
   ICreateProjectRepository,
   IDeleteProjectRepository,
   IDoesParticipantExistRepository,
@@ -26,8 +28,21 @@ export class KnexProjectRepository
     IDoesParticipantExistRepository,
     IFindParticipantRoleInProjectRepository,
     IUpdateProjectRepository,
-    IListProjectsOwnedByAccountRepository
+    IListProjectsOwnedByAccountRepository,
+    ICreateIssueGroupForProjectRepository
 {
+  async createIssueGroup({
+    issueGroupId,
+    projectId,
+    title,
+  }: CreateIssueGroupForProjectRepositoryDTO): Promise<void> {
+    await connection("issue_group").insert({
+      id: issueGroupId,
+      project_id: projectId,
+      title,
+    });
+  }
+
   async listProjects(accountEmail: string): Promise<Project[]> {
     const { id: accountId } = await connection("account")
       .select("id")

@@ -3,7 +3,7 @@ import { FutureDate, Id } from "@shared/entities/value-objects";
 import { ProjectDTO } from "./DTOs";
 import { BeginsAtMustBeBeforeFinishesAtError } from "./errors";
 import { IBeginsAtMustBeBeforeFinishesAtErrorLanguage } from "./interfaces/languages";
-import { Participant } from "./value-objects";
+import { IssueGroup, Participant } from "./value-objects";
 
 export class Project {
   projectId: string;
@@ -13,7 +13,7 @@ export class Project {
   beginsAt: Date | undefined;
   finishesAt: Date | undefined;
   participants: Participant[];
-  issues: []; // TODO create Issue entity
+  issues: IssueGroup[];
 
   constructor(
     {

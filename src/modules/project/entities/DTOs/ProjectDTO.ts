@@ -1,4 +1,4 @@
-import { Participant } from "../value-objects/Participant";
+import { IssueGroup, Participant } from "../value-objects";
 
 export type ProjectDTO = {
   name: string;
@@ -7,5 +7,5 @@ export type ProjectDTO = {
   beginsAt?: Date;
   finishesAt?: Date;
   participants?: Participant[];
-  issues?: [];
+  issues?: IssueGroup[];
 };

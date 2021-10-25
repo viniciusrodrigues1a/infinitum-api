@@ -8,6 +8,7 @@ import {
   ListProjectsOwnedByAccountController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
+import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
 
 export interface IControllerFactory {
   makeRegisterController(language: ILanguage): RegisterController;
@@ -17,4 +18,7 @@ export interface IControllerFactory {
   makeDeleteProjectController(language: ILanguage): DeleteProjectController;
   makeUpdateProjectController(language: ILanguage): UpdateProjectController;
   makeListProjectsOwnedByAccountController(): ListProjectsOwnedByAccountController;
+  makeCreateIssueGroupForProjectController(
+    language: ILanguage
+  ): CreateIssueGroupForProjectController;
 }

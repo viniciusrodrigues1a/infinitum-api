@@ -1,6 +1,7 @@
 import { ILanguage } from "@modules/account/presentation/languages";
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
 import {
+  CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
   DeleteProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
@@ -13,4 +14,7 @@ export interface IUseCaseFactory {
   makeDeleteProjectUseCase(language: ILanguage): DeleteProjectUseCase;
   makeUpdateProjectUseCase(language: ILanguage): UpdateProjectUseCase;
   makeListProjectsOwnedByAccountUseCase(): ListProjectsOwnedByAccountUseCase;
+  makeCreateIssueGroupForProjectUseCase(
+    language: ILanguage
+  ): CreateIssueGroupForProjectUseCase;
 }

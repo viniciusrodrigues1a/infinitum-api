@@ -33,7 +33,37 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
-  describe("listProjects", () => {
+  describe("createIssueGroup method", () => {
+    it("should insert an issue group associated to given project", async () => {
+      expect.assertions(2);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      await connection("project").insert(project);
+      const givenIssueGroup = {
+        issueGroupId: "ig-id-0",
+        projectId: project.id,
+        title: "In progress",
+      };
+
+      await sut.createIssueGroup(givenIssueGroup);
+
+      const insertedIssueGroup = await connection("issue_group")
+        .select("*")
+        .where({ id: givenIssueGroup.issueGroupId })
+        .first();
+
+      expect(insertedIssueGroup.project_id).toBe(givenIssueGroup.projectId);
+      expect(insertedIssueGroup.title).toBe(givenIssueGroup.title);
+    });
+  });
+
+  describe("listProjects method", () => {
     it("should return an array of projects associated to an account", async () => {
       expect.assertions(1);
 

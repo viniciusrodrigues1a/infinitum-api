@@ -5,3 +5,4 @@ export * from "./IDoesParticipantExistRepository";
 export * from "./IFindParticipantRoleInProject";
 export * from "./IUpdateProjectRepository";
 export * from "./IListProjectsOwnedByAccountRepository";
+export * from "./ICreateIssueGroupForProjectRepository";

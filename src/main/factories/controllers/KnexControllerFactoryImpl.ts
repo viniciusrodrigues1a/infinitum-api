@@ -3,6 +3,7 @@ import { LoginController } from "@modules/account/presentation/controllers/Login
 import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
 import { ILanguage } from "@modules/account/presentation/languages";
 import {
+  CreateIssueGroupForProjectController,
   CreateProjectController,
   DeleteProjectController,
   ListProjectsOwnedByAccountController,
@@ -21,6 +22,14 @@ import { IControllerFactory } from "./IControllerFactory";
 class KnexControllerFactoryImpl implements IControllerFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
+
+  makeCreateIssueGroupForProjectController(
+    language: ILanguage
+  ): CreateIssueGroupForProjectController {
+    return new CreateIssueGroupForProjectController(
+      this.useCaseFactory.makeCreateIssueGroupForProjectUseCase(language)
+    );
+  }
 
   makeListProjectsOwnedByAccountController(): ListProjectsOwnedByAccountController {
     return new ListProjectsOwnedByAccountController(

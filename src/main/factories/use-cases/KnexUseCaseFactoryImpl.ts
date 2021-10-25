@@ -1,6 +1,7 @@
 import { ILanguage } from "@modules/account/presentation/languages";
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
 import {
+  CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
   DeleteProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
@@ -14,6 +15,22 @@ import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeCreateIssueGroupForProjectUseCase(
+    language: ILanguage
+  ): CreateIssueGroupForProjectUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new CreateIssueGroupForProjectUseCase(
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeListProjectsOwnedByAccountUseCase(): ListProjectsOwnedByAccountUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

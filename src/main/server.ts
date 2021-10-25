@@ -2,7 +2,12 @@ import dotenv from "dotenv";
 import { Server } from "http";
 import express from "express";
 import cors from "cors";
-import { accountsRoutes, authRoutes, projectsRoutes } from "@main/routes";
+import {
+  accountsRoutes,
+  authRoutes,
+  issueGroupsRoutes,
+  projectsRoutes,
+} from "@main/routes";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 
 dotenv.config();
@@ -28,6 +33,7 @@ export class ExpressServer {
     this.app.use("/auth", authRoutes);
     this.app.use("/accounts", accountsRoutes);
     this.app.use("/projects", projectsRoutes);
+    this.app.use("/issueGroups", issueGroupsRoutes);
   }
 
   public start(): void {
