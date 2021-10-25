@@ -3,6 +3,8 @@ import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IHasProjectBegunRepository,
+  IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import {
   INotParticipantInProjectErrorLanguage,
@@ -17,17 +19,16 @@ import {
 } from "@shared/use-cases/errors";
 import * as RoleModule from "@modules/project/entities/value-objects";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
-import {
-  ICreateIssueRepository,
-  IHasProjectBegunRepository,
-  IIsProjectArchivedRepository,
-} from "./interfaces/repositories";
+import { ICreateIssueRepository } from "./interfaces/repositories";
 import { CreateIssueUseCase } from "./CreateIssueUseCase";
-import { ProjectHasntBegunError, ProjectIsArchivedError } from "./errors";
 import {
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
-} from "./interfaces/languages";
+} from "@modules/project/use-cases/interfaces/languages";
+import {
+  ProjectHasntBegunError,
+  ProjectIsArchivedError,
+} from "@modules/project/use-cases/errors";
 
 jest.mock("../../project/entities/value-objects/Role");
 

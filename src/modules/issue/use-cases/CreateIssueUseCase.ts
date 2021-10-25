@@ -1,10 +1,19 @@
-import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { IInvalidRoleNameErrorLanguage } from "@modules/project/entities/interfaces/languages";
 import { Role } from "@modules/project/entities/value-objects";
+import {
+  ProjectHasntBegunError,
+  ProjectIsArchivedError,
+} from "@modules/project/use-cases/errors";
+import {
+  IProjectHasntBegunErrorLanguage,
+  IProjectIsArchivedErrorLanguage,
+} from "@modules/project/use-cases/interfaces/languages";
 import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IHasProjectBegunRepository,
+  IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
@@ -19,16 +28,7 @@ import {
 } from "@shared/use-cases/interfaces/languages";
 import { Issue } from "../entities";
 import { CreateIssueUseCaseDTO } from "./DTOs";
-import { ProjectHasntBegunError, ProjectIsArchivedError } from "./errors";
-import {
-  IProjectHasntBegunErrorLanguage,
-  IProjectIsArchivedErrorLanguage,
-} from "./interfaces/languages";
-import {
-  ICreateIssueRepository,
-  IHasProjectBegunRepository,
-  IIsProjectArchivedRepository,
-} from "./interfaces/repositories";
+import { ICreateIssueRepository } from "./interfaces/repositories";
 
 export class CreateIssueUseCase {
   constructor(

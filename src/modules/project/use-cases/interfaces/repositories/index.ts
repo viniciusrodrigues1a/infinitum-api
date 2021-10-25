@@ -6,3 +6,5 @@ export * from "./IFindParticipantRoleInProject";
 export * from "./IUpdateProjectRepository";
 export * from "./IListProjectsOwnedByAccountRepository";
 export * from "./ICreateIssueGroupForProjectRepository";
+export * from "./IHasProjectBegunRepository";
+export * from "./IIsProjectArchivedRepository";
