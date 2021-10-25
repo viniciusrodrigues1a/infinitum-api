@@ -33,6 +33,65 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("hasProjectBegun", () => {
+    it("should return true if begins_at is in the past", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const now = new Date().getTime();
+      const yesterday = new Date(now - 86400 * 1000);
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        begins_at: yesterday,
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.hasProjectBegun(project.id);
+
+      expect(response).toBe(true);
+    });
+
+    it("should return true if begins_at is null", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.hasProjectBegun(project.id);
+
+      expect(response).toBe(true);
+    });
+
+    it("should return false if begins_at is in the future", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const now = new Date().getTime();
+      const tomorrow = new Date(now + 86400 * 1000);
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        begins_at: tomorrow,
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.hasProjectBegun(project.id);
+
+      expect(response).toBe(false);
+    });
+  });
+
   describe("createIssueGroup method", () => {
     it("should insert an issue group associated to given project", async () => {
       expect.assertions(2);

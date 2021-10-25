@@ -13,6 +13,7 @@ import {
   IFindParticipantRoleInProjectRepository,
   IListProjectsOwnedByAccountRepository,
   IUpdateProjectRepository,
+  IHasProjectBegunRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import {
@@ -29,8 +30,23 @@ export class KnexProjectRepository
     IFindParticipantRoleInProjectRepository,
     IUpdateProjectRepository,
     IListProjectsOwnedByAccountRepository,
-    ICreateIssueGroupForProjectRepository
+    ICreateIssueGroupForProjectRepository,
+    IHasProjectBegunRepository
 {
+  async hasProjectBegun(projectId: string): Promise<boolean> {
+    const { begins_at: beginsAt } = await connection("project")
+      .select("begins_at")
+      .where({ id: projectId })
+      .first();
+
+    if (!beginsAt) return true;
+
+    const nowMs = new Date().getTime();
+    const beginsAtMs = new Date(beginsAt).getTime();
+
+    return nowMs - beginsAtMs > 0;
+  }
+
   async createIssueGroup({
     issueGroupId,
     projectId,
