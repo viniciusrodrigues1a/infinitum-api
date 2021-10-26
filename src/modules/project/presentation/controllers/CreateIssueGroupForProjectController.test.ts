@@ -58,10 +58,7 @@ describe("createIssueGroupForProject controller", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     createIssueGroupForProjectUseCaseMock.create.mockImplementationOnce(() => {
-      throw new ProjectNotFoundError(
-        givenIssueGroup.projectId,
-        projectNotFoundErrorLanguageMock
-      );
+      throw new ProjectNotFoundError(projectNotFoundErrorLanguageMock);
     });
 
     const response = await sut.handleRequest(givenIssueGroup);

@@ -23,7 +23,7 @@ export class ENUSLanguage implements ILanguage {
     return "You don't have permission";
   }
 
-  getProjectNotFoundErrorMessage(_identifier: string): string {
+  getProjectNotFoundErrorMessage(): string {
     return "Project not found";
   }
 

@@ -10,8 +10,8 @@ import {
 } from "@modules/project/use-cases/interfaces/languages";
 import {
   IDoesParticipantExistRepository,
-  IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IFindProjectIdByIssueGroupIdRepository,
   IHasProjectBegunRepository,
   IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
@@ -33,7 +33,7 @@ import { ICreateIssueRepository } from "./interfaces/repositories";
 export class CreateIssueUseCase {
   constructor(
     private readonly createIssueRepository: ICreateIssueRepository,
-    private readonly doesProjectExistRepository: IDoesProjectExistRepository,
+    private readonly findProjectIdByIssueGroupIdRepository: IFindProjectIdByIssueGroupIdRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasProjectBegunRepository: IHasProjectBegunRepository,
     private readonly isProjectArchivedRepository: IIsProjectArchivedRepository,
@@ -48,19 +48,18 @@ export class CreateIssueUseCase {
   ) {}
 
   async create({
-    projectId,
+    issueGroupId,
     title,
     description,
     expiresAt,
     accountEmailMakingRequest,
   }: CreateIssueUseCaseDTO): Promise<string> {
-    const doesProjectExist =
-      await this.doesProjectExistRepository.doesProjectExist(projectId);
-    if (!doesProjectExist) {
-      throw new ProjectNotFoundError(
-        projectId,
-        this.projectNotFoundErrorLanguage
+    const projectId =
+      await this.findProjectIdByIssueGroupIdRepository.findProjectIdByIssueGroupId(
+        issueGroupId
       );
+    if (!projectId) {
+      throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
     }
 
     const doesParticipantExist =
@@ -112,7 +111,7 @@ export class CreateIssueUseCase {
       title: issue.title,
       issueId: issue.issueId,
       createdAt: issue.createdAt,
-      projectId,
+      issueGroupId,
     });
 
     return issue.issueId;

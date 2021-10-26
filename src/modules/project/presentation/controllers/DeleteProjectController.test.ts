@@ -51,10 +51,7 @@ describe("deleteProject controller", () => {
     const { sut, deleteProjectUseCaseMock } = makeSut();
     const projectId = "project-id-0";
     deleteProjectUseCaseMock.delete.mockImplementationOnce(() => {
-      throw new ProjectNotFoundError(
-        projectId,
-        projectNotFoundErrorLanguageMock
-      );
+      throw new ProjectNotFoundError(projectNotFoundErrorLanguageMock);
     });
 
     const response = await sut.handleRequest({

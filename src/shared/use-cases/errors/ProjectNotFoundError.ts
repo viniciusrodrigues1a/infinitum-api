@@ -1,8 +1,8 @@
 import { IProjectNotFoundErrorLanguage } from "../interfaces/languages";
 
 export class ProjectNotFoundError extends Error {
-  constructor(identifier: string, language: IProjectNotFoundErrorLanguage) {
-    const message = language.getProjectNotFoundErrorMessage(identifier);
+  constructor(language: IProjectNotFoundErrorLanguage) {
+    const message = language.getProjectNotFoundErrorMessage();
     super(message);
     this.message = message;
   }

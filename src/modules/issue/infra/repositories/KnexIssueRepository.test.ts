@@ -44,12 +44,18 @@ describe("createIssue method", () => {
       description: "My project's description",
     };
     await connection("project").insert(project);
+    const issueGroup = {
+      id: "ig-id-0",
+      project_id: project.id,
+      title: "In progress",
+    };
+    await connection("issue_group").insert(issueGroup);
     const givenIssue = {
       title: "My issue",
       description: "My issue's description",
       ownerEmail: accountEmail,
       issueId: "issue-id-0",
-      projectId: project.id,
+      issueGroupId: issueGroup.id,
       createdAt: new Date(),
     };
 
@@ -60,7 +66,7 @@ describe("createIssue method", () => {
       .where({ id: givenIssue.issueId })
       .first();
 
-    expect(insertedIssue.project_id).toBe(project.id);
+    expect(insertedIssue.issue_group_id).toBe(issueGroup.id);
     expect(insertedIssue.owner_id).toBe(accountId);
     expect(insertedIssue.id).toBe(givenIssue.issueId);
   });

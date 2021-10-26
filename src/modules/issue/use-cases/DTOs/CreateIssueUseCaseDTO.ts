@@ -1,7 +1,7 @@
 import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
 
 export type CreateIssueUseCaseDTO = AccountMakingRequestDTO & {
-  projectId: string;
+  issueGroupId: string;
   title: string;
   description: string;
   expiresAt?: Date;

@@ -33,6 +33,42 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findProjectIdByIssueGroupId method", () => {
+    it("should return project id associated to given issue group id", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      await connection("project").insert(project);
+      const issueGroup = {
+        id: "ig-id-0",
+        project_id: project.id,
+        title: "In progress",
+      };
+      await connection("issue_group").insert(issueGroup);
+
+      const projectId = await sut.findProjectIdByIssueGroupId(issueGroup.id);
+
+      expect(projectId).toBe(project.id);
+    });
+
+    it("should return undefined if issue group id cannot be found", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const response = await sut.findProjectIdByIssueGroupId("ig-id-123312312");
+
+      expect(response).toBeUndefined();
+    });
+  });
+
   describe("isProjectArchived method", () => {
     it("should return true if archived is true", async () => {
       expect.assertions(1);

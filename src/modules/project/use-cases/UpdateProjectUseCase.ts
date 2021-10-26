@@ -48,10 +48,7 @@ export class UpdateProjectUseCase {
     const doesProjectExist =
       await this.doesProjectExistRepository.doesProjectExist(projectId);
     if (!doesProjectExist)
-      throw new ProjectNotFoundError(
-        projectId,
-        this.projectNotFoundErrorLanguage
-      );
+      throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
 
     const doesParticipantExist =
       await this.doesParticipantExistRepository.doesParticipantExist({

@@ -47,7 +47,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
@@ -67,16 +67,13 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
     createIssueUseCaseMock.create.mockImplementationOnce(() => {
-      throw new ProjectNotFoundError(
-        givenRequest.projectId,
-        projectNotFoundErrorLanguageMock
-      );
+      throw new ProjectNotFoundError(projectNotFoundErrorLanguageMock);
     });
 
     const response = await sut.handleRequest(givenRequest);
@@ -90,7 +87,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
@@ -113,7 +110,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
@@ -133,7 +130,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
@@ -153,7 +150,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
@@ -176,7 +173,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
@@ -200,7 +197,7 @@ describe("createIssue controller", () => {
 
     const { sut, createIssueUseCaseMock } = makeSut();
     const givenRequest = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",

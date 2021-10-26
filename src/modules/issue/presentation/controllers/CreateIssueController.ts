@@ -31,7 +31,7 @@ export class CreateIssueController implements IController {
   constructor(private readonly createIssueUseCase: CreateIssueUseCase) {}
 
   async handleRequest({
-    projectId,
+    issueGroupId,
     title,
     description,
     expiresAt,
@@ -39,7 +39,7 @@ export class CreateIssueController implements IController {
   }: CreateIssueControllerRequest): Promise<HttpResponse> {
     try {
       const id = await this.createIssueUseCase.create({
-        projectId,
+        issueGroupId,
         title,
         description,
         expiresAt: expiresAt ? new Date(expiresAt) : undefined,

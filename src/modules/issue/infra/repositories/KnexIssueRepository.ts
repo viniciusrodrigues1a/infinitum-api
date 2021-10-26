@@ -7,7 +7,7 @@ export class KnexIssueRepository implements ICreateIssueRepository {
     title,
     description,
     ownerEmail,
-    projectId,
+    issueGroupId,
     issueId,
     createdAt,
     expiresAt,
@@ -20,7 +20,7 @@ export class KnexIssueRepository implements ICreateIssueRepository {
     await connection("issue").insert({
       title,
       description,
-      project_id: projectId,
+      issue_group_id: issueGroupId,
       owner_id: ownerId,
       id: issueId,
       created_at: createdAt,

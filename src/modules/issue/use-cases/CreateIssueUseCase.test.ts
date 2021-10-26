@@ -1,8 +1,8 @@
 import { mock } from "jest-mock-extended";
 import {
   IDoesParticipantExistRepository,
-  IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IFindProjectIdByIssueGroupIdRepository,
   IHasProjectBegunRepository,
   IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
@@ -36,7 +36,8 @@ jest.mock("../entities/Issue");
 
 function makeSut() {
   const createIssueRepositoryMock = mock<ICreateIssueRepository>();
-  const doesProjectExistRepositoryMock = mock<IDoesProjectExistRepository>();
+  const findProjectIdByIssueGroupIdRepositoryMock =
+    mock<IFindProjectIdByIssueGroupIdRepository>();
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const hasProjectBegunRepositoryMock = mock<IHasProjectBegunRepository>();
@@ -58,7 +59,7 @@ function makeSut() {
     mock<IRoleInsufficientPermissionErrorLanguage>();
   const sut = new CreateIssueUseCase(
     createIssueRepositoryMock,
-    doesProjectExistRepositoryMock,
+    findProjectIdByIssueGroupIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasProjectBegunRepositoryMock,
     isProjectArchivedRepositoryMock,
@@ -75,7 +76,7 @@ function makeSut() {
   return {
     sut,
     createIssueRepositoryMock,
-    doesProjectExistRepositoryMock,
+    findProjectIdByIssueGroupIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasProjectBegunRepositoryMock,
     isProjectArchivedRepositoryMock,
@@ -107,19 +108,21 @@ describe("createIssue use-case", () => {
     const {
       sut,
       createIssueRepositoryMock,
-      doesProjectExistRepositoryMock,
+      findProjectIdByIssueGroupIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
     } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -139,15 +142,15 @@ describe("createIssue use-case", () => {
   it("should throw ProjectNotFoundError if project cannot be found", async () => {
     expect.assertions(1);
 
-    const { sut, doesProjectExistRepositoryMock } = makeSut();
+    const { sut, findProjectIdByIssueGroupIdRepositoryMock } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(
-      false
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      undefined
     );
 
     const when = () => sut.create(givenIssue);
@@ -160,16 +163,18 @@ describe("createIssue use-case", () => {
 
     const {
       sut,
-      doesProjectExistRepositoryMock,
+      findProjectIdByIssueGroupIdRepositoryMock,
       doesParticipantExistRepositoryMock,
     } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       false
     );
@@ -184,17 +189,19 @@ describe("createIssue use-case", () => {
 
     const {
       sut,
-      doesProjectExistRepositoryMock,
+      findProjectIdByIssueGroupIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
     } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -210,18 +217,20 @@ describe("createIssue use-case", () => {
 
     const {
       sut,
-      doesProjectExistRepositoryMock,
+      findProjectIdByIssueGroupIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
     } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -240,19 +249,21 @@ describe("createIssue use-case", () => {
 
     const {
       sut,
-      doesProjectExistRepositoryMock,
+      findProjectIdByIssueGroupIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
     } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );
@@ -274,19 +285,21 @@ describe("createIssue use-case", () => {
 
     const {
       sut,
-      doesProjectExistRepositoryMock,
+      findProjectIdByIssueGroupIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasProjectBegunRepositoryMock,
       isProjectArchivedRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
     } = makeSut();
     const givenIssue = {
-      projectId: "project-id-0",
+      issueGroupId: "ig-id-0",
       title: "My issue",
       description: "My issue's description",
       accountEmailMakingRequest: "jorge@email.com",
     };
-    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       true
     );

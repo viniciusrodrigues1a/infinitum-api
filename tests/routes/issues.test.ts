@@ -41,18 +41,25 @@ describe("/issues/ endpoint", () => {
   });
 
   describe("method POST /", () => {
+    let issueGroupId: string;
     let projectId: string;
     beforeEach(async () => {
-      const {
-        body: { id },
-      } = await api
+      const authHeader = { authorization: `Bearer ${authorizationToken}` };
+
+      const projectsResponse = await api
         .post("/projects/")
-        .set({ authorization: `Bearer ${authorizationToken}` })
+        .set(authHeader)
         .send({
           name: "my project",
           description: "my project's description",
         });
-      projectId = id;
+      projectId = projectsResponse.body.id;
+
+      const issueGroupsResponse = await api
+        .post("/issueGroups/")
+        .set(authHeader)
+        .send({ projectId, title: "In progress" });
+      issueGroupId = issueGroupsResponse.body.id;
     });
 
     it("should return 201 with the issue's id", async () => {
@@ -60,7 +67,7 @@ describe("/issues/ endpoint", () => {
 
       const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
       const givenBody = {
-        projectId,
+        issueGroupId,
         title: "In progress",
         description: "Issues that are still in progress",
       };
@@ -79,7 +86,7 @@ describe("/issues/ endpoint", () => {
 
       const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
       const givenBody = {
-        projectId: "project-id-182373128",
+        issueGroupId: "ig-id-182373128",
         title: "In progress",
         description: "Issues that are still in progress",
       };
@@ -90,10 +97,8 @@ describe("/issues/ endpoint", () => {
         .send(givenBody);
 
       expect(response.statusCode).toBe(404);
-      const expectedBodyMessage = new ProjectNotFoundError(
-        givenBody.projectId,
-        defaultLanguage
-      ).message;
+      const expectedBodyMessage = new ProjectNotFoundError(defaultLanguage)
+        .message;
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 
@@ -116,7 +121,7 @@ describe("/issues/ endpoint", () => {
         authorization: `Bearer ${authorizationTokenWithDifferentEmail}`,
       };
       const givenBody = {
-        projectId,
+        issueGroupId,
         title: "In progress",
         description: "Issues that are still in progress",
       };
@@ -141,19 +146,22 @@ describe("/issues/ endpoint", () => {
       const nowMs = new Date().getTime();
       const tomorrowIso = new Date(nowMs + 86400 * 1000).toISOString();
       const {
+        body: { id: projectThatHasntBegunId },
+      } = await api.post("/projects/").set(givenAuthHeader).send({
+        name: "my project",
+        description: "my project's description",
+        beginsAt: tomorrowIso,
+      });
+      const {
         body: { id },
       } = await api
-        .post("/projects/")
-        .set({ authorization: `Bearer ${authorizationToken}` })
-        .send({
-          name: "my project",
-          description: "my project's description",
-          beginsAt: tomorrowIso,
-        });
+        .post("/issueGroups/")
+        .set(givenAuthHeader)
+        .send({ projectId: projectThatHasntBegunId, title: "In progress" });
       const givenBody = {
-        projectId: id,
-        title: "In progress",
-        description: "Issues that are still in progress",
+        issueGroupId: id,
+        title: "My issue",
+        description: "My issue's description",
       };
 
       const response = await api
@@ -172,7 +180,7 @@ describe("/issues/ endpoint", () => {
 
       const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
       const givenBody = {
-        projectId,
+        issueGroupId,
         title: "In progress",
         description: "Issues that are still in progress",
       };
@@ -198,9 +206,9 @@ describe("/issues/ endpoint", () => {
       const nowMs = new Date().getTime();
       const yesterdayIso = new Date(nowMs - 86400 * 1000).toISOString();
       const givenBody = {
-        projectId,
-        title: "In progress",
-        description: "Issues that are still in progress",
+        issueGroupId,
+        title: "My issue",
+        description: "My issue's description",
         expiresAt: yesterdayIso,
       };
 
@@ -208,12 +216,12 @@ describe("/issues/ endpoint", () => {
         .post("/issues/")
         .set(givenAuthHeader)
         .send(givenBody);
-      const a = new Date(yesterdayIso);
 
       expect(response.statusCode).toBe(400);
-      const expectedBodyMessage = new NotFutureDateError(a, defaultLanguage)
-        .message;
-
+      const expectedBodyMessage = new NotFutureDateError(
+        new Date(yesterdayIso),
+        defaultLanguage
+      ).message;
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
   });

@@ -23,7 +23,7 @@ export class PTBRLanguage implements ILanguage {
     return "Você não possui permissão";
   }
 
-  getProjectNotFoundErrorMessage(_identifier: string): string {
+  getProjectNotFoundErrorMessage(): string {
     return "Projeto não encontrado";
   }
 

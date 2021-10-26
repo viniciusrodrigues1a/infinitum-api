@@ -246,10 +246,8 @@ describe("/projects/ endpoint", () => {
           .delete("/projects/invalid-id")
           .set(givenAuthHeader);
 
-        const expectedBodyMessage = new ProjectNotFoundError(
-          "invalid-id",
-          defaultLanguage
-        ).message;
+        const expectedBodyMessage = new ProjectNotFoundError(defaultLanguage)
+          .message;
         expect(response.statusCode).toBe(404);
         expect(response.body.error.message).toBe(expectedBodyMessage);
       });
@@ -346,10 +344,8 @@ describe("/projects/ endpoint", () => {
           .set(givenAuthHeader)
           .send({ name: "Updated project name" });
 
-        const expectedBodyMessage = new ProjectNotFoundError(
-          invalidId,
-          defaultLanguage
-        ).message;
+        const expectedBodyMessage = new ProjectNotFoundError(defaultLanguage)
+          .message;
         expect(response.statusCode).toBe(404);
         expect(response.body.error.message).toBe(expectedBodyMessage);
       });

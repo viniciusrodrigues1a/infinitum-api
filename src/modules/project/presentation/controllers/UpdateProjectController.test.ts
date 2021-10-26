@@ -130,7 +130,6 @@ describe("updateProject controller", () => {
       name: "Updated project name",
     };
     const errorThrown = new ProjectNotFoundError(
-      givenRequest.projectId,
       projectNotFoundErrorLanguageMock
     );
     updateProjectUseCaseMock.updateProject.mockImplementationOnce(() => {
