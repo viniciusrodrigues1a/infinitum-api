@@ -2,7 +2,6 @@ import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/e
 import { UpdateProjectUseCase } from "@modules/project/use-cases";
 import { UpdateProjectUseCaseDTO } from "@modules/project/use-cases/DTOs";
 import { NotFutureDateError } from "@shared/entities/errors";
-import { MissingParamsError } from "@shared/presentation/errors";
 import {
   badRequestResponse,
   noContentResponse,
@@ -12,12 +11,12 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
 } from "@shared/use-cases/errors";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
-import { IUpdateProjectControllerLanguage } from "./interfaces/languages";
 
 export type UpdateProjectControllerRequest = Omit<
   UpdateProjectUseCaseDTO,
@@ -30,44 +29,24 @@ export type UpdateProjectControllerRequest = Omit<
 export class UpdateProjectController implements IController {
   constructor(
     private readonly updateProjectUseCase: UpdateProjectUseCase,
-    private readonly updateProjectControllerLanguage: IUpdateProjectControllerLanguage
+    private readonly validation: IValidation
   ) {}
 
-  async handleRequest({
-    projectId,
-    accountEmailMakingRequest,
-    name,
-    description,
-    beginsAt,
-    finishesAt,
-  }: UpdateProjectControllerRequest): Promise<HttpResponse> {
-    const paramsMissing = [];
-
-    if (name !== undefined && typeof name !== "string")
-      paramsMissing.push(
-        this.updateProjectControllerLanguage.getMissingParamsErrorNameParamMessage()
-      );
-    if (description !== undefined && typeof description !== "string")
-      paramsMissing.push(
-        this.updateProjectControllerLanguage.getMissingParamsErrorDescriptionParamMessage()
-      );
-
-    if (paramsMissing.length > 0)
-      return badRequestResponse(
-        new MissingParamsError(
-          paramsMissing,
-          this.updateProjectControllerLanguage
-        )
-      );
-
+  async handleRequest(
+    request: UpdateProjectControllerRequest
+  ): Promise<HttpResponse> {
     try {
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
       await this.updateProjectUseCase.updateProject({
-        projectId,
-        accountEmailMakingRequest,
-        name,
-        description,
-        beginsAt: beginsAt ? new Date(beginsAt) : undefined,
-        finishesAt: finishesAt ? new Date(finishesAt) : undefined,
+        ...request,
+        beginsAt: request.beginsAt ? new Date(request.beginsAt) : undefined,
+        finishesAt: request.finishesAt
+          ? new Date(request.finishesAt)
+          : undefined,
       });
 
       return noContentResponse();

@@ -14,6 +14,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -28,22 +29,23 @@ export type CreateIssueControllerRequest = Omit<
 };
 
 export class CreateIssueController implements IController {
-  constructor(private readonly createIssueUseCase: CreateIssueUseCase) {}
+  constructor(
+    private readonly createIssueUseCase: CreateIssueUseCase,
+    private readonly validation: IValidation
+  ) {}
 
-  async handleRequest({
-    issueGroupId,
-    title,
-    description,
-    expiresAt,
-    accountEmailMakingRequest,
-  }: CreateIssueControllerRequest): Promise<HttpResponse> {
+  async handleRequest(
+    request: CreateIssueControllerRequest
+  ): Promise<HttpResponse> {
     try {
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
       const id = await this.createIssueUseCase.create({
-        issueGroupId,
-        title,
-        description,
-        expiresAt: expiresAt ? new Date(expiresAt) : undefined,
-        accountEmailMakingRequest,
+        ...request,
+        expiresAt: request.expiresAt ? new Date(request.expiresAt) : undefined,
       });
 
       return createdResponse({ id });

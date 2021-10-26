@@ -8,7 +8,6 @@ import {
   IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
   IInvalidRoleNameErrorLanguage,
 } from "@modules/project/entities/interfaces/languages";
-import { ICreateProjectControllerLanguage } from "@modules/project/presentation/controllers/interfaces/languages";
 import {
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
@@ -19,7 +18,12 @@ import {
   IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
-import { IMissingParamsErrorLanguage } from "../interfaces/languages";
+import {
+  IInvalidParamErrorLanguage,
+  IMissingParamsErrorLanguage,
+  INoParamProvidedErrorLanguage,
+  IParamsLanguage,
+} from "../interfaces/languages";
 
 export interface ILanguage
   extends IInvalidEmailErrorLanguage,
@@ -27,7 +31,6 @@ export interface ILanguage
     IInvalidCredentialsErrorLanguage,
     IAccountNotFoundErrorLanguage,
     INotFutureDateErrorLanguage,
-    ICreateProjectControllerLanguage,
     IMissingParamsErrorLanguage,
     IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
     IProjectNotFoundErrorLanguage,
@@ -35,4 +38,7 @@ export interface ILanguage
     IInvalidRoleNameErrorLanguage,
     IRoleInsufficientPermissionErrorLanguage,
     IProjectHasntBegunErrorLanguage,
-    IProjectIsArchivedErrorLanguage {}
+    IProjectIsArchivedErrorLanguage,
+    IParamsLanguage,
+    IInvalidParamErrorLanguage,
+    INoParamProvidedErrorLanguage {}

@@ -3,8 +3,8 @@ import { IBeginsAtMustBeBeforeFinishesAtErrorLanguage } from "@modules/project/e
 import { UpdateProjectUseCase } from "@modules/project/use-cases";
 import { NotFutureDateError } from "@shared/entities/errors";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
-import { MissingParamsError } from "@shared/presentation/errors";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -16,7 +16,6 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import { IUpdateProjectControllerLanguage } from "./interfaces/languages";
 import { UpdateProjectController } from "./UpdateProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -30,78 +29,36 @@ const beginsAtMustBeBeforeFinishesAtErrorLanguageMock =
 
 function makeSut() {
   const updateProjectUseCaseMock = mock<UpdateProjectUseCase>();
-  const updateProjectControllerLanguageMock =
-    mock<IUpdateProjectControllerLanguage>();
+  const validationMock = mock<IValidation>();
   const sut = new UpdateProjectController(
     updateProjectUseCaseMock,
-    updateProjectControllerLanguageMock
+    validationMock
   );
 
-  return { sut, updateProjectUseCaseMock, updateProjectControllerLanguageMock };
+  return {
+    sut,
+    updateProjectUseCaseMock,
+    validationMock,
+  };
 }
 
 describe("updateProject controller", () => {
-  describe("params validation", () => {
-    it("should return HttpStatusCodes.badRequest and throw MissingParamsError if name is not a string", async () => {
-      expect.assertions(2);
+  it("should return HttpStatusCodes.badRequest if validation returns an error", async () => {
+    expect.assertions(2);
 
-      const { sut, updateProjectControllerLanguageMock } = makeSut();
-      const givenRequest = {
-        projectId: "project-id-0",
-        accountEmailMakingRequest: "jorge@email.com",
-        name: 12345 as any,
-        description: "Updated project description",
-      };
-      const errorThrown = new MissingParamsError(
-        [
-          updateProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage(),
-        ],
-        updateProjectControllerLanguageMock
-      );
+    const { sut, validationMock } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmailMakingRequest: "jorge@email.com",
+      name: "Updated project name",
+    };
+    const errReturned = new Error("Validation error");
+    validationMock.validate.mockImplementationOnce(() => errReturned);
 
-      const response = await sut.handleRequest(givenRequest);
+    const response = await sut.handleRequest(givenRequest);
 
-      expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-      expect(response.body).toStrictEqual(errorThrown);
-    });
-
-    it("should return HttpStatusCodes.badRequest and throw MissingParamsError if description is not a string", async () => {
-      expect.assertions(2);
-
-      const { sut, updateProjectControllerLanguageMock } = makeSut();
-      const givenRequest = {
-        projectId: "project-id-0",
-        accountEmailMakingRequest: "jorge@email.com",
-        name: "Updated project name",
-        description: ["Updated project description"] as any,
-      };
-      const errorThrown = new MissingParamsError(
-        [
-          updateProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage(),
-        ],
-        updateProjectControllerLanguageMock
-      );
-
-      const response = await sut.handleRequest(givenRequest);
-
-      expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-      expect(response.body).toStrictEqual(errorThrown);
-    });
-
-    it("should return HttpStatusCodes.noContent even if name or description was not provided", async () => {
-      expect.assertions(1);
-
-      const { sut } = makeSut();
-      const givenRequest = {
-        projectId: "project-id-0",
-        accountEmailMakingRequest: "jorge@email.com",
-        beginsAt: new Date().toISOString(),
-      };
-
-      const response = await sut.handleRequest(givenRequest);
-
-      expect(response.statusCode).toBe(HttpStatusCodes.noContent);
-    });
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toBe(errReturned);
   });
 
   it("should return HttpStatusCodes.noContent and call the use-case", async () => {

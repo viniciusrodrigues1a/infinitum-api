@@ -6,6 +6,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { IValidation } from "@shared/presentation/validation";
 import { ILoginRepository } from "../interfaces/repositories";
 
 type LoginControllerRequest = {
@@ -14,14 +15,19 @@ type LoginControllerRequest = {
 };
 
 export class LoginController implements IController {
-  constructor(private readonly loginRepository: ILoginRepository) {}
+  constructor(
+    private readonly loginRepository: ILoginRepository,
+    private readonly validation: IValidation
+  ) {}
 
-  async handleRequest({
-    email,
-    password,
-  }: LoginControllerRequest): Promise<HttpResponse> {
+  async handleRequest(request: LoginControllerRequest): Promise<HttpResponse> {
     try {
-      const token = await this.loginRepository.login({ email, password });
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
+      const token = await this.loginRepository.login(request);
 
       return okResponse({ token });
     } catch (err) {

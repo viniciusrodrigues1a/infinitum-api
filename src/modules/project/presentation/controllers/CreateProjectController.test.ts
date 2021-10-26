@@ -4,13 +4,12 @@ import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { NotFutureDateError } from "@shared/entities/errors";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
-import { IMissingParamsErrorLanguage } from "@shared/presentation/interfaces/languages";
+import { IValidation } from "@shared/presentation/validation";
 import { mock } from "jest-mock-extended";
 import {
   CreateProjectController,
   CreateProjectControllerRequest,
 } from "./CreateProjectController";
-import { ICreateProjectControllerLanguage } from "./interfaces/languages";
 
 const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
 notFutureDateErrorLanguageMock.getNotFutureDateErrorMessage.mockReturnValue(
@@ -24,33 +23,38 @@ beginsAtMustBeBeforeFinishesAtErrorLanguageMock.getBeginsAtMustBeBeforeFinishesA
 
 function makeSut() {
   const createProjectUseCaseMock = mock<CreateProjectUseCase>();
-  const createProjectControllerLanguageMock =
-    mock<ICreateProjectControllerLanguage>();
-  createProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage.mockReturnValue(
-    "name"
-  );
-  createProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage.mockReturnValue(
-    "description"
-  );
-  const missingParamsErrorLanguageMock = mock<IMissingParamsErrorLanguage>();
-  missingParamsErrorLanguageMock.getMissingParamsErrorMessage.mockReturnValue(
-    "mocked missingParams message"
-  );
+  const validationMock = mock<IValidation>();
   const sut = new CreateProjectController(
     createProjectUseCaseMock,
-    createProjectControllerLanguageMock,
-    missingParamsErrorLanguageMock
+    validationMock
   );
 
   return {
     sut,
     createProjectUseCaseMock,
-    createProjectControllerLanguageMock,
-    missingParamsErrorLanguageMock,
+    validationMock,
   };
 }
 
 describe("createProject controller", () => {
+  it("should return HttpStatusCodes.badRequest if validation returns an error", async () => {
+    expect.assertions(2);
+
+    const { sut, validationMock } = makeSut();
+    const givenProject = {
+      name: "my project",
+      description: "my project's description",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    const errReturned = new Error("Validation error");
+    validationMock.validate.mockImplementationOnce(() => errReturned);
+
+    const response = await sut.handleRequest(givenProject);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toBe(errReturned);
+  });
+
   it("should return HttpStatusCodes.created with the project id", async () => {
     expect.assertions(3);
 
@@ -87,64 +91,6 @@ describe("createProject controller", () => {
     const response = await sut.handleRequest(givenProject);
 
     expect(response.statusCode).toBe(HttpStatusCodes.serverError);
-  });
-
-  it("should return HttpStatusCodes.badRequest if name is not a string", async () => {
-    expect.assertions(2);
-
-    const { sut, createProjectControllerLanguageMock } = makeSut();
-    const givenProject = {
-      name: new Date() as unknown,
-      description: "my project's description",
-      accountEmailMakingRequest: "jorge@email.com",
-    } as CreateProjectControllerRequest;
-
-    const response = await sut.handleRequest(givenProject);
-
-    const expectedParamsMissing = [
-      createProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage(),
-    ];
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body.params).toStrictEqual(expectedParamsMissing);
-  });
-
-  it("should return HttpStatusCodes.badRequest if description is not a string", async () => {
-    expect.assertions(2);
-
-    const { sut, createProjectControllerLanguageMock } = makeSut();
-    const givenProject = {
-      name: "my project",
-      description: 12345 as unknown,
-      accountEmailMakingRequest: "jorge@email.com",
-    } as CreateProjectControllerRequest;
-
-    const response = await sut.handleRequest(givenProject);
-
-    const expectedParamsMissing = [
-      createProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage(),
-    ];
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body.params).toStrictEqual(expectedParamsMissing);
-  });
-
-  it("should return HttpStatusCodes.badRequest if name AND description are not a string", async () => {
-    expect.assertions(2);
-
-    const { sut, createProjectControllerLanguageMock } = makeSut();
-    const givenProject = {
-      name: 123 as unknown,
-      description: [1, 2] as unknown,
-      accountEmailMakingRequest: "jorge@email.com",
-    } as CreateProjectControllerRequest;
-
-    const response = await sut.handleRequest(givenProject);
-
-    const expectedParamsMissing = [
-      createProjectControllerLanguageMock.getMissingParamsErrorNameParamMessage(),
-      createProjectControllerLanguageMock.getMissingParamsErrorDescriptionParamMessage(),
-    ];
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body.params).toStrictEqual(expectedParamsMissing);
   });
 
   it("should return HttpStatusCodes.badRequest if NotFutureDateError is thrown", async () => {

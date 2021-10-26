@@ -7,6 +7,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { IValidation } from "@shared/presentation/validation";
 import { IRegisterRepository } from "../interfaces/repositories";
 
 export type RegisterControllerRequest = {
@@ -17,16 +18,20 @@ export type RegisterControllerRequest = {
 
 export class RegisterController implements IController {
   constructor(
-    private readonly registerAccountRepository: IRegisterRepository
+    private readonly registerAccountRepository: IRegisterRepository,
+    private readonly validation: IValidation
   ) {}
 
-  async handleRequest({
-    name,
-    email,
-    password,
-  }: RegisterControllerRequest): Promise<HttpResponse> {
+  async handleRequest(
+    request: RegisterControllerRequest
+  ): Promise<HttpResponse> {
     try {
-      await this.registerAccountRepository.create({ name, email, password });
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
+      await this.registerAccountRepository.create(request);
 
       return noContentResponse();
     } catch (err) {

@@ -9,6 +9,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { IValidation } from "@shared/presentation/validation";
 import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
 import {
   NotParticipantInProjectError,
@@ -21,20 +22,20 @@ export type CreateIssueGroupForProjectControllerRequest =
 
 export class CreateIssueGroupForProjectController implements IController {
   constructor(
-    private readonly createIssueGroupForProjectUseCase: CreateIssueGroupForProjectUseCase
+    private readonly createIssueGroupForProjectUseCase: CreateIssueGroupForProjectUseCase,
+    private readonly validation: IValidation
   ) {}
 
-  async handleRequest({
-    title,
-    projectId,
-    accountEmailMakingRequest,
-  }: CreateIssueGroupForProjectControllerRequest): Promise<HttpResponse> {
+  async handleRequest(
+    request: CreateIssueGroupForProjectControllerRequest
+  ): Promise<HttpResponse> {
     try {
-      const id = await this.createIssueGroupForProjectUseCase.create({
-        title,
-        projectId,
-        accountEmailMakingRequest,
-      });
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
+      const id = await this.createIssueGroupForProjectUseCase.create(request);
 
       return createdResponse({ id });
     } catch (err) {

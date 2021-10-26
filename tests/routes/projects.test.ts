@@ -3,7 +3,10 @@ import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountN
 import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/errors";
 import { NotFutureDateError } from "@shared/entities/errors";
 import { configuration, connection } from "@shared/infra/database/connection";
-import { MissingParamsError } from "@shared/presentation/errors";
+import {
+  InvalidParamError,
+  MissingParamsError,
+} from "@shared/presentation/errors";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -120,7 +123,7 @@ describe("/projects/ endpoint", () => {
 
       expect(response.statusCode).toBe(400);
       const expectedBody = new MissingParamsError(
-        [defaultLanguage.getMissingParamsErrorNameParamMessage()],
+        [defaultLanguage.getNameParamMessage()],
         defaultLanguage
       ).message;
       expect(response.body.error.message).toBe(expectedBody);
@@ -141,8 +144,8 @@ describe("/projects/ endpoint", () => {
         .send(givenBody);
 
       expect(response.statusCode).toBe(400);
-      const expectedBody = new MissingParamsError(
-        [defaultLanguage.getMissingParamsErrorDescriptionParamMessage()],
+      const expectedBody = new InvalidParamError(
+        defaultLanguage.getDescriptionParamMessage(),
         defaultLanguage
       ).message;
       expect(response.body.error.message).toBe(expectedBody);
@@ -163,14 +166,18 @@ describe("/projects/ endpoint", () => {
         .send(givenBody);
 
       expect(response.statusCode).toBe(400);
-      const expectedBody = new MissingParamsError(
-        [
-          defaultLanguage.getMissingParamsErrorNameParamMessage(),
-          defaultLanguage.getMissingParamsErrorDescriptionParamMessage(),
-        ],
+      const invalidNameParamBodyMessage = new InvalidParamError(
+        defaultLanguage.getNameParamMessage(),
         defaultLanguage
       ).message;
-      expect(response.body.error.message).toBe(expectedBody);
+      const invalidDescriptionParamBodyMessage = new InvalidParamError(
+        defaultLanguage.getNameParamMessage(),
+        defaultLanguage
+      ).message;
+      const oneOfTwoMessages =
+        response.body.error.message === invalidNameParamBodyMessage ||
+        response.body.error.message === invalidDescriptionParamBodyMessage;
+      expect(oneOfTwoMessages).toBeTruthy();
     });
 
     it("should return 404 if account doesn't exist", async () => {

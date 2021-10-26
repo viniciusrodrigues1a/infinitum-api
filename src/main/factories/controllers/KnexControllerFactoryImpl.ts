@@ -19,14 +19,18 @@ import {
 } from "@main/factories/use-cases";
 import { CreateIssueController } from "@modules/issue/presentation/controllers";
 import { IControllerFactory } from "./IControllerFactory";
+import { ControllerValidationFactory } from "../validation";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
+  private validationFactory: ControllerValidationFactory =
+    new ControllerValidationFactory();
 
   makeCreateIssueController(language: ILanguage): CreateIssueController {
     return new CreateIssueController(
-      this.useCaseFactory.makeCreateIssueUseCase(language)
+      this.useCaseFactory.makeCreateIssueUseCase(language),
+      this.validationFactory.makeCreateIssueControllerValidation(language)
     );
   }
 
@@ -34,7 +38,10 @@ class KnexControllerFactoryImpl implements IControllerFactory {
     language: ILanguage
   ): CreateIssueGroupForProjectController {
     return new CreateIssueGroupForProjectController(
-      this.useCaseFactory.makeCreateIssueGroupForProjectUseCase(language)
+      this.useCaseFactory.makeCreateIssueGroupForProjectUseCase(language),
+      this.validationFactory.makeCreateIssueGroupForProjectControllerValidation(
+        language
+      )
     );
   }
 
@@ -47,7 +54,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   makeUpdateProjectController(language: ILanguage): UpdateProjectController {
     return new UpdateProjectController(
       this.useCaseFactory.makeUpdateProjectUseCase(language),
-      language
+      this.validationFactory.makeUpdateProjectControllerValidation(language)
     );
   }
 
@@ -60,8 +67,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   makeCreateProjectController(language: ILanguage): CreateProjectController {
     return new CreateProjectController(
       this.useCaseFactory.makeCreateProjectUseCase(language),
-      language,
-      language
+      this.validationFactory.makeCreateProjectControllerValidation(language)
     );
   }
 
@@ -73,13 +79,15 @@ class KnexControllerFactoryImpl implements IControllerFactory {
 
   makeLoginController(language: ILanguage): LoginController {
     return new LoginController(
-      this.repositoryFactory.makeLoginRepository(language)
+      this.repositoryFactory.makeLoginRepository(language),
+      this.validationFactory.makeLoginControllerValidation(language)
     );
   }
 
   makeRegisterController(language: ILanguage): RegisterController {
     return new RegisterController(
-      this.repositoryFactory.makeRegisterRepository(language)
+      this.repositoryFactory.makeRegisterRepository(language),
+      this.validationFactory.makeRegisterControllerValidation(language)
     );
   }
 }

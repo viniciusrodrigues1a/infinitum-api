@@ -10,6 +10,7 @@ import {
 import { NotFutureDateError } from "@shared/entities/errors";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -36,12 +37,32 @@ const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
 
 function makeSut() {
   const createIssueUseCaseMock = mock<CreateIssueUseCase>();
-  const sut = new CreateIssueController(createIssueUseCaseMock);
+  const validationMock = mock<IValidation>();
+  const sut = new CreateIssueController(createIssueUseCaseMock, validationMock);
 
-  return { sut, createIssueUseCaseMock };
+  return { sut, createIssueUseCaseMock, validationMock };
 }
 
 describe("createIssue controller", () => {
+  it("should return HttpStatusCodes.badRequest if validation returns an error", async () => {
+    expect.assertions(2);
+
+    const { sut, validationMock } = makeSut();
+    const givenRequest = {
+      issueGroupId: "ig-id-0",
+      title: "My issue",
+      description: "My issue's description",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    const errReturned = new Error("Validation error");
+    validationMock.validate.mockImplementationOnce(() => errReturned);
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toBe(errReturned);
+  });
+
   it("should return HttpStatusCodes.created with the issue's id", async () => {
     expect.assertions(2);
 

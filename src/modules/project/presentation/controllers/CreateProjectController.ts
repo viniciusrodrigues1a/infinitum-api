@@ -2,7 +2,6 @@ import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/e
 import { CreateProjectUseCase } from "@modules/project/use-cases";
 import { CreateProjectDTO } from "@modules/project/use-cases/DTOs";
 import { NotFutureDateError } from "@shared/entities/errors";
-import { MissingParamsError } from "@shared/presentation/errors";
 import {
   badRequestResponse,
   createdResponse,
@@ -10,12 +9,11 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
-import { IMissingParamsErrorLanguage } from "@shared/presentation/interfaces/languages";
-import { ICreateProjectControllerLanguage } from "./interfaces/languages";
+import { IValidation } from "@shared/presentation/validation";
 
 export type CreateProjectControllerRequest = Omit<
   CreateProjectDTO,
-  "issues" | "participants" | "beginsAt" | "finishesAt"
+  "issues" | "participants" | "beginsAt" | "finishesAt" | "projectId"
 > & {
   beginsAt?: string;
   finishesAt?: string;
@@ -24,40 +22,24 @@ export type CreateProjectControllerRequest = Omit<
 export class CreateProjectController implements IController {
   constructor(
     private readonly createProjectUseCase: CreateProjectUseCase,
-    private readonly createProjectControllerLanguage: ICreateProjectControllerLanguage,
-    private readonly missingParamsErrorLanguage: IMissingParamsErrorLanguage
+    private readonly validation: IValidation
   ) {}
 
-  async handleRequest({
-    name,
-    description,
-    beginsAt,
-    finishesAt,
-    accountEmailMakingRequest,
-  }: CreateProjectControllerRequest): Promise<HttpResponse> {
-    const paramsMissing = [];
-
-    if (typeof name !== "string")
-      paramsMissing.push(
-        this.createProjectControllerLanguage.getMissingParamsErrorNameParamMessage()
-      );
-    if (typeof description !== "string")
-      paramsMissing.push(
-        this.createProjectControllerLanguage.getMissingParamsErrorDescriptionParamMessage()
-      );
-
-    if (paramsMissing.length > 0)
-      return badRequestResponse(
-        new MissingParamsError(paramsMissing, this.missingParamsErrorLanguage)
-      );
-
+  async handleRequest(
+    request: CreateProjectControllerRequest
+  ): Promise<HttpResponse> {
     try {
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
       const id = await this.createProjectUseCase.create({
-        name,
-        description,
-        beginsAt: beginsAt ? new Date(beginsAt) : undefined,
-        finishesAt: finishesAt ? new Date(finishesAt) : undefined,
-        accountEmailMakingRequest,
+        ...request,
+        beginsAt: request.beginsAt ? new Date(request.beginsAt) : undefined,
+        finishesAt: request.finishesAt
+          ? new Date(request.finishesAt)
+          : undefined,
       });
 
       return createdResponse({ id });

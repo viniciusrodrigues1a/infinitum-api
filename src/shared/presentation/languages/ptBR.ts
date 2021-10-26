@@ -1,6 +1,54 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getExpiresAtParamMessage(): string {
+    return "data de expiração";
+  }
+
+  getIssueGroupIdParamMessage(): string {
+    return "id da seção de issues";
+  }
+
+  getProjectIdParamMessage(): string {
+    return "id do projeto";
+  }
+
+  getTitleParamMessage(): string {
+    return "título";
+  }
+
+  getDescriptionParamMessage(): string {
+    return "descrição";
+  }
+
+  getBeginsAtParamMessage(): string {
+    return "data de início";
+  }
+
+  getFinishesAtParamMessage(): string {
+    return "data de término";
+  }
+
+  getNameParamMessage(): string {
+    return "nome";
+  }
+
+  getEmailParamMessage(): string {
+    return "email";
+  }
+
+  getPasswordParamMessage(): string {
+    return "senha";
+  }
+
+  getNoParamProvidedErrorMessage(): string {
+    return "Nenhum parâmetro foi especificado";
+  }
+
+  getInvalidParamErrorMessage(param: string): string {
+    return `Parâmetro inválido: ${param}`;
+  }
+
   getProjectHasntBegunErrorMessage(): string {
     return "Este projeto ainda não começou";
   }
@@ -29,14 +77,6 @@ export class PTBRLanguage implements ILanguage {
 
   getBeginsAtMustBeBeforeFinishesAtErrorMessage(): string {
     return "Data de término não pode ser antes da data de começo";
-  }
-
-  getMissingParamsErrorNameParamMessage(): string {
-    return "nome";
-  }
-
-  getMissingParamsErrorDescriptionParamMessage(): string {
-    return "descrição";
   }
 
   getMissingParamsErrorMessage(params: string[]): string {
