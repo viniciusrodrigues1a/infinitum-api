@@ -20,6 +20,13 @@ import {
 } from "@shared/use-cases/errors";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
 
+export type CreateIssueControllerRequest = Omit<
+  CreateIssueUseCaseDTO,
+  "expiresAt"
+> & {
+  expiresAt?: string;
+};
+
 export class CreateIssueController implements IController {
   constructor(private readonly createIssueUseCase: CreateIssueUseCase) {}
 
@@ -29,13 +36,13 @@ export class CreateIssueController implements IController {
     description,
     expiresAt,
     accountEmailMakingRequest,
-  }: CreateIssueUseCaseDTO): Promise<HttpResponse> {
+  }: CreateIssueControllerRequest): Promise<HttpResponse> {
     try {
       const id = await this.createIssueUseCase.create({
         projectId,
         title,
         description,
-        expiresAt,
+        expiresAt: expiresAt ? new Date(expiresAt) : undefined,
         accountEmailMakingRequest,
       });
 

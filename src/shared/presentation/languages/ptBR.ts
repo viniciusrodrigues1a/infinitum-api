@@ -1,6 +1,14 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getProjectHasntBegunErrorMessage(): string {
+    return "Este projeto ainda não começou";
+  }
+
+  getProjectIsArchivedErrorMessage(): string {
+    return "Este projeto está arquivado";
+  }
+
   getNotParticipantInProjectErrorMessage(
     participantIdentifier: string
   ): string {
@@ -8,7 +16,7 @@ export class PTBRLanguage implements ILanguage {
   }
 
   getInvalidRoleNameErrorLanguage(_name: string): string {
-    throw new Error("Method not implemented.");
+    return "Função no projeto não é válida";
   }
 
   getRoleInsufficientPermissionErrorMessage(_roleIdentifier: string): string {

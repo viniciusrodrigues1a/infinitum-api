@@ -17,11 +17,18 @@ import {
   IUseCaseFactory,
   knexUseCaseFactoryImpl,
 } from "@main/factories/use-cases";
+import { CreateIssueController } from "@modules/issue/presentation/controllers";
 import { IControllerFactory } from "./IControllerFactory";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
+
+  makeCreateIssueController(language: ILanguage): CreateIssueController {
+    return new CreateIssueController(
+      this.useCaseFactory.makeCreateIssueUseCase(language)
+    );
+  }
 
   makeCreateIssueGroupForProjectController(
     language: ILanguage

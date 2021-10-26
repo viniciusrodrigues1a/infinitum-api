@@ -1,6 +1,14 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getProjectHasntBegunErrorMessage(): string {
+    return "This project hasn't begun yet";
+  }
+
+  getProjectIsArchivedErrorMessage(): string {
+    return "This project is archived";
+  }
+
   getNotParticipantInProjectErrorMessage(
     participantIdentifier: string
   ): string {

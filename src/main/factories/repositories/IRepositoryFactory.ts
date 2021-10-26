@@ -8,6 +8,7 @@ import {
   IFindOneAccountRepository,
   IDoesAccountExistRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
+import { KnexIssueRepository } from "@modules/issue/infra/repositories";
 import { KnexProjectRepository } from "@modules/project/infra/repositories";
 import { ICreateProjectRepository } from "@modules/project/use-cases/interfaces/repositories";
 
@@ -19,4 +20,5 @@ export interface IRepositoryFactory {
   makeCreateProjectRepository(): ICreateProjectRepository;
   makeProjectRepository(): KnexProjectRepository;
   makeAccountRepository(): KnexAccountRepository;
+  makeIssueRepository(): KnexIssueRepository;
 }

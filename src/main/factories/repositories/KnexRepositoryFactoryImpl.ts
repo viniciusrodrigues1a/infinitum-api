@@ -12,11 +12,16 @@ import {
   IDoesAccountExistRepository,
   IFindOneAccountRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
+import { KnexIssueRepository } from "@modules/issue/infra/repositories";
 import { KnexProjectRepository } from "@modules/project/infra/repositories/KnexProjectRepository";
 import { ICreateProjectRepository } from "@modules/project/use-cases/interfaces/repositories";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeIssueRepository(): KnexIssueRepository {
+    return new KnexIssueRepository();
+  }
+
   makeCreateProjectRepository(): ICreateProjectRepository {
     return this.makeProjectRepository();
   }

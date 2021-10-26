@@ -1,5 +1,6 @@
 import { ILanguage } from "@modules/account/presentation/languages";
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
+import { CreateIssueUseCase } from "@modules/issue/use-cases";
 import {
   CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
@@ -17,4 +18,5 @@ export interface IUseCaseFactory {
   makeCreateIssueGroupForProjectUseCase(
     language: ILanguage
   ): CreateIssueGroupForProjectUseCase;
+  makeCreateIssueUseCase(language: ILanguage): CreateIssueUseCase;
 }

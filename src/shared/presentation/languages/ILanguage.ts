@@ -9,6 +9,10 @@ import {
   IInvalidRoleNameErrorLanguage,
 } from "@modules/project/entities/interfaces/languages";
 import { ICreateProjectControllerLanguage } from "@modules/project/presentation/controllers/interfaces/languages";
+import {
+  IProjectHasntBegunErrorLanguage,
+  IProjectIsArchivedErrorLanguage,
+} from "@modules/project/use-cases/interfaces/languages";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   INotParticipantInProjectErrorLanguage,
@@ -29,4 +33,6 @@ export interface ILanguage
     IProjectNotFoundErrorLanguage,
     INotParticipantInProjectErrorLanguage,
     IInvalidRoleNameErrorLanguage,
-    IRoleInsufficientPermissionErrorLanguage {}
+    IRoleInsufficientPermissionErrorLanguage,
+    IProjectHasntBegunErrorLanguage,
+    IProjectIsArchivedErrorLanguage {}
