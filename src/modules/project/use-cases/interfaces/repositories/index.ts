@@ -9,3 +9,4 @@ export * from "./ICreateIssueGroupForProjectRepository";
 export * from "./IHasProjectBegunRepository";
 export * from "./IIsProjectArchivedRepository";
 export * from "./IFindProjectIdByIssueGroupIdRepository";
+export * from "./IFindProjectIdByIssueIdRepository";
