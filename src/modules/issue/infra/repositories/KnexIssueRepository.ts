@@ -1,8 +1,29 @@
 import { CreateIssueRepositoryDTO } from "@modules/issue/use-cases/DTOs";
-import { ICreateIssueRepository } from "@modules/issue/use-cases/interfaces/repositories";
+import {
+  ICreateIssueRepository,
+  IDoesIssueExistRepository,
+} from "@modules/issue/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 
-export class KnexIssueRepository implements ICreateIssueRepository {
+export class KnexIssueRepository
+  implements ICreateIssueRepository, IDoesIssueExistRepository
+{
+  async doesIssueExist(issueId: string): Promise<boolean> {
+    try {
+      const issue = await connection("issue")
+        .select("id")
+        .where({ id: issueId })
+        .first();
+
+      return !!issue;
+    } catch (err) {
+      if (err.message.includes("invalid input syntax for type uuid"))
+        return false;
+
+      throw err;
+    }
+  }
+
   async createIssue({
     title,
     description,
