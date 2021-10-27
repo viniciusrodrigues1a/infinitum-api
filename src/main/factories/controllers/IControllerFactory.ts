@@ -2,7 +2,10 @@ import { FindOneAccountController } from "@modules/account/presentation/controll
 import { LoginController } from "@modules/account/presentation/controllers/LoginController";
 import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
 import { ILanguage } from "@modules/account/presentation/languages";
-import { CreateIssueController } from "@modules/issue/presentation/controllers";
+import {
+  CreateIssueController,
+  DeleteIssueController,
+} from "@modules/issue/presentation/controllers";
 import {
   CreateProjectController,
   DeleteProjectController,
@@ -23,4 +26,5 @@ export interface IControllerFactory {
     language: ILanguage
   ): CreateIssueGroupForProjectController;
   makeCreateIssueController(language: ILanguage): CreateIssueController;
+  makeDeleteIssueController(language: ILanguage): DeleteIssueController;
 }

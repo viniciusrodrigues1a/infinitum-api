@@ -4,6 +4,7 @@ import {
   IAccountNotFoundErrorLanguage,
   IEmailAlreadyInUseErrorLanguage,
 } from "@modules/account/use-cases/interfaces/languages";
+import { IIssueNotFoundErrorLanguage } from "@modules/issue/use-cases/interfaces/languages";
 import {
   IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
   IInvalidRoleNameErrorLanguage,
@@ -41,4 +42,5 @@ export interface ILanguage
     IProjectIsArchivedErrorLanguage,
     IParamsLanguage,
     IInvalidParamErrorLanguage,
-    INoParamProvidedErrorLanguage {}
+    INoParamProvidedErrorLanguage,
+    IIssueNotFoundErrorLanguage {}

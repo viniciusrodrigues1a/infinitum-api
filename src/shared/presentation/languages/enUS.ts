@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getIssueNotFoundErrorMessage(): string {
+    return "Issue not found";
+  }
+
   getExpiresAtParamMessage(): string {
     return "expires at";
   }

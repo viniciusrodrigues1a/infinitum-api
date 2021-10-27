@@ -12,10 +12,28 @@ import {
   knexRepositoryFactoryImpl,
 } from "@main/factories/repositories";
 import { CreateIssueUseCase } from "@modules/issue/use-cases";
+import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
 import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeDeleteIssueUseCase(language: ILanguage): DeleteIssueUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    const issueRepository = this.repositoryFactory.makeIssueRepository();
+    return new DeleteIssueUseCase(
+      issueRepository,
+      issueRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeCreateIssueUseCase(language: ILanguage): CreateIssueUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

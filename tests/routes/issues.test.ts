@@ -1,4 +1,5 @@
 import { jwtToken } from "@modules/account/infra/authentication";
+import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
 import {
   ProjectHasntBegunError,
   ProjectIsArchivedError,
@@ -13,12 +14,15 @@ import {
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
+  RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
 import { api, defaultLanguage } from "../helpers";
 
 describe("/issues/ endpoint", () => {
   let authorizationToken: string;
   let accountId: string;
+  let issueGroupId: string;
+  let projectId: string;
 
   beforeEach(async () => {
     await connection.migrate.latest(configuration.migrations);
@@ -35,6 +39,20 @@ describe("/issues/ endpoint", () => {
     });
 
     authorizationToken = jwtToken.sign({ email: accountEmail });
+
+    const authHeader = { authorization: `Bearer ${authorizationToken}` };
+
+    const projectsResponse = await api.post("/projects/").set(authHeader).send({
+      name: "my project",
+      description: "my project's description",
+    });
+    projectId = projectsResponse.body.id;
+
+    const issueGroupsResponse = await api
+      .post("/issueGroups/")
+      .set(authHeader)
+      .send({ projectId, title: "My issue" });
+    issueGroupId = issueGroupsResponse.body.id;
   });
 
   afterEach(async () => {
@@ -45,28 +63,126 @@ describe("/issues/ endpoint", () => {
     await connection.destroy();
   });
 
-  describe("method POST /", () => {
-    let issueGroupId: string;
-    let projectId: string;
+  describe("routes with an issue already created", () => {
+    let issueId: string;
     beforeEach(async () => {
-      const authHeader = { authorization: `Bearer ${authorizationToken}` };
-
-      const projectsResponse = await api
-        .post("/projects/")
-        .set(authHeader)
+      const {
+        body: { id },
+      } = await api
+        .post("/issues/")
+        .set({ authorization: `Bearer ${authorizationToken}` })
         .send({
-          name: "my project",
-          description: "my project's description",
+          issueGroupId,
+          title: "My issue",
+          description: "My issue's description",
         });
-      projectId = projectsResponse.body.id;
-
-      const issueGroupsResponse = await api
-        .post("/issueGroups/")
-        .set(authHeader)
-        .send({ projectId, title: "My issue" });
-      issueGroupId = issueGroupsResponse.body.id;
+      issueId = id;
     });
 
+    describe("method DELETE /", () => {
+      it("should return 204", async () => {
+        expect.assertions(1);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .delete(`/issues/${issueId}`)
+          .set(givenAuthHeader);
+
+        expect(response.statusCode).toBe(204);
+      });
+
+      it("should return 404 if issue cannot be found", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .delete("/issues/issue-id-1233124421512")
+          .set(givenAuthHeader);
+
+        expect(response.statusCode).toBe(404);
+        const expectedBodyMessage = new IssueNotFoundError(defaultLanguage)
+          .message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if account doesn't participate in project", async () => {
+        expect.assertions(2);
+
+        const notParticipantEmail = "notparticipant@email.com";
+        await connection("account").insert({
+          id: "account-id-1",
+          name: "jorge",
+          email: notParticipantEmail,
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        });
+        const authorizationTokenWithDifferentEmail = jwtToken.sign({
+          email: notParticipantEmail,
+        });
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationTokenWithDifferentEmail}`,
+        };
+
+        const response = await api
+          .delete(`/issues/${issueId}`)
+          .set(givenAuthHeader);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new NotParticipantInProjectError(
+          notParticipantEmail,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 401 if participant doesn't have sufficient permission", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const nowMs = new Date().getTime();
+        const yesterdayIso = new Date(nowMs - 86400 * 1000).toISOString();
+        const givenBody = {
+          issueGroupId,
+          title: "My issue",
+          description: "My issue's description",
+          expiresAt: yesterdayIso,
+        };
+        const roleName = "espectator";
+        const { id: memberRoleId } = await connection("project_role")
+          .select("id")
+          .where({ name: roleName })
+          .first();
+        await connection("account_project_project_role")
+          .update({
+            project_role_id: memberRoleId,
+          })
+          .where({ account_id: accountId });
+
+        const response = await api
+          .delete(`/issues/${issueId}`)
+          .set(givenAuthHeader)
+          .send(givenBody);
+
+        expect(response.statusCode).toBe(401);
+        const expectedBodyMessage = new RoleInsufficientPermissionError(
+          roleName,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+    });
+  });
+
+  describe("method POST /", () => {
     describe("params validation", () => {
       it("should return 400 if title is missing", async () => {
         expect.assertions(2);
@@ -437,6 +553,42 @@ describe("/issues/ endpoint", () => {
       expect(response.statusCode).toBe(400);
       const expectedBodyMessage = new NotFutureDateError(
         new Date(yesterdayIso),
+        defaultLanguage
+      ).message;
+      expect(response.body.error.message).toBe(expectedBodyMessage);
+    });
+
+    it("should return 401 if participant doesn't have sufficient permission", async () => {
+      expect.assertions(2);
+
+      const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
+      const nowMs = new Date().getTime();
+      const yesterdayIso = new Date(nowMs - 86400 * 1000).toISOString();
+      const givenBody = {
+        issueGroupId,
+        title: "My issue",
+        description: "My issue's description",
+        expiresAt: yesterdayIso,
+      };
+      const roleName = "espectator";
+      const { id: memberRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: roleName })
+        .first();
+      await connection("account_project_project_role")
+        .update({
+          project_role_id: memberRoleId,
+        })
+        .where({ account_id: accountId });
+
+      const response = await api
+        .post("/issues/")
+        .set(givenAuthHeader)
+        .send(givenBody);
+
+      expect(response.statusCode).toBe(401);
+      const expectedBodyMessage = new RoleInsufficientPermissionError(
+        roleName,
         defaultLanguage
       ).message;
       expect(response.body.error.message).toBe(expectedBodyMessage);

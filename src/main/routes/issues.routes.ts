@@ -20,3 +20,10 @@ issuesRoutes.post(
     knexControllerFactoryImpl.makeCreateIssueController(language)
   )
 );
+
+issuesRoutes.delete(
+  "/:issueId",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeDeleteIssueController(language)
+  )
+);

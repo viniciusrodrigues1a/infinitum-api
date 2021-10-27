@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getIssueNotFoundErrorMessage(): string {
+    return "Ticket não encontrado";
+  }
+
   getExpiresAtParamMessage(): string {
     return "data de expiração";
   }

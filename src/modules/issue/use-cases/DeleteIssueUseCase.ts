@@ -63,7 +63,7 @@ export class DeleteIssueUseCase {
       });
     if (!doesParticipantExist) {
       throw new NotParticipantInProjectError(
-        projectId,
+        accountEmailMakingRequest,
         this.notParticipantInProjectErrorLanguage
       );
     }

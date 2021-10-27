@@ -17,7 +17,10 @@ import {
   IUseCaseFactory,
   knexUseCaseFactoryImpl,
 } from "@main/factories/use-cases";
-import { CreateIssueController } from "@modules/issue/presentation/controllers";
+import {
+  CreateIssueController,
+  DeleteIssueController,
+} from "@modules/issue/presentation/controllers";
 import { IControllerFactory } from "./IControllerFactory";
 import { ControllerValidationFactory } from "../validation";
 
@@ -26,6 +29,12 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeDeleteIssueController(language: ILanguage): DeleteIssueController {
+    return new DeleteIssueController(
+      this.useCaseFactory.makeDeleteIssueUseCase(language)
+    );
+  }
 
   makeCreateIssueController(language: ILanguage): CreateIssueController {
     return new CreateIssueController(
