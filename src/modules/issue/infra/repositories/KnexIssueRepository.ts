@@ -1,13 +1,21 @@
 import { CreateIssueRepositoryDTO } from "@modules/issue/use-cases/DTOs";
 import {
   ICreateIssueRepository,
+  IDeleteIssueRepository,
   IDoesIssueExistRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 
 export class KnexIssueRepository
-  implements ICreateIssueRepository, IDoesIssueExistRepository
+  implements
+    ICreateIssueRepository,
+    IDoesIssueExistRepository,
+    IDeleteIssueRepository
 {
+  async deleteIssue(issueId: string): Promise<void> {
+    await connection("issue").where({ id: issueId }).del();
+  }
+
   async doesIssueExist(issueId: string): Promise<boolean> {
     try {
       const issue = await connection("issue")
