@@ -16,6 +16,7 @@ import {
   IHasProjectBegunRepository,
   IIsProjectArchivedRepository,
   IFindProjectIdByIssueGroupIdRepository,
+  IFindProjectIdByIssueIdRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import {
@@ -35,8 +36,24 @@ export class KnexProjectRepository
     ICreateIssueGroupForProjectRepository,
     IHasProjectBegunRepository,
     IIsProjectArchivedRepository,
-    IFindProjectIdByIssueGroupIdRepository
+    IFindProjectIdByIssueGroupIdRepository,
+    IFindProjectIdByIssueIdRepository
 {
+  async findProjectIdByIssueId(issueId: string): Promise<string | undefined> {
+    const issue = await connection("issue")
+      .select("issue_group_id")
+      .where({ id: issueId })
+      .first();
+
+    if (!issue) return undefined;
+
+    const projectId = await this.findProjectIdByIssueGroupId(
+      issue.issue_group_id
+    );
+
+    return projectId;
+  }
+
   async findProjectIdByIssueGroupId(
     issueGroupId: string
   ): Promise<string | undefined> {

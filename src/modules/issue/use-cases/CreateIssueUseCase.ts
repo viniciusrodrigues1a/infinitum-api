@@ -19,8 +19,8 @@ import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languag
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
+  RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
-import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
 import {
   INotParticipantInProjectErrorLanguage,
   IProjectNotFoundErrorLanguage,
