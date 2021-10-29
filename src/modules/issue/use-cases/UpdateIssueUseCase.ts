@@ -5,6 +5,7 @@ import {
   IFindParticipantRoleInProjectRepository,
   IFindProjectIdByIssueIdRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
+import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -15,21 +16,24 @@ import {
   IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
+import { Issue } from "../entities";
 import { UpdateIssueUseCaseDTO } from "./DTOs";
 import { IssueNotFoundError } from "./errors";
 import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
 import {
   IDoesIssueExistRepository,
+  IFindOneIssueRepository,
   IUpdateIssueRepository,
 } from "./interfaces/repositories";
 
 export class UpdateIssueUseCase {
   constructor(
     private readonly updateIssueRepository: IUpdateIssueRepository,
-    private readonly doesIssueExistRepository: IDoesIssueExistRepository,
+    private readonly findOneIssueRepository: IFindOneIssueRepository,
     private readonly findProjectIdByIssueIdRepository: IFindProjectIdByIssueIdRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
+    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
     private readonly issueNotFoundErrorLanguage: IIssueNotFoundErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
@@ -44,10 +48,8 @@ export class UpdateIssueUseCase {
     newExpiresAt,
     newDescription,
   }: UpdateIssueUseCaseDTO): Promise<void> {
-    const doesIssueExist = await this.doesIssueExistRepository.doesIssueExist(
-      issueId
-    );
-    if (!doesIssueExist) {
+    const oldIssue = await this.findOneIssueRepository.findOneIssue(issueId);
+    if (!oldIssue) {
       throw new IssueNotFoundError(this.issueNotFoundErrorLanguage);
     }
 
@@ -84,11 +86,21 @@ export class UpdateIssueUseCase {
       );
     }
 
+    const newIssue = new Issue(
+      {
+        title: newTitle || oldIssue.title,
+        description: newDescription || oldIssue.description,
+        expiresAt: newExpiresAt || oldIssue.expiresAt,
+        ownerEmail: accountEmailMakingRequest,
+      },
+      this.notFutureDateErrorLanguage
+    );
+
     await this.updateIssueRepository.updateIssue({
       issueId,
-      newTitle,
-      newDescription,
-      newExpiresAt,
+      newTitle: newIssue.title,
+      newDescription: newIssue.description,
+      newExpiresAt: newIssue.expiresAt,
     });
   }
 }

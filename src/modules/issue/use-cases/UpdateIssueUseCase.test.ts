@@ -16,25 +16,29 @@ import {
 import { mock } from "jest-mock-extended";
 import * as RoleModule from "@modules/project/entities/value-objects";
 import { IInvalidRoleNameErrorLanguage } from "@modules/project/entities/interfaces/languages";
+import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { IssueNotFoundError } from "./errors";
 import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
 import {
-  IDoesIssueExistRepository,
+  IFindOneIssueRepository,
   IUpdateIssueRepository,
 } from "./interfaces/repositories";
 import { UpdateIssueUseCase } from "./UpdateIssueUseCase";
+import { Issue } from "../entities";
 
 jest.mock("../../project/entities/value-objects/Role");
+jest.mock("../entities/Issue");
 
 function makeSut() {
   const updateIssueRepositoryMock = mock<IUpdateIssueRepository>();
-  const doesIssueExistRepositoryMock = mock<IDoesIssueExistRepository>();
+  const findOneIssueRepositoryMock = mock<IFindOneIssueRepository>();
   const findProjectIdByIssueIdRepositoryMock =
     mock<IFindProjectIdByIssueIdRepository>();
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
+  const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
   const issueNotFoundErrorLanguageMock = mock<IIssueNotFoundErrorLanguage>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
@@ -46,10 +50,11 @@ function makeSut() {
     mock<IRoleInsufficientPermissionErrorLanguage>();
   const sut = new UpdateIssueUseCase(
     updateIssueRepositoryMock,
-    doesIssueExistRepositoryMock,
+    findOneIssueRepositoryMock,
     findProjectIdByIssueIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
+    notFutureDateErrorLanguageMock,
     issueNotFoundErrorLanguageMock,
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
@@ -60,7 +65,7 @@ function makeSut() {
   return {
     sut,
     updateIssueRepositoryMock,
-    doesIssueExistRepositoryMock,
+    findOneIssueRepositoryMock,
     findProjectIdByIssueIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
@@ -92,7 +97,7 @@ describe("updateIssue use-case", () => {
     const {
       sut,
       updateIssueRepositoryMock,
-      doesIssueExistRepositoryMock,
+      findOneIssueRepositoryMock,
       findProjectIdByIssueIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
@@ -103,7 +108,15 @@ describe("updateIssue use-case", () => {
       newDescription: "My issue's updated description",
       newExpiresAt: new Date(),
     };
-    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
+    findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
+      title: "old title",
+      description: "old description",
+      ownerEmail: "jorge@email.com",
+      assignedToEmail: "jorge",
+      issueId: givenNewIssue.issueId,
+      expiresAt: new Date(),
+      createdAt: new Date(),
+    });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
@@ -119,16 +132,56 @@ describe("updateIssue use-case", () => {
       ...givenNewIssue,
     });
 
-    expect(updateIssueRepositoryMock.updateIssue).toHaveBeenNthCalledWith(
-      1,
-      givenNewIssue
-    );
+    expect(updateIssueRepositoryMock.updateIssue).toHaveBeenCalledTimes(1);
   });
 
-  it("should throw IssueNotFoundError if doesIssueExistRepository returns false", async () => {
+  it("should instantiate Issue", async () => {
     expect.assertions(1);
 
-    const { sut, doesIssueExistRepositoryMock } = makeSut();
+    const {
+      sut,
+      findOneIssueRepositoryMock,
+      findProjectIdByIssueIdRepositoryMock,
+      doesParticipantExistRepositoryMock,
+      findParticipantRoleInProjectRepositoryMock,
+    } = makeSut();
+    const givenNewIssue = {
+      issueId: "issue-id-0",
+      newTitle: "My issue's updated title",
+      newDescription: "My issue's updated description",
+      newExpiresAt: new Date(),
+    };
+    findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
+      title: "old title",
+      description: "old description",
+      ownerEmail: "jorge@email.com",
+      assignedToEmail: "jorge",
+      issueId: givenNewIssue.issueId,
+      expiresAt: new Date(),
+      createdAt: new Date(),
+    });
+    findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
+      "project-id-0"
+    );
+    doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
+      true
+    );
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockResolvedValueOnce(
+      "roleWithPermission"
+    );
+
+    await sut.update({
+      accountEmailMakingRequest: "jorge@email.com",
+      ...givenNewIssue,
+    });
+
+    expect(Issue).toHaveBeenCalledTimes(1);
+  });
+
+  it("should throw IssueNotFoundError if findOneIssueRepository returns undefined", async () => {
+    expect.assertions(1);
+
+    const { sut, findOneIssueRepositoryMock } = makeSut();
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       issueId: "issue-id-0",
@@ -136,7 +189,7 @@ describe("updateIssue use-case", () => {
       newDescription: "My issue's updated description",
       newExpiresAt: new Date(),
     };
-    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(false);
+    findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce(undefined);
 
     const when = () => sut.update(givenRequest);
 
@@ -148,7 +201,7 @@ describe("updateIssue use-case", () => {
 
     const {
       sut,
-      doesIssueExistRepositoryMock,
+      findOneIssueRepositoryMock,
       findProjectIdByIssueIdRepositoryMock,
     } = makeSut();
     const givenRequest = {
@@ -158,7 +211,15 @@ describe("updateIssue use-case", () => {
       newDescription: "My issue's updated description",
       newExpiresAt: new Date(),
     };
-    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
+    findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
+      title: "old title",
+      description: "old description",
+      ownerEmail: givenRequest.accountEmailMakingRequest,
+      assignedToEmail: "jorge",
+      issueId: givenRequest.issueId,
+      expiresAt: new Date(),
+      createdAt: new Date(),
+    });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       undefined
     );
@@ -173,7 +234,7 @@ describe("updateIssue use-case", () => {
 
     const {
       sut,
-      doesIssueExistRepositoryMock,
+      findOneIssueRepositoryMock,
       findProjectIdByIssueIdRepositoryMock,
       doesParticipantExistRepositoryMock,
     } = makeSut();
@@ -184,7 +245,15 @@ describe("updateIssue use-case", () => {
       newDescription: "My issue's updated description",
       newExpiresAt: new Date(),
     };
-    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
+    findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
+      title: "old title",
+      description: "old description",
+      ownerEmail: givenRequest.accountEmailMakingRequest,
+      assignedToEmail: "jorge",
+      issueId: givenRequest.issueId,
+      expiresAt: new Date(),
+      createdAt: new Date(),
+    });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
@@ -202,7 +271,7 @@ describe("updateIssue use-case", () => {
 
     const {
       sut,
-      doesIssueExistRepositoryMock,
+      findOneIssueRepositoryMock,
       findProjectIdByIssueIdRepositoryMock,
       doesParticipantExistRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
@@ -214,7 +283,15 @@ describe("updateIssue use-case", () => {
       newDescription: "My issue's updated description",
       newExpiresAt: new Date(),
     };
-    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
+    findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
+      title: "old title",
+      description: "old description",
+      ownerEmail: givenRequest.accountEmailMakingRequest,
+      assignedToEmail: "jorge",
+      issueId: givenRequest.issueId,
+      expiresAt: new Date(),
+      createdAt: new Date(),
+    });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
