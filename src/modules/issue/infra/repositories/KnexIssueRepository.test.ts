@@ -51,6 +51,31 @@ describe("issue repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("updateIssue method", () => {
+    it("should update an issue", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const issueId = "issue-id-0";
+      await connection("issue").insert({
+        id: "issue-id-0",
+        title: "My issue",
+        description: "My issue's description",
+        owner_id: accountId,
+        issue_group_id: issueGroupId,
+      });
+      const updatedIssueTitle = "updated issue name";
+
+      await sut.updateIssue({ issueId, newTitle: updatedIssueTitle });
+
+      const issue = await connection("issue")
+        .select("*")
+        .where({ id: issueId })
+        .first();
+      expect(issue.title).toBe(updatedIssueTitle);
+    });
+  });
+
   describe("deleteIssue method", () => {
     it("should delete an issue", async () => {
       expect.assertions(1);

@@ -1,8 +1,12 @@
-import { CreateIssueRepositoryDTO } from "@modules/issue/use-cases/DTOs";
+import {
+  CreateIssueRepositoryDTO,
+  UpdateIssueRepositoryDTO,
+} from "@modules/issue/use-cases/DTOs";
 import {
   ICreateIssueRepository,
   IDeleteIssueRepository,
   IDoesIssueExistRepository,
+  IUpdateIssueRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 
@@ -10,8 +14,24 @@ export class KnexIssueRepository
   implements
     ICreateIssueRepository,
     IDoesIssueExistRepository,
-    IDeleteIssueRepository
+    IDeleteIssueRepository,
+    IUpdateIssueRepository
 {
+  async updateIssue({
+    issueId,
+    newTitle,
+    newDescription,
+    newExpiresAt,
+  }: UpdateIssueRepositoryDTO): Promise<void> {
+    await connection("issue")
+      .update({
+        title: newTitle,
+        description: newDescription,
+        newExpiresAt,
+      })
+      .where({ id: issueId });
+  }
+
   async deleteIssue(issueId: string): Promise<void> {
     await connection("issue").where({ id: issueId }).del();
   }
