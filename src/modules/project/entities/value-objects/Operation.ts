@@ -3,4 +3,5 @@ export type Operation =
   | "UPDATE_PROJECT"
   | "CREATE_ISSUE_GROUP"
   | "CREATE_ISSUE"
-  | "DELETE_ISSUE";
+  | "DELETE_ISSUE"
+  | "UPDATE_ISSUE";
