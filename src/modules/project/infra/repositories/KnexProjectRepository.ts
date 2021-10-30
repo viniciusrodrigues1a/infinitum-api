@@ -224,6 +224,7 @@ export class KnexProjectRepository
       title: val.issue_title,
       description: val.issue_description,
       expires_at: val.issue_expires_at,
+      created_at: val.issue_created_at,
     };
   }
 
