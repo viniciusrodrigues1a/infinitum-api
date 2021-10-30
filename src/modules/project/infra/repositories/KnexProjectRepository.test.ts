@@ -294,7 +294,79 @@ describe("project repository using Knex", () => {
       expect(projects).toHaveLength(0);
     });
 
-    it.todo("should return an array of projects joined with issues");
+    it("should return an array of projects joined with issue_group and issue", async () => {
+      expect.assertions(2);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      const issueGroup = {
+        id: "ig-id-0",
+        project_id: project.id,
+        title: "In progress",
+      };
+      const issue = {
+        id: "issue-id-0",
+        issue_group_id: issueGroup.id,
+        owner_id: accountId,
+        title: "My issue",
+        description: "My issue's description",
+      };
+      await connection("project").insert(project);
+      await connection("issue_group").insert(issueGroup);
+      await connection("issue").insert(issue);
+
+      const response = await sut.listProjects(accountEmail);
+
+      expect(response[0].issueGroups[0].issueGroupId).toBe(issueGroup.id);
+      expect(response[0].issueGroups[0].issues[0].issueId).toBe(issue.id);
+    });
+
+    it("should return an array of projects with an empty array for issues", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      const issueGroup = {
+        id: "ig-id-0",
+        project_id: project.id,
+        title: "In progress",
+      };
+
+      await connection("project").insert(project);
+      await connection("issue_group").insert(issueGroup);
+
+      const response = await sut.listProjects(accountEmail);
+
+      expect(response[0].issueGroups[0].issues).toStrictEqual([]);
+    });
+
+    it("should return an array of projects with an empty array for issue groups", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+
+      await connection("project").insert(project);
+
+      const response = await sut.listProjects(accountEmail);
+
+      expect(response[0].issueGroups).toStrictEqual([]);
+    });
 
     it.todo("should return an array of projects joined with participants");
   });

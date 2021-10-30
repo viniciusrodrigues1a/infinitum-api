@@ -13,7 +13,7 @@ export class Project {
   beginsAt: Date | undefined;
   finishesAt: Date | undefined;
   participants: Participant[];
-  issues: IssueGroup[];
+  issueGroups: IssueGroup[];
 
   constructor(
     {
@@ -22,7 +22,7 @@ export class Project {
       beginsAt,
       finishesAt,
       participants,
-      issues,
+      issueGroups,
       projectId,
     }: ProjectDTO,
     notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
@@ -38,7 +38,7 @@ export class Project {
       ? new FutureDate(finishesAt, notFutureDateErrorLanguage).value
       : undefined;
     this.participants = participants || [];
-    this.issues = issues || [];
+    this.issueGroups = issueGroups || [];
 
     if (!this.isBeginsAtBeforeFinishesAt()) {
       throw new BeginsAtMustBeBeforeFinishesAtError(

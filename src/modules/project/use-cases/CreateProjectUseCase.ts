@@ -17,7 +17,7 @@ export class CreateProjectUseCase {
     beginsAt,
     finishesAt,
     participants,
-    issues,
+    issueGroups,
     accountEmailMakingRequest,
   }: CreateProjectDTO): Promise<string> {
     const project = new Project(
@@ -27,7 +27,7 @@ export class CreateProjectUseCase {
         beginsAt,
         finishesAt,
         participants,
-        issues,
+        issueGroups,
       },
       this.notFutureDateErrorLanguage,
       this.beginsAtMustBeBeforeFinishesAtErrorLanguage

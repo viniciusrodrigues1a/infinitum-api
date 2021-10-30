@@ -127,53 +127,113 @@ export class KnexProjectRepository
         "=",
         "project_role.id"
       )
+      .leftJoin("issue_group", "project.id", "=", "issue_group.project_id")
+      .leftJoin("issue", "issue_group.id", "=", "issue.issue_group_id")
       .select(
         "project.*",
         "account.name as account_name",
         "account.email as account_email",
         "account_project_project_role.account_id",
-        "project_role.name as project_role_name"
+        "project_role.name as project_role_name",
+        "issue_group.id as issue_group_id",
+        "issue_group.title as issue_group_title",
+        "issue.id as issue_id",
+        "issue.title as issue_title",
+        "issue.description as issue_description",
+        "issue.expires_at as issue_expires_at",
+        "issue.created_at as issue_created_at"
       )
-      .where({ owner_id: accountId });
+      .where("project.owner_id", "=", accountId);
 
-    const reducedProjects = projects.reduce((acc: Array<any>, val) => {
-      const index = acc.findIndex((p) => p.projectId === val.id);
-
-      if (index !== -1) {
-        acc[index].participants = [
-          ...acc[index].participants,
-          {
-            id: val.account_id,
-            name: val.account_name,
-            email: val.account_email,
-            projectRoleName: val.project_role_name,
-          },
-        ];
-      } else {
-        acc.push({
-          projectId: val.id,
-          name: val.name,
-          description: val.description,
-          beginsAt: val.begins_at,
-          finishesAt: val.finishes_at,
-          createdAt: val.created_at,
-          archived: val.archived,
-          issues: [],
-          participants: [
-            {
-              id: val.account_id,
-              name: val.account_name,
-              email: val.account_email,
-              projectRoleName: val.project_role_name,
-            },
-          ],
-        });
-      }
-
-      return acc;
-    }, []);
+    const reducedProjects = projects.reduce(
+      (acc, val) => this.projectsOutputFormatter(acc, val),
+      []
+    );
 
     return reducedProjects;
+  }
+
+  private projectsOutputFormatter(acc: any, val: any): any {
+    const index = acc.findIndex((p: any) => p.projectId === val.id);
+
+    if (index !== -1) {
+      this.accumulateProjectObject(acc, val, index);
+    } else {
+      const project = this.formatProjectObject(val);
+      acc.push(project);
+    }
+
+    return acc;
+  }
+
+  private accumulateProjectObject(acc: any, val: any, index: number) {
+    if (val.issue_group_id) {
+      const issueGroupIndex = acc[index].issueGroups.findIndex(
+        (issueGroup: any) => issueGroup.issueGroupId === val.issue_group_id
+      );
+
+      const issues = val.issue_id
+        ? [
+            ...acc[index].issueGroups[issueGroupIndex].issues,
+            this.formatIssueObject(val),
+          ]
+        : [];
+      acc[index].issueGroups = [
+        ...acc[index].issueGroups,
+        this.formatIssueGroupObject(val, issues),
+      ];
+    }
+    acc[index].participants = [
+      ...acc[index].participants,
+      this.formatParticipantObject(val),
+    ];
+  }
+
+  private formatProjectObject(val: any) {
+    const issues = val.issue_id ? [this.formatIssueObject(val)] : [];
+    const issueGroups = val.issue_group_id
+      ? [this.formatIssueGroupObject(val, issues)]
+      : [];
+    const participants = [this.formatParticipantObject(val)];
+    const project = {
+      projectId: val.id,
+      name: val.name,
+      description: val.description,
+      beginsAt: val.begins_at,
+      finishesAt: val.finishes_at,
+      createdAt: val.created_at,
+      archived: val.archived,
+      issueGroups,
+      participants,
+    };
+
+    return project;
+  }
+
+  private formatIssueGroupObject(val: any, issues: any[]): any {
+    return {
+      issueGroupId: val.issue_group_id,
+      title: val.issue_group_title,
+      issues,
+    };
+  }
+
+  private formatIssueObject(val: any): any {
+    return {
+      issueId: val.issue_id,
+      title: val.issue_title,
+      description: val.issue_description,
+      expires_at: val.issue_expires_at,
+    };
+  }
+
+  private formatParticipantObject(val: any): any {
+    return {
+      id: val.account_id,
+      name: val.account_name,
+      email: val.account_email,
+      projectRoleName: val.project_role_name,
+    };
   }
 
   async updateProject({

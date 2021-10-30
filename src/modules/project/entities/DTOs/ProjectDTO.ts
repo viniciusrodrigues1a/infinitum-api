@@ -7,5 +7,5 @@ export type ProjectDTO = {
   beginsAt?: Date;
   finishesAt?: Date;
   participants?: Participant[];
-  issues?: IssueGroup[];
+  issueGroups?: IssueGroup[];
 };
