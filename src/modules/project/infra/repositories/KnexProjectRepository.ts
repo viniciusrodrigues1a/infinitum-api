@@ -172,16 +172,22 @@ export class KnexProjectRepository
         (issueGroup: any) => issueGroup.issueGroupId === val.issue_group_id
       );
 
-      const issues = val.issue_id
-        ? [
-            ...acc[index].issueGroups[issueGroupIndex].issues,
-            this.formatIssueObject(val),
-          ]
-        : [];
-      acc[index].issueGroups = [
-        ...acc[index].issueGroups,
-        this.formatIssueGroupObject(val, issues),
-      ];
+      if (issueGroupIndex === -1) {
+        const issues = val.issue_id ? [this.formatIssueObject(val)] : [];
+        acc[index].issueGroups = [
+          ...acc[index].issueGroups,
+          this.formatIssueGroupObject(val, issues),
+        ];
+      } else {
+        const issues = val.issue_id
+          ? [
+              ...acc[index].issueGroups[issueGroupIndex].issues,
+              this.formatIssueObject(val),
+            ]
+          : [];
+
+        acc[index].issueGroups[issueGroupIndex].issues = issues;
+      }
     }
     acc[index].participants = [
       ...acc[index].participants,
