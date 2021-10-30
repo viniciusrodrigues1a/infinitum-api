@@ -223,8 +223,8 @@ export class KnexProjectRepository
       issueId: val.issue_id,
       title: val.issue_title,
       description: val.issue_description,
-      expires_at: val.issue_expires_at,
-      created_at: val.issue_created_at,
+      expiresAt: val.issue_expires_at,
+      createdAt: val.issue_created_at,
     };
   }
 
