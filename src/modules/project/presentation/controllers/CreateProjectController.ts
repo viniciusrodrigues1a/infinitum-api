@@ -1,5 +1,8 @@
 import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/errors";
-import { CreateProjectUseCase } from "@modules/project/use-cases";
+import {
+  CreateIssueGroupForProjectUseCase,
+  CreateProjectUseCase,
+} from "@modules/project/use-cases";
 import { CreateProjectDTO } from "@modules/project/use-cases/DTOs";
 import { NotFutureDateError } from "@shared/entities/errors";
 import {
@@ -22,6 +25,7 @@ export type CreateProjectControllerRequest = Omit<
 export class CreateProjectController implements IController {
   constructor(
     private readonly createProjectUseCase: CreateProjectUseCase,
+    private readonly createIssueGroupForProjectUseCase: CreateIssueGroupForProjectUseCase,
     private readonly validation: IValidation
   ) {}
 
@@ -40,6 +44,21 @@ export class CreateProjectController implements IController {
         finishesAt: request.finishesAt
           ? new Date(request.finishesAt)
           : undefined,
+      });
+      await this.createIssueGroupForProjectUseCase.create({
+        projectId: id,
+        title: "A fazer",
+        accountEmailMakingRequest: request.accountEmailMakingRequest,
+      });
+      await this.createIssueGroupForProjectUseCase.create({
+        projectId: id,
+        title: "Em progresso",
+        accountEmailMakingRequest: request.accountEmailMakingRequest,
+      });
+      await this.createIssueGroupForProjectUseCase.create({
+        projectId: id,
+        title: "Concluído",
+        accountEmailMakingRequest: request.accountEmailMakingRequest,
       });
 
       return createdResponse({ id });

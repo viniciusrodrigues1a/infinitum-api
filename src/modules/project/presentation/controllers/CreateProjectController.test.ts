@@ -1,6 +1,9 @@
 import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/errors";
 import { IBeginsAtMustBeBeforeFinishesAtErrorLanguage } from "@modules/project/entities/interfaces/languages";
-import { CreateProjectUseCase } from "@modules/project/use-cases";
+import {
+  CreateIssueGroupForProjectUseCase,
+  CreateProjectUseCase,
+} from "@modules/project/use-cases";
 import { NotFutureDateError } from "@shared/entities/errors";
 import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
@@ -23,9 +26,12 @@ beginsAtMustBeBeforeFinishesAtErrorLanguageMock.getBeginsAtMustBeBeforeFinishesA
 
 function makeSut() {
   const createProjectUseCaseMock = mock<CreateProjectUseCase>();
+  const createIssueGroupForProjectUseCaseMock =
+    mock<CreateIssueGroupForProjectUseCase>();
   const validationMock = mock<IValidation>();
   const sut = new CreateProjectController(
     createProjectUseCaseMock,
+    createIssueGroupForProjectUseCaseMock,
     validationMock
   );
 
