@@ -137,6 +137,7 @@ export class KnexProjectRepository
         "project_role.name as project_role_name",
         "issue_group.id as issue_group_id",
         "issue_group.title as issue_group_title",
+        "issue_group.created_at as issue_group_created_at",
         "issue.id as issue_id",
         "issue.title as issue_title",
         "issue.description as issue_description",
@@ -150,7 +151,30 @@ export class KnexProjectRepository
       []
     );
 
-    return reducedProjects;
+    const projectsWithSortedIssues = reducedProjects.map((p) => ({
+      ...p,
+      issueGroups: p.issueGroups
+        .map((ig) => ({
+          ...ig,
+          issues: ig.issues.sort(this.compareByCreatedAt),
+        }))
+        .sort(this.compareByCreatedAt),
+    }));
+
+    const sortedProjects = projectsWithSortedIssues.sort(
+      this.compareByCreatedAt
+    );
+
+    sortedProjects.map((p) => ({ id: p.projectId, createdAt: p.createdAt }));
+
+    return sortedProjects;
+  }
+
+  private compareByCreatedAt(
+    a: { createdAt: string },
+    b: { createdAt: string }
+  ): number {
+    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   }
 
   private projectsOutputFormatter(acc: any, val: any): any {
@@ -220,6 +244,7 @@ export class KnexProjectRepository
     return {
       issueGroupId: val.issue_group_id,
       title: val.issue_group_title,
+      createdAt: val.issue_group_created_at,
       issues,
     };
   }
