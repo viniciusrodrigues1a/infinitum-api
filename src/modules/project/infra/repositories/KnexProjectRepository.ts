@@ -151,10 +151,10 @@ export class KnexProjectRepository
       []
     );
 
-    const projectsWithSortedIssues = reducedProjects.map((p) => ({
+    const projectsWithSortedIssues = reducedProjects.map((p: any) => ({
       ...p,
       issueGroups: p.issueGroups
-        .map((ig) => ({
+        .map((ig: any) => ({
           ...ig,
           issues: ig.issues.sort(this.compareByCreatedAt),
         }))
@@ -165,7 +165,10 @@ export class KnexProjectRepository
       this.compareByCreatedAt
     );
 
-    sortedProjects.map((p) => ({ id: p.projectId, createdAt: p.createdAt }));
+    sortedProjects.map((p: any) => ({
+      id: p.projectId,
+      createdAt: p.createdAt,
+    }));
 
     return sortedProjects;
   }
