@@ -282,8 +282,8 @@ export class KnexProjectRepository
       .update({
         name,
         description,
-        beginsAt,
-        finishesAt,
+        begins_at: beginsAt,
+        finishes_at: finishesAt,
       })
       .where({ id: projectId });
   }

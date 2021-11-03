@@ -394,6 +394,62 @@ describe("project repository using Knex", () => {
       expect(project.name).toBe(updatedProjectName);
     });
 
+    it("should update project's field begins_at", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      const nowMs = new Date().getTime();
+      const yesterday = new Date(nowMs - 86400 * 1000);
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: "my project's description",
+        begins_at: yesterday,
+      });
+
+      const updatedBeginsAt = new Date();
+      await sut.updateProject({
+        projectId,
+        beginsAt: updatedBeginsAt,
+      });
+
+      const project = await connection("project")
+        .select("*")
+        .where({ id: projectId })
+        .first();
+      expect(project.begins_at).toBe(updatedBeginsAt.toString());
+    });
+
+    it("should update project's field finishes_at", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const projectId = "project-id-0";
+      const nowMs = new Date().getTime();
+      const yesterday = new Date(nowMs - 86400 * 1000);
+      await connection("project").insert({
+        id: projectId,
+        owner_id: accountId,
+        name: "my project",
+        description: "my project's description",
+        finishes_at: yesterday,
+      });
+
+      const updatedFinishesAt = new Date();
+      await sut.updateProject({
+        projectId,
+        finishesAt: updatedFinishesAt,
+      });
+
+      const project = await connection("project")
+        .select("*")
+        .where({ id: projectId })
+        .first();
+      expect(project.finishes_at).toBe(updatedFinishesAt.toString());
+    });
+
     it("should not update undefined fields", async () => {
       expect.assertions(2);
 
