@@ -33,6 +33,40 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("createInvitationToken method", () => {
+    it("should insert given object in project_invitation table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      await connection("project").insert(project);
+      const invitation = {
+        projectId: project.id,
+        roleName: "member",
+        accountEmail,
+        token: "invitation-token-0",
+      };
+
+      await sut.createInvitationToken(invitation);
+
+      const insertedInvitation = await connection("project_invitation")
+        .select("*")
+        .where({ token: invitation.token })
+        .first();
+      expect(insertedInvitation).toMatchObject({
+        project_id: invitation.projectId,
+        token: invitation.token,
+        account_id: accountId,
+      });
+    });
+  });
+
   describe("findProjectIdByIssueId method", () => {
     it("should return project id associated to given issue id", async () => {
       expect.assertions(1);

@@ -1,5 +1,6 @@
 import { Project } from "@modules/project/entities";
 import {
+  CreateInvitationTokenRepositoryDTO,
   CreateIssueGroupForProjectRepositoryDTO,
   CreateProjectRepositoryDTO,
   UpdateProjectRepositoryDTO,
@@ -17,6 +18,7 @@ import {
   IIsProjectArchivedRepository,
   IFindProjectIdByIssueGroupIdRepository,
   IFindProjectIdByIssueIdRepository,
+  ICreateInvitationTokenRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import {
@@ -37,8 +39,32 @@ export class KnexProjectRepository
     IHasProjectBegunRepository,
     IIsProjectArchivedRepository,
     IFindProjectIdByIssueGroupIdRepository,
-    IFindProjectIdByIssueIdRepository
+    IFindProjectIdByIssueIdRepository,
+    ICreateInvitationTokenRepository
 {
+  async createInvitationToken({
+    projectId,
+    accountEmail,
+    roleName,
+    token,
+  }: CreateInvitationTokenRepositoryDTO): Promise<void> {
+    const { id: roleId } = await connection("project_role")
+      .select("id")
+      .where({ name: roleName })
+      .first();
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    await connection("project_invitation").insert({
+      project_role_id: roleId,
+      account_id: accountId,
+      project_id: projectId,
+      token,
+    });
+  }
+
   async findProjectIdByIssueId(issueId: string): Promise<string | undefined> {
     const issue = await connection("issue")
       .select("issue_group_id")
