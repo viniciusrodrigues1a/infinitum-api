@@ -10,3 +10,5 @@ export * from "./IHasProjectBegunRepository";
 export * from "./IIsProjectArchivedRepository";
 export * from "./IFindProjectIdByIssueGroupIdRepository";
 export * from "./IFindProjectIdByIssueIdRepository";
+export * from "./ICreateInvitationTokenRepository";
+export * from "./IHasAccountBeenInvitedToProjectRepository";

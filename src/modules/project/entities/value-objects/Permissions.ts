@@ -22,5 +22,6 @@ export const permissions: PermissionsType = {
     "CREATE_ISSUE",
     "DELETE_ISSUE",
     "UPDATE_ISSUE",
+    "INVITE_ACCOUNT_TO_PROJECT",
   ],
 };
