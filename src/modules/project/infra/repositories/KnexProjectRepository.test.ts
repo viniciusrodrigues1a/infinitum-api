@@ -33,6 +33,61 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("hasAccountBeenInvited method", () => {
+    it("should return false if no row is found in project_invitation table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      await connection("project").insert(project);
+
+      const response = await sut.hasAccountBeenInvited({
+        projectId: project.id,
+        accountEmail,
+      });
+
+      expect(response).toBe(false);
+    });
+
+    it("should return true if a row is found in project_invitation table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "member" })
+        .first();
+      const invitation = {
+        project_id: project.id,
+        project_role_id: roleId,
+        account_id: accountId,
+        token: "invitation-token-0",
+      };
+      await connection("project").insert(project);
+      await connection("project_invitation").insert(invitation);
+
+      const response = await sut.hasAccountBeenInvited({
+        projectId: project.id,
+        accountEmail,
+      });
+
+      expect(response).toBe(true);
+    });
+  });
+
   describe("createInvitationToken method", () => {
     it("should insert given object in project_invitation table", async () => {
       expect.assertions(1);
