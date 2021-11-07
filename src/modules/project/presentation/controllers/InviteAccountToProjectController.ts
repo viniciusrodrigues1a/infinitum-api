@@ -8,6 +8,7 @@ import {
 import {
   badRequestResponse,
   noContentResponse,
+  notFoundResponse,
   serverErrorResponse,
   unauthorizedResponse,
 } from "@shared/presentation/http/httpHelper";
@@ -46,10 +47,13 @@ export class InviteAccountToProjectController implements IController {
         err instanceof NotParticipantInProjectError ||
         err instanceof AccountAlreadyParticipatesInProjectError ||
         err instanceof AccountHasAlreadyBeenInvitedError ||
-        err instanceof OwnerCantBeUsedAsARoleForAnInvitationError ||
-        err instanceof ProjectNotFoundError
+        err instanceof OwnerCantBeUsedAsARoleForAnInvitationError
       ) {
         return badRequestResponse(err);
+      }
+
+      if (err instanceof ProjectNotFoundError) {
+        return notFoundResponse(err);
       }
 
       if (err instanceof RoleInsufficientPermissionError) {

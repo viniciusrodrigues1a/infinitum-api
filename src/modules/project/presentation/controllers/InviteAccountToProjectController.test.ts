@@ -189,7 +189,7 @@ describe("invitAccountToProject controller", () => {
     );
   });
 
-  it("should return HttpStatusCode.badRequest if ProjectNotFoundError thrown", async () => {
+  it("should return HttpStatusCode.notFound if ProjectNotFoundError thrown", async () => {
     expect.assertions(2);
 
     const { sut, inviteAccountToProjectUseCaseMock } = makeSut();
@@ -206,7 +206,7 @@ describe("invitAccountToProject controller", () => {
 
     const response = await sut.handleRequest(givenRequest);
 
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.statusCode).toBe(HttpStatusCodes.notFound);
     expect(response.body).toBeInstanceOf(ProjectNotFoundError);
   });
 
