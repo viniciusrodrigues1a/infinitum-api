@@ -13,7 +13,7 @@ services:
       - POSTGRES_DB
 
   app:
-    build: .
+    build: ./docker/app
     restart: always
     ports:
       - 3333:3333
@@ -21,5 +21,26 @@ services:
       - .:/usr/app
     links:
       - "postgres:postgreshost"
+      - "redis-queue:redishost"
     depends_on: 
       - postgres
+      - redis-queue
+
+  queue:
+    build: ./docker/queue
+    restart: always
+    volumes:
+      - .:/usr/app
+    links:
+      - "postgres:postgreshost"
+      - "redis-queue:redishost"
+    depends_on: 
+      - postgres
+      - redis-queue
+
+
+  redis-queue:
+    image: "redis:alpine"
+
+    ports:
+      - "6379:6379"

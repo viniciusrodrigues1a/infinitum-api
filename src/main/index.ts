@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { connection } from "@shared/infra/database/connection";
 import { ExpressServer } from "@main/server";
+import Queue from "@shared/infra/queue/Queue";
 
 enum ExitStatus {
   Failure = 1,
@@ -17,6 +18,7 @@ function handleSignal(sig: string, closeOpenHandles: () => void) {
     try {
       console.log("Gracefully shutting down...");
       closeOpenHandles();
+      await Queue.close();
       await connection.destroy();
     } catch (err) {
       exitWithError(err);

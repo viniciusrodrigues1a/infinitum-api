@@ -121,6 +121,7 @@ export class InviteAccountToProjectUseCase {
     await this.sendInvitationToProjectEmailService.sendInvitationEmail({
       token: invitation.token,
       projectName,
+      email: accountEmail,
     });
   }
 }

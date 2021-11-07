@@ -1,0 +1,86 @@
+<style>
+  .infinitum-email-container {
+    padding-top: 36px;
+    padding-bottom: 36px;
+  }
+
+  .infinitum-email-logo-container {
+    margin-top: 26px;
+    width:100%;
+  }
+
+  .infinitum-email-logo-container > div {
+    margin: 0 auto;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .infinitum-email-logo-container h1 {
+    color: #2b2b2b;
+    margin-left: 8px;
+    text-align: center;
+  }
+
+  .infinitum-email-container p {
+    color: #2b2b2b;
+    margin-top: 6px;
+    text-align: center;
+  }
+
+  .infinitum-email-buttons-container {
+    margin-top: 36px;
+  }
+
+  .infinitum-email-buttons-container .infinitum-email-accept-button,
+  .infinitum-email-buttons-container .infinitum-email-deny-button
+  {
+    text-decoration: none;
+    padding: 14px 20px;
+    border-radius: 6px;
+    color: #2b2b2b;
+  }
+
+  .infinitum-email-buttons-container .infinitum-email-accept-button {
+    background-color: #28CCC7;
+    margin-right: 10px;
+  }
+
+  .infinitum-email-buttons-container .infinitum-email-deny-button {
+    background-color: rgba(216, 92, 67, 0.8);
+    margin-left: 10px;
+  }
+
+  .infinitum-email-container small {
+    display: block;
+    margin-top: 48px;
+  }
+</style>
+
+<div class="infinitum-email-container">
+  <center>
+    <img src="<%= invitationImgSrc %>"/>
+
+    <div class="infinitum-email-logo-container">
+      <div>
+        <img src="<%= logoImgSrc %>" />
+        <h1>Infinitum</h1>
+      </div>
+    </div>
+
+    <p>Você foi convidado a participar do projeto <b><%= projectName %></b>.</p>
+
+    <div class="infinitum-email-buttons-container">
+      <a class="infinitum-email-accept-button" href="http://localhost:3000/invitation?token=<%= token %>">
+        Aceitar convite
+      </a>
+
+      <a class="infinitum-email-deny-button" href="http://localhost:3000/invitation?revoke=<%= token %>">
+        Recusar convite
+      </a>
+    </div>
+
+    <small>Equipe Infinitum</small>
+  </center>
+</div>
+
