@@ -1,9 +1,11 @@
 import {
   NotParticipantInProjectError,
+  ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
 import {
   INotParticipantInProjectErrorLanguage,
+  IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { Invitation } from "../entities";
@@ -24,6 +26,7 @@ import {
 import {
   ICreateInvitationTokenRepository,
   IDoesParticipantExistRepository,
+  IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
   IHasAccountBeenInvitedToProjectRepository,
 } from "./interfaces/repositories";
@@ -33,11 +36,13 @@ export class InviteAccountToProjectUseCase {
   constructor(
     private readonly createInvitationTokenRepository: ICreateInvitationTokenRepository,
     private readonly sendInvitationToProjectEmailService: ISendInvitationToProjectEmailService,
+    private readonly doesProjectExistRepository: IDoesProjectExistRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasAccountBeenInvitedToProjectRepository: IHasAccountBeenInvitedToProjectRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly ownerCantBeUsedAsARoleForAnInvitationErrorLanguage: IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
+    private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly accountHasAlreadyBeenInvitedErrorLanguage: IAccountHasAlreadyBeenInvitedErrorLanguage,
     private readonly accountAlreadyParticipatesInProjectErrorLanguage: IAccountAlreadyParticipatesInProjectErrorLanguage,
@@ -51,6 +56,12 @@ export class InviteAccountToProjectUseCase {
     roleName,
     accountEmailMakingRequest,
   }: InviteAccountToProjectUseCaseDTO): Promise<void> {
+    const doesProjectExist =
+      await this.doesProjectExistRepository.doesProjectExist(projectId);
+    if (!doesProjectExist) {
+      throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
+    }
+
     const doesAccountInvitingParticipatesInProject =
       await this.doesParticipantExistRepository.doesParticipantExist({
         projectId,
