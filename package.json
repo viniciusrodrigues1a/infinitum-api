@@ -68,6 +68,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.10",
     "nodemailer": "^6.7.0",
+    "nodemailer-plugin-inline-base64": "^2.1.1",
     "pg": "^8.7.1",
     "sqlite3": "^5.0.2"
   }

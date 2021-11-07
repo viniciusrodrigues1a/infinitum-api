@@ -3,6 +3,7 @@ import ejs from "ejs";
 import { SendInvitationToProjectEmailServiceDTO } from "@modules/project/use-cases/DTOs";
 import { transporter } from "@shared/infra/nodemailer";
 import { SendMailOptions } from "nodemailer";
+import inlineBase64 from "nodemailer-plugin-inline-base64";
 import { IJob } from "./IJob";
 import { fileToBase64DataUrl } from "./utils";
 
@@ -45,6 +46,7 @@ class InvitationEmailJob implements IJob {
       mailOptions.text = `Você foi convidado a participar do projeto ${projectName}. Clique aqui para aceitar o convite: http://localhost:3000/invitation?token=${token}`;
     }
 
+    transporter.use("compile", inlineBase64());
     transporter.sendMail(mailOptions, (err, _res) => {
       if (err) console.log("Nodemailer error ", err.message);
     });
