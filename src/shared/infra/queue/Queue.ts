@@ -1,4 +1,4 @@
-import Bull from "bull";
+import Bull, { Job } from "bull";
 import { IQueue } from "./IQueue";
 import { IJob } from "./jobs";
 import InvitationEmailJob from "./jobs/InvitationEmailJob";
@@ -24,9 +24,15 @@ class Queue implements IQueue {
 
   public processQueue(): void {
     this.jobs.forEach((job) => {
+      console.log(`Started processing queue: ${job.key}`);
+
       const { bull, handle } = this.queues[job.key];
 
       bull.on("error", this.onError);
+      bull.on("completed", this.onCompleted);
+      bull.on("waiting", this.onWaiting);
+      bull.on("active", this.onActive);
+      bull.on("removed", this.onRemoved);
       bull.process((bullJob) => handle(bullJob.data));
     });
   }
@@ -39,6 +45,22 @@ class Queue implements IQueue {
 
   private onError(err: Error): void {
     console.log("Job error: ", err.message);
+  }
+
+  private onCompleted(job: Job): void {
+    console.log(`Job ${job.id} has finished being processed`);
+  }
+
+  private onWaiting(job: Job): void {
+    console.log(`Job ${job.id} is waiting to be processed`);
+  }
+
+  private onActive(job: Job): void {
+    console.log(`Job ${job.id} has started being processed`);
+  }
+
+  private onRemoved(job: Job): void {
+    console.log(`Job ${job.id} has being removed`);
   }
 
   private init() {
