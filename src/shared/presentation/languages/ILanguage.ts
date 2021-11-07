@@ -8,8 +8,11 @@ import { IIssueNotFoundErrorLanguage } from "@modules/issue/use-cases/interfaces
 import {
   IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
   IInvalidRoleNameErrorLanguage,
+  IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
 } from "@modules/project/entities/interfaces/languages";
 import {
+  IAccountAlreadyParticipatesInProjectErrorLanguage,
+  IAccountHasAlreadyBeenInvitedErrorLanguage,
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
@@ -43,4 +46,7 @@ export interface ILanguage
     IParamsLanguage,
     IInvalidParamErrorLanguage,
     INoParamProvidedErrorLanguage,
-    IIssueNotFoundErrorLanguage {}
+    IIssueNotFoundErrorLanguage,
+    IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
+    IAccountHasAlreadyBeenInvitedErrorLanguage,
+    IAccountAlreadyParticipatesInProjectErrorLanguage {}

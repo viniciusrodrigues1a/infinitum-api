@@ -6,6 +6,7 @@ import {
   CreateIssueGroupForProjectController,
   CreateProjectController,
   DeleteProjectController,
+  InviteAccountToProjectController,
   ListProjectsOwnedByAccountController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
@@ -29,6 +30,17 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeInviteAccountToProjectUseCase(
+    language: ILanguage
+  ): InviteAccountToProjectController {
+    return new InviteAccountToProjectController(
+      this.useCaseFactory.makeInviteAccountToProjectUseCase(language),
+      this.validationFactory.makeInviteAccountToProjectControllerValidation(
+        language
+      )
+    );
+  }
 
   makeDeleteIssueController(language: ILanguage): DeleteIssueController {
     return new DeleteIssueController(

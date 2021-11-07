@@ -1,8 +1,28 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getOwnerCantBeUsedAsARoleForAnInvitationErrorMessage(): string {
+    return "Você não pode convidar um usuário para a função de dono do projeto";
+  }
+
+  getAccountHasAlreadyBeenInvitedErrorMessage(_email: string): string {
+    return "Este usuário já possui um convite pendente para este projeto";
+  }
+
+  getAccountAlreadyParticipatesInProjectErrorMessage(_email: string): string {
+    return "Este usuário já participa deste projeto";
+  }
+
   getIssueNotFoundErrorMessage(): string {
     return "Ticket não encontrado";
+  }
+
+  getRoleNameParamMessage(): string {
+    return "nome do cargo";
+  }
+
+  getProjectNameParamMessage(): string {
+    return "nome do projeto";
   }
 
   getExpiresAtParamMessage(): string {

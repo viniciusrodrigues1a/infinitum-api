@@ -4,6 +4,7 @@ import {
   CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
   DeleteProjectUseCase,
+  InviteAccountToProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
   UpdateProjectUseCase,
 } from "@modules/project/use-cases";
@@ -14,9 +15,31 @@ import {
 import { CreateIssueUseCase } from "@modules/issue/use-cases";
 import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
 import { IUseCaseFactory } from "./IUseCaseFactory";
+import NodemailerSendInvitationToProjectEmailServiceFactory from "../services/NodemailerSendInvitationToProjectEmailServiceFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeInviteAccountToProjectUseCase(
+    language: ILanguage
+  ): InviteAccountToProjectUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new InviteAccountToProjectUseCase(
+      projectRepository,
+      NodemailerSendInvitationToProjectEmailServiceFactory.make(),
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeDeleteIssueUseCase(language: ILanguage): DeleteIssueUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

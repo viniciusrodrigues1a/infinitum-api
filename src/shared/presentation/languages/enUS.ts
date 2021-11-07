@@ -1,8 +1,28 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getOwnerCantBeUsedAsARoleForAnInvitationErrorMessage(): string {
+    return "You cannot invite a user for the owner role of this project";
+  }
+
+  getAccountHasAlreadyBeenInvitedErrorMessage(_email: string): string {
+    return "This user has already been invited to this project";
+  }
+
+  getAccountAlreadyParticipatesInProjectErrorMessage(_email: string): string {
+    return "This user is already a participant of this project";
+  }
+
   getIssueNotFoundErrorMessage(): string {
     return "Issue not found";
+  }
+
+  getRoleNameParamMessage(): string {
+    return "role name";
+  }
+
+  getProjectNameParamMessage(): string {
+    return "project name";
   }
 
   getExpiresAtParamMessage(): string {

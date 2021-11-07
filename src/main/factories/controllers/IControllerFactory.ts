@@ -13,6 +13,7 @@ import {
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
+import { InviteAccountToProjectController } from "@modules/project/presentation/controllers/InviteAccountToProjectController";
 
 export interface IControllerFactory {
   makeRegisterController(language: ILanguage): RegisterController;
@@ -27,4 +28,7 @@ export interface IControllerFactory {
   ): CreateIssueGroupForProjectController;
   makeCreateIssueController(language: ILanguage): CreateIssueController;
   makeDeleteIssueController(language: ILanguage): DeleteIssueController;
+  makeInviteAccountToProjectUseCase(
+    language: ILanguage
+  ): InviteAccountToProjectController;
 }

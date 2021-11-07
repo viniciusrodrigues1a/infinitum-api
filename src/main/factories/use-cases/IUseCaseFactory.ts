@@ -6,6 +6,7 @@ import {
   CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
   DeleteProjectUseCase,
+  InviteAccountToProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
   UpdateProjectUseCase,
 } from "@modules/project/use-cases";
@@ -21,4 +22,7 @@ export interface IUseCaseFactory {
   ): CreateIssueGroupForProjectUseCase;
   makeCreateIssueUseCase(language: ILanguage): CreateIssueUseCase;
   makeDeleteIssueUseCase(language: ILanguage): DeleteIssueUseCase;
+  makeInviteAccountToProjectUseCase(
+    language: ILanguage
+  ): InviteAccountToProjectUseCase;
 }

@@ -41,3 +41,10 @@ projectsRoutes.get(
     knexControllerFactoryImpl.makeListProjectsOwnedByAccountController()
   )
 );
+
+projectsRoutes.post(
+  "/invitation",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeInviteAccountToProjectUseCase(language)
+  )
+);
