@@ -10,17 +10,8 @@ import {
   projectsRoutes,
 } from "@main/routes";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
-import NodemailerSendInvitationToProjectEmailServiceFactory from "./factories/services/NodemailerSendInvitationToProjectEmailServiceFactory";
 
 dotenv.config();
-
-NodemailerSendInvitationToProjectEmailServiceFactory.make().sendInvitationEmail(
-  {
-    email: "vinicius_rodriguesbr145@hotmail.com",
-    token: "token",
-    projectName: "Projeto",
-  }
-);
 
 export class ExpressServer {
   app = express();
