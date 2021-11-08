@@ -1,3 +1,4 @@
+import { Issue } from "@modules/issue/entities";
 import {
   CreateIssueRepositoryDTO,
   UpdateIssueRepositoryDTO,
@@ -6,6 +7,7 @@ import {
   ICreateIssueRepository,
   IDeleteIssueRepository,
   IDoesIssueExistRepository,
+  IFindOneIssueRepository,
   IUpdateIssueRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
@@ -15,8 +17,32 @@ export class KnexIssueRepository
     ICreateIssueRepository,
     IDoesIssueExistRepository,
     IDeleteIssueRepository,
-    IUpdateIssueRepository
+    IUpdateIssueRepository,
+    IFindOneIssueRepository
 {
+  async findOneIssue(issueId: string): Promise<Issue | undefined> {
+    const issue = await connection("issue")
+      .select("*")
+      .where({ id: issueId })
+      .first();
+
+    if (!issue) return undefined;
+
+    const { email: ownerEmail } = await connection("account")
+      .select("email")
+      .where({ id: issue.owner_id })
+      .first();
+
+    return {
+      issueId: issue.id,
+      title: issue.title,
+      description: issue.description,
+      ownerEmail,
+      createdAt: issue.created_at,
+      expiresAt: issue.expires_at,
+    } as Issue;
+  }
+
   async updateIssue({
     issueId,
     newTitle,

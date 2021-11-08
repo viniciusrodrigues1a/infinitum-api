@@ -51,6 +51,45 @@ describe("issue repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findOneIssue method", () => {
+    it("should return inserted issue", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const issueId = "issue-id-0";
+      await connection("issue").insert({
+        id: "issue-id-0",
+        title: "My issue",
+        description: "My issue's description",
+        owner_id: accountId,
+        issue_group_id: issueGroupId,
+      });
+
+      const issue = await sut.findOneIssue(issueId);
+
+      expect(issue!.issueId).toBe(issueId);
+    });
+
+    it("should return undefined if issue cannot be found", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      await connection("issue").insert({
+        id: "issue-id-0",
+        title: "My issue",
+        description: "My issue's description",
+        owner_id: accountId,
+        issue_group_id: issueGroupId,
+      });
+
+      const issue = await sut.findOneIssue("nonexistent-issue-id-123964996");
+
+      expect(issue).toBeUndefined();
+    });
+  });
+
   describe("updateIssue method", () => {
     it("should update an issue", async () => {
       expect.assertions(1);
