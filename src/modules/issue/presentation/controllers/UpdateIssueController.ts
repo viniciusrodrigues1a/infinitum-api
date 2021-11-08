@@ -18,6 +18,13 @@ import {
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
 
+export type UpdateIssueControllerRequest = Omit<
+  UpdateIssueUseCaseDTO,
+  "newExpiresAt"
+> & {
+  newExpiresAt?: string;
+};
+
 export class UpdateIssueController implements IController {
   constructor(
     private readonly updateIssueUseCase: UpdateIssueUseCase,
@@ -31,7 +38,12 @@ export class UpdateIssueController implements IController {
         return badRequestResponse(validationError);
       }
 
-      await this.updateIssueUseCase.update(request);
+      await this.updateIssueUseCase.update({
+        ...request,
+        newExpiresAt: request.newExpiresAt
+          ? new Date(request.newExpiresAt)
+          : undefined,
+      });
 
       return noContentResponse();
     } catch (err) {

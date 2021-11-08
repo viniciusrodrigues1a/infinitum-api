@@ -21,6 +21,7 @@ import {
 import {
   CreateIssueController,
   DeleteIssueController,
+  UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
 import { IControllerFactory } from "./IControllerFactory";
 import { ControllerValidationFactory } from "../validation";
@@ -30,6 +31,13 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeUpdateIssueController(language: ILanguage): UpdateIssueController {
+    return new UpdateIssueController(
+      this.useCaseFactory.makeUpdateIssueUseCase(language),
+      this.validationFactory.makeUpdateIssueControllerValidation(language)
+    );
+  }
 
   makeInviteAccountToProjectUseCase(
     language: ILanguage

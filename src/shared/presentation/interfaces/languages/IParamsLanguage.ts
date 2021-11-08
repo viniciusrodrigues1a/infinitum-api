@@ -11,4 +11,5 @@ export interface IParamsLanguage {
   getExpiresAtParamMessage(): string;
   getRoleNameParamMessage(): string;
   getProjectNameParamMessage(): string;
+  getIssueIdParamMessage(): string;
 }

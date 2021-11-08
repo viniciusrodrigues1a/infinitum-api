@@ -21,7 +21,6 @@ import { UpdateIssueUseCaseDTO } from "./DTOs";
 import { IssueNotFoundError } from "./errors";
 import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
 import {
-  IDoesIssueExistRepository,
   IFindOneIssueRepository,
   IUpdateIssueRepository,
 } from "./interfaces/repositories";

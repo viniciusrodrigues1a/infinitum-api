@@ -14,6 +14,23 @@ type Field = {
 };
 
 export class ControllerValidationFactory {
+  makeUpdateIssueControllerValidation(
+    language: ILanguage
+  ): ValidationComposite {
+    const stringFields = [
+      { accessor: "newTitle", i18n: language.getTitleParamMessage() },
+      {
+        accessor: "newDescription",
+        i18n: language.getDescriptionParamMessage(),
+      },
+      { accessor: "newExpiresAt", i18n: language.getExpiresAtParamMessage() },
+    ];
+
+    const validations = this.makeAllString(stringFields, language);
+
+    return new ValidationComposite(validations);
+  }
+
   makeInviteAccountToProjectControllerValidation(
     language: ILanguage
   ): ValidationComposite {
@@ -28,8 +45,10 @@ export class ControllerValidationFactory {
     ];
 
     const required = this.makeAllRequired(requiredAndStringFields, language);
+    const string = this.makeAllString(requiredAndStringFields, language);
+    const validations = [...required, ...string];
 
-    return new ValidationComposite(required);
+    return new ValidationComposite(validations);
   }
 
   makeCreateIssueControllerValidation(

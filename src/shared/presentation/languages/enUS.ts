@@ -17,6 +17,10 @@ export class ENUSLanguage implements ILanguage {
     return "Issue not found";
   }
 
+  getIssueIdParamMessage(): string {
+    return "issue id";
+  }
+
   getRoleNameParamMessage(): string {
     return "role name";
   }

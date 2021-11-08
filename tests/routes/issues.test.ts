@@ -79,7 +79,143 @@ describe("/issues/ endpoint", () => {
       issueId = id;
     });
 
-    describe("method DELETE /", () => {
+    describe("method PUT /:issueId", () => {
+      it("should return 204", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const updatedTitle = "updated title";
+        const response = await api
+          .put(`/issues/${issueId}`)
+          .set(givenAuthHeader)
+          .send({
+            newTitle: updatedTitle,
+          });
+
+        const storedIssue = await connection("issue")
+          .select("title")
+          .where({ id: issueId })
+          .first();
+        expect(response.statusCode).toBe(204);
+        expect(storedIssue.title).toBe(updatedTitle);
+      });
+
+      it("should return 404 if IssueNotFoundError is thrown", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .put("/issues/invalid-id-213312321")
+          .set(givenAuthHeader)
+          .send({
+            newTitle: "updated title",
+          });
+
+        expect(response.statusCode).toBe(404);
+        const expectedBodyMessage = new IssueNotFoundError(defaultLanguage)
+          .message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 404 if NotParticipantInProjectError is thrown", async () => {
+        expect.assertions(2);
+
+        const notParticipantEmail = "notparticipant@email.com";
+        await connection("account").insert({
+          id: "account-id-1",
+          name: "jorge",
+          email: notParticipantEmail,
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        });
+        const authorizationTokenWithDifferentEmail = jwtToken.sign({
+          email: notParticipantEmail,
+        });
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationTokenWithDifferentEmail}`,
+        };
+
+        const response = await api
+          .put(`/issues/${issueId}`)
+          .set(givenAuthHeader)
+          .send({
+            newTitle: "updated title",
+          });
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new NotParticipantInProjectError(
+          notParticipantEmail,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if NotFutureDateError is thrown", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const nowMs = new Date().getTime();
+        const yesterday = new Date(nowMs - 86400 * 1000);
+        const response = await api
+          .put(`/issues/${issueId}`)
+          .set(givenAuthHeader)
+          .send({
+            newTitle: "updated title",
+            newExpiresAt: yesterday,
+          });
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new NotFutureDateError(
+          yesterday,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("rhould return 401 if RoleInsufficientPermissionError is thrown", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const roleName = "espectator";
+        const { id: memberRoleId } = await connection("project_role")
+          .select("id")
+          .where({ name: roleName })
+          .first();
+        await connection("account_project_project_role")
+          .update({
+            project_role_id: memberRoleId,
+          })
+          .where({ account_id: accountId });
+
+        const response = await api
+          .put(`/issues/${issueId}`)
+          .set(givenAuthHeader)
+          .send({
+            newTitle: "updated title",
+          });
+
+        expect(response.statusCode).toBe(401);
+        const expectedBodyMessage = new RoleInsufficientPermissionError(
+          roleName,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+    });
+
+    describe("method DELETE /:issueId", () => {
       it("should return 204", async () => {
         expect.assertions(1);
 

@@ -17,6 +17,10 @@ export class PTBRLanguage implements ILanguage {
     return "Ticket não encontrado";
   }
 
+  getIssueIdParamMessage(): string {
+    return "id do ticket";
+  }
+
   getRoleNameParamMessage(): string {
     return "nome do cargo";
   }
@@ -30,7 +34,7 @@ export class PTBRLanguage implements ILanguage {
   }
 
   getIssueGroupIdParamMessage(): string {
-    return "id da seção de issues";
+    return "id da seção de tickets";
   }
 
   getProjectIdParamMessage(): string {

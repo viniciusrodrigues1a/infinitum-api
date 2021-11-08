@@ -12,13 +12,34 @@ import {
   IRepositoryFactory,
   knexRepositoryFactoryImpl,
 } from "@main/factories/repositories";
-import { CreateIssueUseCase } from "@modules/issue/use-cases";
+import {
+  CreateIssueUseCase,
+  UpdateIssueUseCase,
+} from "@modules/issue/use-cases";
 import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
 import { IUseCaseFactory } from "./IUseCaseFactory";
 import NodemailerSendInvitationToProjectEmailServiceFactory from "../services/NodemailerSendInvitationToProjectEmailServiceFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeUpdateIssueUseCase(language: ILanguage): UpdateIssueUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    const issueRepository = this.repositoryFactory.makeIssueRepository();
+    return new UpdateIssueUseCase(
+      issueRepository,
+      issueRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeInviteAccountToProjectUseCase(
     language: ILanguage

@@ -5,6 +5,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import {
   CreateIssueController,
   DeleteIssueController,
+  UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
 import {
   CreateProjectController,
@@ -31,4 +32,5 @@ export interface IControllerFactory {
   makeInviteAccountToProjectUseCase(
     language: ILanguage
   ): InviteAccountToProjectController;
+  makeUpdateIssueController(language: ILanguage): UpdateIssueController;
 }
