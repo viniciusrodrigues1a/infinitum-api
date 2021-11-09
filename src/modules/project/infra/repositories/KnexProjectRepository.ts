@@ -20,6 +20,7 @@ import {
   IFindProjectIdByIssueIdRepository,
   ICreateInvitationTokenRepository,
   IHasAccountBeenInvitedToProjectRepository,
+  IIsInvitationTokenValidRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import {
@@ -42,8 +43,18 @@ export class KnexProjectRepository
     IFindProjectIdByIssueGroupIdRepository,
     IFindProjectIdByIssueIdRepository,
     ICreateInvitationTokenRepository,
-    IHasAccountBeenInvitedToProjectRepository
+    IHasAccountBeenInvitedToProjectRepository,
+    IIsInvitationTokenValidRepository
 {
+  async isInvitationTokenValid(token: string): Promise<boolean> {
+    const invitation = await connection("project_invitation")
+      .select("*")
+      .where({ token })
+      .first();
+
+    return !!invitation;
+  }
+
   async hasAccountBeenInvited({
     projectId,
     accountEmail,
