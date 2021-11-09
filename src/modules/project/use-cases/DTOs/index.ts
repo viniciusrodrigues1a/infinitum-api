@@ -7,3 +7,4 @@ export * from "./CreateIssueGroupForProjectRepositoryDTO";
 export * from "./CreateInvitationTokenRepositoryDTO";
 export * from "./InviteAccountToProjectUseCaseDTO";
 export * from "./SendInvitationToProjectEmailServiceDTO";
+export * from "./AddAccountToProjectRepositoryDTO";
