@@ -2,6 +2,7 @@ import Bull, { Job } from "bull";
 import { IQueue } from "./IQueue";
 import { IJob } from "./jobs";
 import InvitationEmailJob from "./jobs/InvitationEmailJob";
+import KickedOutOfProjectEmailJob from "./jobs/KickedOutOfProjectEmailJob";
 
 type QueueEntry = {
   bull: Bull.Queue;
@@ -9,7 +10,7 @@ type QueueEntry = {
 };
 
 class Queue implements IQueue {
-  private jobs: IJob[] = [InvitationEmailJob];
+  private jobs: IJob[] = [InvitationEmailJob, KickedOutOfProjectEmailJob];
   queues: { [key: string]: QueueEntry } = {};
 
   constructor() {

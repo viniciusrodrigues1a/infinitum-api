@@ -1,19 +1,18 @@
-import path from "path";
-import { SendInvitationToProjectEmailServiceDTO } from "@modules/project/use-cases/DTOs";
+import { SendKickedOutOfProjectEmailServiceDTO } from "@modules/project/use-cases/DTOs";
 import { transporter } from "@shared/infra/nodemailer";
 import { SendMailOptions } from "nodemailer";
+import path from "path";
 import inlineBase64 from "nodemailer-plugin-inline-base64";
 import { IJob } from "./IJob";
 import { fileToBase64DataUrl, renderHtml } from "./utils";
 
-class InvitationEmailJob implements IJob {
-  public key = "InvitationEmailJob";
+class KickedOutOfProjectEmailJob implements IJob {
+  public key = "KickedOutOfProjectEmailJob";
 
   async handle({
-    projectName,
     email,
-    token,
-  }: SendInvitationToProjectEmailServiceDTO): Promise<void> {
+    projectName,
+  }: SendKickedOutOfProjectEmailServiceDTO): Promise<void> {
     const emailTemplatesDir = path.resolve(
       __dirname,
       "..",
@@ -21,8 +20,8 @@ class InvitationEmailJob implements IJob {
       "emailTemplates"
     );
 
-    const invitationImgSrc = fileToBase64DataUrl(
-      path.resolve(emailTemplatesDir, "assets", "invitationIcon.png")
+    const kickedImgSrc = fileToBase64DataUrl(
+      path.resolve(emailTemplatesDir, "assets", "kickedIcon.png")
     );
     const logoImgSrc = fileToBase64DataUrl(
       path.resolve(emailTemplatesDir, "assets", "logo.png")
@@ -35,14 +34,14 @@ class InvitationEmailJob implements IJob {
     };
 
     const renderedHtml = renderHtml(
-      path.resolve(emailTemplatesDir, "invitation.ejs"),
-      { projectName, token, iconImgSrc: invitationImgSrc, logoImgSrc }
+      path.resolve(emailTemplatesDir, "kicked.ejs"),
+      { projectName, logoImgSrc, iconImgSrc: kickedImgSrc }
     );
 
     if (renderedHtml) {
       mailOptions.html = renderedHtml;
     } else {
-      mailOptions.text = `Você foi convidado a participar do projeto ${projectName}. Clique aqui para aceitar o convite: http://localhost:3000/invitation?token=${token}`;
+      mailOptions.text = `Você foi removido do do projeto: ${projectName}. E portanto não pode mais acessá-lo na plataforma.`;
     }
 
     transporter.use("compile", inlineBase64());
@@ -52,4 +51,4 @@ class InvitationEmailJob implements IJob {
   }
 }
 
-export default new InvitationEmailJob();
+export default new KickedOutOfProjectEmailJob();

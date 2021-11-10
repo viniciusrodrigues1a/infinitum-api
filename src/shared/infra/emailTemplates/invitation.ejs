@@ -1,13 +1,6 @@
 <div style="padding: 36px 0;">
   <center>
-    <img src="<%= invitationImgSrc %>"/>
-
-    <div style="margin-top: 26px; width: 100%;">
-      <div style="margin: 0 auto; display: inline-flex; justify-content: center; align-items: center;">
-        <img src="<%= logoImgSrc %>" />
-        <h1 style="color: #2b2b2b; margin-left: 8px; text-align: center; font-size: 26px;">Infinitum</h1>
-      </div>
-    </div>
+    <%- include('partials/header', { iconImgSrc, logoImgSrc }); %>
 
     <p style="color: #2b2b2b; margin-top: 6px; text-align: center; font-size: 20px;">Você foi convidado a participar do projeto <b><%= projectName %></b>.</p>
 
@@ -21,7 +14,7 @@
       </a>
     </div>
 
-    <small style="display: block; margin-top: 48px; color: #2b2b2b;">Equipe Infinitum</small>
+    <%- include('partials/footer'); %>
   </center>
 </div>
 
