@@ -14,6 +14,7 @@ export const permissions: PermissionsType = {
     "CREATE_ISSUE",
     "DELETE_ISSUE",
     "UPDATE_ISSUE",
+    "KICK_ACCOUNT_FROM_PROJECT",
   ],
   owner: [
     "DELETE_PROJECT",
@@ -23,5 +24,6 @@ export const permissions: PermissionsType = {
     "DELETE_ISSUE",
     "UPDATE_ISSUE",
     "INVITE_ACCOUNT_TO_PROJECT",
+    "KICK_ACCOUNT_FROM_PROJECT",
   ],
 };

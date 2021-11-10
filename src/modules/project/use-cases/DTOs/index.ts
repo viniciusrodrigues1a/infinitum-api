@@ -8,3 +8,6 @@ export * from "./CreateInvitationTokenRepositoryDTO";
 export * from "./InviteAccountToProjectUseCaseDTO";
 export * from "./SendInvitationToProjectEmailServiceDTO";
 export * from "./AddAccountToProjectRepositoryDTO";
+export * from "./SendKicketOutOfProjectEmailServiceDTO";
+export * from "./KickParticipantFromProjectUseCaseDTO";
+export * from "./KickParticipantFromProjectRepositoryDTO";
