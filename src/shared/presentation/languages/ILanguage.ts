@@ -13,6 +13,7 @@ import {
 import {
   IAccountAlreadyParticipatesInProjectErrorLanguage,
   IAccountHasAlreadyBeenInvitedErrorLanguage,
+  IInvalidInvitationTokenErrorLanguage,
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
@@ -49,4 +50,5 @@ export interface ILanguage
     IIssueNotFoundErrorLanguage,
     IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
     IAccountHasAlreadyBeenInvitedErrorLanguage,
-    IAccountAlreadyParticipatesInProjectErrorLanguage {}
+    IAccountAlreadyParticipatesInProjectErrorLanguage,
+    IInvalidInvitationTokenErrorLanguage {}

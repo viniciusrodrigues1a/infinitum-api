@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getInvalidInvitationTokenErrorMessage(): string {
+    return "Invitation token is not valid";
+  }
+
   getOwnerCantBeUsedAsARoleForAnInvitationErrorMessage(): string {
     return "You cannot invite a user for the owner role of this project";
   }

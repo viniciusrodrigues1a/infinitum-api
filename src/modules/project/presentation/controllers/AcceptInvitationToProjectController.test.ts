@@ -25,7 +25,7 @@ describe("acceptInvitationToProject controller", () => {
     const { sut, acceptInvitationToProjectUseCaseMock } = makeSut();
     const givenToken = "invitationToken-0";
 
-    const response = await sut.handleRequest(givenToken);
+    const response = await sut.handleRequest({ invitationToken: givenToken });
 
     expect(response.statusCode).toBe(HttpStatusCodes.noContent);
     expect(acceptInvitationToProjectUseCaseMock.accept).toHaveBeenNthCalledWith(
@@ -42,7 +42,9 @@ describe("acceptInvitationToProject controller", () => {
       throw new Error("unhandled server side err");
     });
 
-    const response = await sut.handleRequest("invitationToken-0");
+    const response = await sut.handleRequest({
+      invitationToken: "invitationToken-0",
+    });
 
     expect(response.statusCode).toBe(HttpStatusCodes.serverError);
   });
@@ -58,7 +60,9 @@ describe("acceptInvitationToProject controller", () => {
       throw errorThrown;
     });
 
-    const response = await sut.handleRequest("invitationToken-0");
+    const response = await sut.handleRequest({
+      invitationToken: "invitationToken-0",
+    });
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body).toBe(errorThrown);

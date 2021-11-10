@@ -48,3 +48,10 @@ projectsRoutes.post(
     knexControllerFactoryImpl.makeInviteAccountToProjectUseCase(language)
   )
 );
+
+projectsRoutes.post(
+  "/invitation/accept/:invitationToken",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeAcceptInvitationToProjectController(language)
+  )
+);

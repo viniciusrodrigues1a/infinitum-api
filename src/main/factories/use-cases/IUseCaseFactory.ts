@@ -13,6 +13,7 @@ import {
   ListProjectsOwnedByAccountUseCase,
   UpdateProjectUseCase,
 } from "@modules/project/use-cases";
+import { AcceptInvitationToProjectUseCase } from "@modules/project/use-cases/AcceptInvitationToProjectUseCase";
 
 export interface IUseCaseFactory {
   makeFindOneAccountUseCase(language: ILanguage): FindOneAccountUseCase;
@@ -29,4 +30,7 @@ export interface IUseCaseFactory {
     language: ILanguage
   ): InviteAccountToProjectUseCase;
   makeUpdateIssueUseCase(language: ILanguage): UpdateIssueUseCase;
+  makeAcceptInvitationToProjectUseCase(
+    language: ILanguage
+  ): AcceptInvitationToProjectUseCase;
 }

@@ -6,6 +6,7 @@ import {
   AccountAlreadyParticipatesInProjectError,
   AccountHasAlreadyBeenInvitedError,
 } from "@modules/project/use-cases/errors";
+import { InvalidInvitationTokenError } from "@modules/project/use-cases/errors/InvalidInvitationTokenError";
 import { NotFutureDateError } from "@shared/entities/errors";
 import { configuration, connection } from "@shared/infra/database/connection";
 import {
@@ -232,6 +233,60 @@ describe("/projects/ endpoint", () => {
         .where({ name: "my project" })
         .first();
       projectId = id;
+    });
+
+    describe("method POST /invitation/accept/:invitationToken", () => {
+      it("should return 204", async () => {
+        expect.assertions(1);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const newAccount = {
+          id: "account-id-123421",
+          email: "newaccount@email.com",
+          name: "new account",
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        };
+        const { id: roleId } = await connection("project_role")
+          .select("id")
+          .where({ name: "member" })
+          .first();
+        const projectInvitation = {
+          account_id: newAccount.id,
+          project_id: projectId,
+          project_role_id: roleId,
+          token: "invitationToken-0",
+        };
+        await connection("account").insert(newAccount);
+        await connection("project_invitation").insert(projectInvitation);
+
+        const response = await api
+          .post(`/projects/invitation/accept/${projectInvitation.token}`)
+          .set(givenAuthHeader);
+
+        expect(response.statusCode).toBe(204);
+      });
+
+      it("should return 400 if token is not valid", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .post(`/projects/invitation/accept/invalid-invitationToken-0`)
+          .set(givenAuthHeader);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new InvalidInvitationTokenError(
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
     });
 
     describe("method POST /invitation", () => {

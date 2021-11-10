@@ -8,12 +8,18 @@ import {
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
 
+export type AcceptInvitationToProjectControllerRequest = {
+  invitationToken: string;
+};
+
 export class AcceptInvitationToProjectController implements IController {
   constructor(
     private readonly acceptInvitationToProjectUseCase: AcceptInvitationToProjectUseCase
   ) {}
 
-  async handleRequest(invitationToken: string): Promise<HttpResponse> {
+  async handleRequest({
+    invitationToken,
+  }: AcceptInvitationToProjectControllerRequest): Promise<HttpResponse> {
     try {
       await this.acceptInvitationToProjectUseCase.accept(invitationToken);
       return noContentResponse();

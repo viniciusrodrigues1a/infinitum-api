@@ -3,6 +3,7 @@ import { LoginController } from "@modules/account/presentation/controllers/Login
 import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
 import { ILanguage } from "@modules/account/presentation/languages";
 import {
+  AcceptInvitationToProjectController,
   CreateIssueGroupForProjectController,
   CreateProjectController,
   DeleteProjectController,
@@ -31,6 +32,14 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeAcceptInvitationToProjectController(
+    language: ILanguage
+  ): AcceptInvitationToProjectController {
+    return new AcceptInvitationToProjectController(
+      this.useCaseFactory.makeAcceptInvitationToProjectUseCase(language)
+    );
+  }
 
   makeUpdateIssueController(language: ILanguage): UpdateIssueController {
     return new UpdateIssueController(

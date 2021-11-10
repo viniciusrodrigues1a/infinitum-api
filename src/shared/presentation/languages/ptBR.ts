@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getInvalidInvitationTokenErrorMessage(): string {
+    return "Token de convite para projeto não é válido";
+  }
+
   getOwnerCantBeUsedAsARoleForAnInvitationErrorMessage(): string {
     return "Você não pode convidar um usuário para a função de dono do projeto";
   }

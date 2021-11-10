@@ -8,6 +8,7 @@ import {
   UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
 import {
+  AcceptInvitationToProjectController,
   CreateProjectController,
   DeleteProjectController,
   ListProjectsOwnedByAccountController,
@@ -33,4 +34,7 @@ export interface IControllerFactory {
     language: ILanguage
   ): InviteAccountToProjectController;
   makeUpdateIssueController(language: ILanguage): UpdateIssueController;
+  makeAcceptInvitationToProjectController(
+    language: ILanguage
+  ): AcceptInvitationToProjectController;
 }

@@ -17,11 +17,23 @@ import {
   UpdateIssueUseCase,
 } from "@modules/issue/use-cases";
 import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
+import { AcceptInvitationToProjectUseCase } from "@modules/project/use-cases/AcceptInvitationToProjectUseCase";
 import { IUseCaseFactory } from "./IUseCaseFactory";
 import NodemailerSendInvitationToProjectEmailServiceFactory from "../services/NodemailerSendInvitationToProjectEmailServiceFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeAcceptInvitationToProjectUseCase(
+    language: ILanguage
+  ): AcceptInvitationToProjectUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new AcceptInvitationToProjectUseCase(
+      projectRepository,
+      projectRepository,
+      language
+    );
+  }
 
   makeUpdateIssueUseCase(language: ILanguage): UpdateIssueUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();
