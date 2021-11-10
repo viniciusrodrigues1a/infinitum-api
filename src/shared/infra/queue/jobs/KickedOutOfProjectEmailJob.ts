@@ -30,7 +30,7 @@ class KickedOutOfProjectEmailJob implements IJob {
     const mailOptions: SendMailOptions = {
       from: process.env.NODEMAILER_GMAIL_FROM,
       to: email,
-      subject: "Infinitum - Convite para participar de projeto",
+      subject: "Infinitum - Aviso de expulsão de projeto",
     };
 
     const renderedHtml = renderHtml(
