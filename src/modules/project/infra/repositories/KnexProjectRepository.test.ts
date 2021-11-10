@@ -33,6 +33,45 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("kickParticipantFromProjectRepository method", () => {
+    it("should remove a row in the account_project_project_role table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "member" })
+        .first();
+      await connection("project").insert(project);
+      await connection("account_project_project_role").insert({
+        account_id: accountId,
+        project_id: project.id,
+        project_role_id: roleId,
+      });
+
+      await sut.kickParticipant({
+        projectId: project.id,
+        accountEmail,
+      });
+
+      const participant = await connection("account_project_project_role")
+        .select("*")
+        .where({
+          account_id: accountId,
+          project_id: project.id,
+        })
+        .first();
+      expect(participant).toBeUndefined();
+    });
+  });
+
   describe("acceptInvitationToken method", () => {
     it("should insert new row in the account_project_project_role table given invitation token", async () => {
       expect.assertions(1);

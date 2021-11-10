@@ -3,6 +3,7 @@ import {
   CreateInvitationTokenRepositoryDTO,
   CreateIssueGroupForProjectRepositoryDTO,
   CreateProjectRepositoryDTO,
+  KickParticipantFromProjectRepositoryDTO,
   UpdateProjectRepositoryDTO,
 } from "@modules/project/use-cases/DTOs";
 import {
@@ -23,6 +24,7 @@ import {
   IIsInvitationTokenValidRepository,
   IAcceptInvitationTokenRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
+import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
 import { connection } from "@shared/infra/database/connection";
 import {
   DoesParticipantExistRepositoryDTO,
@@ -46,8 +48,26 @@ export class KnexProjectRepository
     ICreateInvitationTokenRepository,
     IHasAccountBeenInvitedToProjectRepository,
     IIsInvitationTokenValidRepository,
-    IAcceptInvitationTokenRepository
+    IAcceptInvitationTokenRepository,
+    IKickParticipantFromProjectRepository
 {
+  async kickParticipant({
+    projectId,
+    accountEmail,
+  }: KickParticipantFromProjectRepositoryDTO): Promise<void> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    await connection("account_project_project_role")
+      .where({
+        project_id: projectId,
+        account_id: accountId,
+      })
+      .del();
+  }
+
   async acceptInvitationToken(token: string): Promise<void> {
     const invitation = await connection("project_invitation")
       .select("*")
