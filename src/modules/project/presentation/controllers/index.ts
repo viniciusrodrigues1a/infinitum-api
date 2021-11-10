@@ -5,3 +5,4 @@ export * from "./ListProjectsOwnedByAccountController";
 export * from "./CreateIssueGroupForProjectController";
 export * from "./InviteAccountToProjectController";
 export * from "./AcceptInvitationToProjectController";
+export * from "./KickParticipantFromProjectController";
