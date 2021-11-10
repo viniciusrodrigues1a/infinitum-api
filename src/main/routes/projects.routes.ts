@@ -55,3 +55,10 @@ projectsRoutes.post(
     knexControllerFactoryImpl.makeAcceptInvitationToProjectController(language)
   )
 );
+
+projectsRoutes.post(
+  "/invitation/kick",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeKickParticipantFromProjectController(language)
+  )
+);

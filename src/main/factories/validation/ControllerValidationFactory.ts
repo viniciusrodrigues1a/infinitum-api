@@ -14,6 +14,25 @@ type Field = {
 };
 
 export class ControllerValidationFactory {
+  makeKickParticipantFromProjectControllerValidation(
+    language: ILanguage
+  ): ValidationComposite {
+    const requiredAndStringFields = [
+      { accessor: "projectId", i18n: language.getProjectIdParamMessage() },
+      {
+        accessor: "accountEmail",
+        i18n: language.getEmailParamMessage(),
+      },
+    ];
+
+    const required = this.makeAllRequired(requiredAndStringFields, language);
+    const string = this.makeAllString(requiredAndStringFields, language);
+
+    const validations = [...required, ...string];
+
+    return new ValidationComposite(validations);
+  }
+
   makeUpdateIssueControllerValidation(
     language: ILanguage
   ): ValidationComposite {
