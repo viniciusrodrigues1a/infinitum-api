@@ -11,3 +11,5 @@ export * from "./AddAccountToProjectRepositoryDTO";
 export * from "./SendKicketOutOfProjectEmailServiceDTO";
 export * from "./KickParticipantFromProjectUseCaseDTO";
 export * from "./KickParticipantFromProjectRepositoryDTO";
+export * from "./RevokeInvitationRepositoryDTO";
+export * from "./RevokeInvitationUseCaseDTO";

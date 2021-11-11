@@ -5,3 +5,4 @@ export * from "./ListProjectsOwnedByAccountUseCase";
 export * from "./CreateIssueGroupForProjectUseCase";
 export * from "./InviteAccountToProjectUseCase";
 export * from "./KickParticipantFromProjectUseCase";
+export * from "./RevokeInvitationUseCase";
