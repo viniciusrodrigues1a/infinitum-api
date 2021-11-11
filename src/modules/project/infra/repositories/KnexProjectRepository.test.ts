@@ -33,6 +33,53 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("revokeInvitation method", () => {
+    it("should remove a row in the project_invitation table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      const newAccount = {
+        id: "account-id-123421",
+        email: "newaccount@email.com",
+        name: "new account",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "member" })
+        .first();
+      const projectInvitation = {
+        account_id: newAccount.id,
+        project_id: project.id,
+        project_role_id: roleId,
+        token: "invitationToken-0",
+      };
+      await connection("account").insert(newAccount);
+      await connection("project").insert(project);
+      await connection("project_invitation").insert(projectInvitation);
+
+      await sut.revokeInvitation({
+        projectId: project.id,
+        accountEmail: newAccount.email,
+      });
+
+      const storedInvitation = await connection("project_invitation")
+        .select("*")
+        .where({ token: projectInvitation.token })
+        .first();
+      expect(storedInvitation).toBeUndefined();
+    });
+  });
+
   describe("kickParticipantFromProjectRepository method", () => {
     it("should remove a row in the account_project_project_role table", async () => {
       expect.assertions(1);

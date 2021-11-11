@@ -4,6 +4,7 @@ import {
   CreateIssueGroupForProjectRepositoryDTO,
   CreateProjectRepositoryDTO,
   KickParticipantFromProjectRepositoryDTO,
+  RevokeInvitationRepositoryDTO,
   UpdateProjectRepositoryDTO,
 } from "@modules/project/use-cases/DTOs";
 import {
@@ -23,6 +24,7 @@ import {
   IHasAccountBeenInvitedToProjectRepository,
   IIsInvitationTokenValidRepository,
   IAcceptInvitationTokenRepository,
+  IRevokeInvitationRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
 import { connection } from "@shared/infra/database/connection";
@@ -49,8 +51,26 @@ export class KnexProjectRepository
     IHasAccountBeenInvitedToProjectRepository,
     IIsInvitationTokenValidRepository,
     IAcceptInvitationTokenRepository,
-    IKickParticipantFromProjectRepository
+    IKickParticipantFromProjectRepository,
+    IRevokeInvitationRepository
 {
+  async revokeInvitation({
+    projectId,
+    accountEmail,
+  }: RevokeInvitationRepositoryDTO): Promise<void> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    await connection("project_invitation")
+      .where({
+        account_id: accountId,
+        project_id: projectId,
+      })
+      .del();
+  }
+
   async kickParticipant({
     projectId,
     accountEmail,
