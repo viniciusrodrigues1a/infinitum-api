@@ -26,5 +26,6 @@ export const permissions: PermissionsType = {
     "INVITE_ACCOUNT_TO_PROJECT",
     "KICK_ACCOUNT_FROM_PROJECT",
     "REVOKE_INVITATION",
+    "UPDATE_PARTICIPANT_ROLE",
   ],
 };
