@@ -62,3 +62,10 @@ projectsRoutes.post(
     knexControllerFactoryImpl.makeKickParticipantFromProjectController(language)
   )
 );
+
+projectsRoutes.delete(
+  "/invitation/revoke",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeRevokeInvitationController(language)
+  )
+);

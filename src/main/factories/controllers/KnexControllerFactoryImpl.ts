@@ -10,6 +10,7 @@ import {
   InviteAccountToProjectController,
   KickParticipantFromProjectController,
   ListProjectsOwnedByAccountController,
+  RevokeInvitationController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 import {
@@ -33,6 +34,15 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeRevokeInvitationController(
+    language: ILanguage
+  ): RevokeInvitationController {
+    return new RevokeInvitationController(
+      this.useCaseFactory.makeRevokeInvitationUseCase(language),
+      this.validationFactory.makeRevokeInvitationUseCaseValidation(language)
+    );
+  }
 
   makeKickParticipantFromProjectController(
     language: ILanguage

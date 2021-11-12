@@ -12,6 +12,7 @@ import {
   CreateProjectController,
   DeleteProjectController,
   ListProjectsOwnedByAccountController,
+  RevokeInvitationController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
@@ -37,4 +38,7 @@ export interface IControllerFactory {
   makeAcceptInvitationToProjectController(
     language: ILanguage
   ): AcceptInvitationToProjectController;
+  makeRevokeInvitationController(
+    language: ILanguage
+  ): RevokeInvitationController;
 }

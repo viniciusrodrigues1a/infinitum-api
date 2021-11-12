@@ -235,6 +235,170 @@ describe("/projects/ endpoint", () => {
       projectId = id;
     });
 
+    describe("method DELETE /invitation", () => {
+      it("should return 204", async () => {
+        expect.assertions(1);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const newAccount = {
+          id: "account-id-123421",
+          email: "newaccount@email.com",
+          name: "new account",
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        };
+        const { id: roleId } = await connection("project_role")
+          .select("id")
+          .where({ name: "member" })
+          .first();
+        const projectInvitation = {
+          account_id: newAccount.id,
+          project_id: projectId,
+          project_role_id: roleId,
+          token: "invitationToken-0",
+        };
+        await connection("account").insert(newAccount);
+        await connection("project_invitation").insert(projectInvitation);
+
+        const response = await api
+          .delete("/projects/invitation/revoke")
+          .set(givenAuthHeader)
+          .send({
+            projectId,
+            accountEmail: newAccount.email,
+          });
+
+        expect(response.statusCode).toBe(204);
+      });
+
+      it("should return 404 if project cannot be found", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const newAccount = {
+          id: "account-id-123421",
+          email: "newaccount@email.com",
+          name: "new account",
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        };
+        const { id: roleId } = await connection("project_role")
+          .select("id")
+          .where({ name: "member" })
+          .first();
+        const projectInvitation = {
+          account_id: newAccount.id,
+          project_id: projectId,
+          project_role_id: roleId,
+          token: "invitationToken-0",
+        };
+        await connection("account").insert(newAccount);
+        await connection("project_invitation").insert(projectInvitation);
+
+        const response = await api
+          .delete("/projects/invitation/revoke")
+          .set(givenAuthHeader)
+          .send({
+            projectId: "inexistent-project-id-12394721412",
+            accountEmail: newAccount.email,
+          });
+
+        expect(response.statusCode).toBe(404);
+        const expectedBodyMessage = new ProjectNotFoundError(defaultLanguage)
+          .message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if authorized user doesn't participate in project", async () => {
+        expect.assertions(2);
+
+        const notParticipantEmail = "notparticipant@email.com";
+        await connection("account").insert({
+          id: "account-id-2",
+          name: "jorge",
+          email: notParticipantEmail,
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        });
+        const authorizationTokenWithDifferentEmail = jwtToken.sign({
+          email: notParticipantEmail,
+        });
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationTokenWithDifferentEmail}`,
+        };
+
+        const response = await api
+          .delete("/projects/invitation/revoke")
+          .set(givenAuthHeader)
+          .send({
+            projectId,
+            accountEmail: "user123978@email.com",
+          });
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new NotParticipantInProjectError(
+          notParticipantEmail,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 401 if authorized user doesn't enough permission", async () => {
+        expect.assertions(2);
+
+        const newAccount = {
+          id: "account-id-123421",
+          email: "newaccount@email.com",
+          name: "new account",
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        };
+        const authorizationTokenWithDifferentEmail = jwtToken.sign({
+          email: newAccount.email,
+        });
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationTokenWithDifferentEmail}`,
+        };
+        const { id: roleId } = await connection("project_role")
+          .select("id")
+          .where({ name: "member" })
+          .first();
+        await connection("account").insert(newAccount); // create new account
+        await connection("account_project_project_role").insert({
+          // make new account participant of already existent project
+          project_role_id: roleId,
+          account_id: newAccount.id,
+          project_id: projectId,
+        });
+        await connection("account_project_project_role") // change authenticated account role to member so it doesn't have enough permission
+          .update({ project_role_id: roleId })
+          .where({ account_id: accountId });
+
+        const response = await api
+          .delete("/projects/invitation/revoke")
+          .set(givenAuthHeader)
+          .send({
+            projectId,
+            accountEmail: "user123978@email.com",
+          });
+
+        expect(response.statusCode).toBe(401);
+        const expectedBodyMessage = new RoleInsufficientPermissionError(
+          "member",
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+    });
+
     describe("method POST /invitation/kick", () => {
       it("should return 204", async () => {
         expect.assertions(1);

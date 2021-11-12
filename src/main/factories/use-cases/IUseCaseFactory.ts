@@ -12,6 +12,7 @@ import {
   InviteAccountToProjectUseCase,
   KickParticipantFromProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
+  RevokeInvitationUseCase,
   UpdateProjectUseCase,
 } from "@modules/project/use-cases";
 import { AcceptInvitationToProjectUseCase } from "@modules/project/use-cases/AcceptInvitationToProjectUseCase";
@@ -37,4 +38,5 @@ export interface IUseCaseFactory {
   makeKickParticipantFromProjectUseCase(
     language: ILanguage
   ): KickParticipantFromProjectUseCase;
+  makeRevokeInvitationUseCase(language: ILanguage): RevokeInvitationUseCase;
 }
