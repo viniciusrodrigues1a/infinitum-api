@@ -62,15 +62,9 @@ export class KnexProjectRepository
     projectId,
     accountEmail,
   }: UpdateParticipantRoleInProjectRepositoryDTO): Promise<void> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
-    const { id: roleId } = await connection("project_role")
-      .select("id")
-      .where({ name: roleName })
-      .first();
+    const roleId = await this.findRoleIdByRoleName(roleName);
 
     await connection("account_project_project_role")
       .where({ account_id: accountId, project_id: projectId })
@@ -83,10 +77,7 @@ export class KnexProjectRepository
     projectId,
     accountEmail,
   }: RevokeInvitationRepositoryDTO): Promise<void> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     await connection("project_invitation")
       .where({
@@ -100,10 +91,7 @@ export class KnexProjectRepository
     projectId,
     accountEmail,
   }: KickParticipantFromProjectRepositoryDTO): Promise<void> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     await connection("account_project_project_role")
       .where({
@@ -139,10 +127,7 @@ export class KnexProjectRepository
     projectId,
     accountEmail,
   }: DoesParticipantExistRepositoryDTO): Promise<boolean> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     const invitation = await connection("project_invitation")
       .select("*")
@@ -158,14 +143,8 @@ export class KnexProjectRepository
     roleName,
     token,
   }: CreateInvitationTokenRepositoryDTO): Promise<void> {
-    const { id: roleId } = await connection("project_role")
-      .select("id")
-      .where({ name: roleName })
-      .first();
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const roleId = await this.findRoleIdByRoleName(roleName);
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     await connection("project_invitation").insert({
       project_role_id: roleId,
@@ -239,10 +218,7 @@ export class KnexProjectRepository
   }
 
   async listProjects(accountEmail: string): Promise<Project[]> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     const projects = await connection("project")
       .leftJoin(
@@ -428,10 +404,7 @@ export class KnexProjectRepository
     accountEmail,
     projectId,
   }: FindParticipantRoleInProjectRepositoryDTO): Promise<string> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     const { project_role_id: projectRoleId } = await connection(
       "account_project_project_role"
@@ -455,10 +428,7 @@ export class KnexProjectRepository
     accountEmail,
     projectId,
   }: DoesParticipantExistRepositoryDTO): Promise<boolean> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: accountEmail })
-      .first();
+    const accountId = await this.findAccountIdByEmail(accountEmail);
 
     const accountProjectRelationshipExists = await connection(
       "account_project_project_role"
@@ -531,5 +501,23 @@ export class KnexProjectRepository
     } catch (err) {
       throw new Error("Transaction failed");
     }
+  }
+
+  private async findAccountIdByEmail(accountEmail: string): Promise<string> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    return accountId;
+  }
+
+  private async findRoleIdByRoleName(roleName: string): Promise<string> {
+    const { id: roleId } = await connection("project_role")
+      .select("id")
+      .where({ name: roleName })
+      .first();
+
+    return roleId;
   }
 }
