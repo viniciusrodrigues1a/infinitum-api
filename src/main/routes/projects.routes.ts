@@ -41,31 +41,3 @@ projectsRoutes.get(
     knexControllerFactoryImpl.makeListProjectsOwnedByAccountController()
   )
 );
-
-projectsRoutes.post(
-  "/invitation",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeInviteAccountToProjectUseCase(language)
-  )
-);
-
-projectsRoutes.post(
-  "/invitation/accept/:invitationToken",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeAcceptInvitationToProjectController(language)
-  )
-);
-
-projectsRoutes.post(
-  "/invitation/kick",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeKickParticipantFromProjectController(language)
-  )
-);
-
-projectsRoutes.delete(
-  "/invitation/revoke",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeRevokeInvitationController(language)
-  )
-);

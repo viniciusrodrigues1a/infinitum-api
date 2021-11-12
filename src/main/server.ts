@@ -5,6 +5,7 @@ import cors from "cors";
 import {
   accountsRoutes,
   authRoutes,
+  invitationsRoutes,
   issueGroupsRoutes,
   issuesRoutes,
   projectsRoutes,
@@ -36,6 +37,7 @@ export class ExpressServer {
     this.app.use("/projects", projectsRoutes);
     this.app.use("/issueGroups", issueGroupsRoutes);
     this.app.use("/issues", issuesRoutes);
+    this.app.use("/invitations", invitationsRoutes);
   }
 
   public start(): void {
