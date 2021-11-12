@@ -13,10 +13,12 @@ import { Role } from "../entities/value-objects";
 import { UpdateParticipantRoleInProjectUseCaseDTO } from "./DTOs";
 import {
   CannotUpdateRoleOfOwnerError,
+  CannotUpdateRoleToOwnerError,
   CannotUpdateYourOwnRoleError,
 } from "./errors";
 import {
   ICannotUpdateRoleOfOwnerErrorLanguage,
+  ICannotUpdateRoleToOwnerErrorLanguage,
   ICannotUpdateYourOwnRoleErrorLanguage,
 } from "./interfaces/languages";
 import {
@@ -34,6 +36,7 @@ export class UpdateParticipantRoleInProjectUseCase {
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
+    private readonly cannotUpdateRoleToOwnerErrorLanguage: ICannotUpdateRoleToOwnerErrorLanguage,
     private readonly cannotUpdateYourOwnRoleErrorLanguage: ICannotUpdateYourOwnRoleErrorLanguage,
     private readonly cannotUpdateRoleOfOwnerErrorLanguage: ICannotUpdateRoleOfOwnerErrorLanguage,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
@@ -73,6 +76,12 @@ export class UpdateParticipantRoleInProjectUseCase {
       throw new NotParticipantInProjectError(
         accountEmail,
         this.notParticipantInProjectErrorLanguage
+      );
+    }
+
+    if (roleName === "owner") {
+      throw new CannotUpdateRoleToOwnerError(
+        this.cannotUpdateRoleToOwnerErrorLanguage
       );
     }
 

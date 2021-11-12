@@ -18,9 +18,14 @@ import {
   IUpdateParticipantRoleInProjectRepository,
 } from "./interfaces/repositories";
 import { UpdateParticipantRoleInProjectUseCase } from "./UpdateParticipantRoleInProjectUseCase";
-import { CannotUpdateYourOwnRoleError } from "./errors";
+import {
+  CannotUpdateRoleOfOwnerError,
+  CannotUpdateRoleToOwnerError,
+  CannotUpdateYourOwnRoleError,
+} from "./errors";
 import {
   ICannotUpdateRoleOfOwnerErrorLanguage,
+  ICannotUpdateRoleToOwnerErrorLanguage,
   ICannotUpdateYourOwnRoleErrorLanguage,
 } from "./interfaces/languages";
 
@@ -38,9 +43,11 @@ function makeSut() {
     mock<IProjectNotFoundErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
     mock<INotParticipantInProjectErrorLanguage>();
-  const cannotUpdateYourOwnRoleErrorLanguage =
+  const cannotUpdateRoleToOwnerErrorLanguageMock =
+    mock<ICannotUpdateRoleToOwnerErrorLanguage>();
+  const cannotUpdateYourOwnRoleErrorLanguageMock =
     mock<ICannotUpdateYourOwnRoleErrorLanguage>();
-  const cannotUpdateRoleOfOwnerErrorLanguage =
+  const cannotUpdateRoleOfOwnerErrorLanguageMock =
     mock<ICannotUpdateRoleOfOwnerErrorLanguage>();
   const invalidRoleNameErrorLanguageMock =
     mock<IInvalidRoleNameErrorLanguage>();
@@ -53,8 +60,9 @@ function makeSut() {
     findParticipantRoleInProjectRepositoryMock,
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
-    cannotUpdateYourOwnRoleErrorLanguage,
-    cannotUpdateRoleOfOwnerErrorLanguage,
+    cannotUpdateRoleToOwnerErrorLanguageMock,
+    cannotUpdateYourOwnRoleErrorLanguageMock,
+    cannotUpdateRoleOfOwnerErrorLanguageMock,
     invalidRoleNameErrorLanguageMock,
     roleInsufficientPermissionErrorLanguageMock
   );
@@ -294,7 +302,7 @@ describe("updateParticipantRoleInProject use-case", () => {
       roleName: "espectator",
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
-      accountEmailMakingRequest: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
@@ -311,6 +319,34 @@ describe("updateParticipantRoleInProject use-case", () => {
 
     const when = () => sut.updateParticipantRole(givenRequest);
 
-    await expect(when).rejects.toThrow(CannotUpdateYourOwnRoleError);
+    await expect(when).rejects.toThrow(CannotUpdateRoleOfOwnerError);
+  });
+
+  it("should throw CannotUpdateRoleToOwnerError if roleName is owner", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      doesProjectExistRepositoryMock,
+      doesParticipantExistRepositoryMock,
+      findParticipantRoleInProjectRepositoryMock,
+    } = makeSut();
+    const givenRequest = {
+      roleName: "owner",
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
+      true
+    );
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockResolvedValue(
+      "roleWithPermission"
+    );
+
+    const when = () => sut.updateParticipantRole(givenRequest);
+
+    await expect(when).rejects.toThrow(CannotUpdateRoleToOwnerError);
   });
 });
