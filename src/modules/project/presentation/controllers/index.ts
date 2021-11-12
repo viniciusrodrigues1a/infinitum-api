@@ -6,3 +6,4 @@ export * from "./CreateIssueGroupForProjectController";
 export * from "./InviteAccountToProjectController";
 export * from "./AcceptInvitationToProjectController";
 export * from "./KickParticipantFromProjectController";
+export * from "./RevokeInvitationController";
