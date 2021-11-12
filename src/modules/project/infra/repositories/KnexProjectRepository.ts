@@ -5,6 +5,7 @@ import {
   CreateProjectRepositoryDTO,
   KickParticipantFromProjectRepositoryDTO,
   RevokeInvitationRepositoryDTO,
+  UpdateParticipantRoleInProjectRepositoryDTO,
   UpdateProjectRepositoryDTO,
 } from "@modules/project/use-cases/DTOs";
 import {
@@ -25,6 +26,7 @@ import {
   IIsInvitationTokenValidRepository,
   IAcceptInvitationTokenRepository,
   IRevokeInvitationRepository,
+  IUpdateParticipantRoleInProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
 import { connection } from "@shared/infra/database/connection";
@@ -52,8 +54,31 @@ export class KnexProjectRepository
     IIsInvitationTokenValidRepository,
     IAcceptInvitationTokenRepository,
     IKickParticipantFromProjectRepository,
-    IRevokeInvitationRepository
+    IRevokeInvitationRepository,
+    IUpdateParticipantRoleInProjectRepository
 {
+  async updateParticipantRole({
+    roleName,
+    projectId,
+    accountEmail,
+  }: UpdateParticipantRoleInProjectRepositoryDTO): Promise<void> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: accountEmail })
+      .first();
+
+    const { id: roleId } = await connection("project_role")
+      .select("id")
+      .where({ name: roleName })
+      .first();
+
+    await connection("account_project_project_role")
+      .where({ account_id: accountId, project_id: projectId })
+      .update({
+        project_role_id: roleId,
+      });
+  }
+
   async revokeInvitation({
     projectId,
     accountEmail,

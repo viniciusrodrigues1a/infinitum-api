@@ -33,6 +33,67 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("updateParticipantRole method", () => {
+    it("should update a row in the account_project_project_role table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const newAccount = {
+        id: "account-id-123421",
+        email: "newaccount@email.com",
+        name: "new account",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      const { id: adminRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "admin" })
+        .first();
+      const { id: ownerRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      const adminParticipant = {
+        account_id: accountId,
+        project_id: project.id,
+        project_role_id: adminRoleId,
+      };
+      const ownerParticipant = {
+        account_id: newAccount.id,
+        project_id: project.id,
+        project_role_id: ownerRoleId,
+      };
+      await connection("account").insert(newAccount);
+      await connection("project").insert(project);
+      await connection("account_project_project_role").insert(adminParticipant);
+      await connection("account_project_project_role").insert(ownerParticipant);
+
+      await sut.updateParticipantRole({
+        projectId: project.id,
+        roleName: "espectator",
+        accountEmail,
+      });
+
+      const { id: espectatorRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "espectator" })
+        .first();
+      const storedParticipant = await connection("account_project_project_role")
+        .select("*")
+        .where({ account_id: accountId, project_id: project.id })
+        .first();
+      expect(storedParticipant.project_role_id).toBe(espectatorRoleId);
+    });
+  });
+
   describe("revokeInvitation method", () => {
     it("should remove a row in the project_invitation table", async () => {
       expect.assertions(1);
