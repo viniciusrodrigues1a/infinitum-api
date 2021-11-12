@@ -1,5 +1,6 @@
 import { RevokeInvitationUseCase } from "@modules/project/use-cases";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -21,12 +22,34 @@ const roleInsufficientPermissionErrorLanguageMock =
 
 function makeSut() {
   const revokeInvitationUseCaseMock = mock<RevokeInvitationUseCase>();
-  const sut = new RevokeInvitationController(revokeInvitationUseCaseMock);
+  const validationMock = mock<IValidation>();
+  const sut = new RevokeInvitationController(
+    revokeInvitationUseCaseMock,
+    validationMock
+  );
 
-  return { sut, revokeInvitationUseCaseMock };
+  return { sut, revokeInvitationUseCaseMock, validationMock };
 }
 
 describe("revokeInvitation controller", () => {
+  it("should return HttpStatusCodes.badRequest if validation returns an error", async () => {
+    expect.assertions(2);
+
+    const { sut, validationMock } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    const errReturned = new Error("Validation error");
+    validationMock.validate.mockImplementationOnce(() => errReturned);
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toBe(errReturned);
+  });
+
   it("should return HttpStatusCodes.noContent", async () => {
     expect.assertions(2);
 

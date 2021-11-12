@@ -9,6 +9,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -17,13 +18,19 @@ import {
 
 export class RevokeInvitationController implements IController {
   constructor(
-    private readonly revokeInvitationUseCase: RevokeInvitationUseCase
+    private readonly revokeInvitationUseCase: RevokeInvitationUseCase,
+    private readonly validation: IValidation
   ) {}
 
   async handleRequest(
     request: RevokeInvitationUseCaseDTO
   ): Promise<HttpResponse> {
     try {
+      const validationError = this.validation.validate(request);
+      if (validationError) {
+        return badRequestResponse(validationError);
+      }
+
       await this.revokeInvitationUseCase.revokeInvitation(request);
 
       return noContentResponse();
