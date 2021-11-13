@@ -48,12 +48,14 @@ export class KnexIssueRepository
     newTitle,
     newDescription,
     newExpiresAt,
+    newCompleted,
   }: UpdateIssueRepositoryDTO): Promise<void> {
     await connection("issue")
       .update({
         title: newTitle,
         description: newDescription,
-        newExpiresAt,
+        expires_at: newExpiresAt,
+        completed: newCompleted,
       })
       .where({ id: issueId });
   }

@@ -6,4 +6,5 @@ export type IssueDTO = {
   createdAt?: Date;
   expiresAt?: Date;
   assignedToEmail?: string;
+  completed?: boolean;
 };

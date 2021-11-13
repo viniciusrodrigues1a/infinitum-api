@@ -1,6 +1,7 @@
 import { ILanguage } from "@shared/presentation/languages/ILanguage";
 import {
   AtLeastOneFieldRequiredValidation,
+  FieldIsBooleanValidation,
   FieldIsDateValidation,
   FieldIsRequiredValidation,
   FieldIsStringValidation,
@@ -80,8 +81,13 @@ export class ControllerValidationFactory {
       },
       { accessor: "newExpiresAt", i18n: language.getExpiresAtParamMessage() },
     ];
+    const booleanFields = [
+      { accessor: "newCompleted", i18n: language.getCompletedParamMessage() },
+    ];
 
-    const validations = this.makeAllString(stringFields, language);
+    const string = this.makeAllString(stringFields, language);
+    const boolean = this.makeAllBoolean(booleanFields, language);
+    const validations = [...string, ...boolean];
 
     return new ValidationComposite(validations);
   }
@@ -234,6 +240,10 @@ export class ControllerValidationFactory {
 
   private makeAllDate(fields: Field[], language: ILanguage): IValidation[] {
     return this._makeAllValidation(fields, language, FieldIsDateValidation);
+  }
+
+  private makeAllBoolean(fields: Field[], language: ILanguage): IValidation[] {
+    return this._makeAllValidation(fields, language, FieldIsBooleanValidation);
   }
 
   private _makeAllValidation(

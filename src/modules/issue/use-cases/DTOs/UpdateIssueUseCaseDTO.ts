@@ -5,4 +5,5 @@ export type UpdateIssueUseCaseDTO = AccountMakingRequestDTO & {
   newTitle?: string;
   newDescription?: string;
   newExpiresAt?: Date;
+  newCompleted?: boolean;
 };

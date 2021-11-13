@@ -46,6 +46,7 @@ export class UpdateIssueUseCase {
     newTitle,
     newExpiresAt,
     newDescription,
+    newCompleted,
   }: UpdateIssueUseCaseDTO): Promise<void> {
     const oldIssue = await this.findOneIssueRepository.findOneIssue(issueId);
     if (!oldIssue) {
@@ -91,6 +92,7 @@ export class UpdateIssueUseCase {
         description: newDescription || oldIssue.description,
         expiresAt: newExpiresAt || oldIssue.expiresAt,
         ownerEmail: accountEmailMakingRequest,
+        completed: newCompleted || oldIssue.completed,
       },
       this.notFutureDateErrorLanguage
     );
@@ -100,6 +102,7 @@ export class UpdateIssueUseCase {
       newTitle: newIssue.title,
       newDescription: newIssue.description,
       newExpiresAt: newIssue.expiresAt,
+      newCompleted: newIssue.completed,
     });
   }
 }

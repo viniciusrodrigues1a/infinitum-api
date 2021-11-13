@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getCompletedParamMessage(): string {
+    return "completed";
+  }
+
   getCannotUpdateRoleToOwnerErrorMessage(): string {
     return "You cannot update someone's role to owner";
   }

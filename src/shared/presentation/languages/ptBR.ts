@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getCompletedParamMessage(): string {
+    return "finalizado";
+  }
+
   getCannotUpdateRoleToOwnerErrorMessage(): string {
     return "Você não pode atualizar o cargo de um usuário para dono";
   }

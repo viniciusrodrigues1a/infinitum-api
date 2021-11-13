@@ -10,6 +10,7 @@ export class Issue {
   expiresAt: Date | undefined;
   ownerEmail: string;
   assignedToEmail: string | undefined;
+  completed: boolean;
 
   constructor(
     {
@@ -20,6 +21,7 @@ export class Issue {
       issueId,
       expiresAt,
       createdAt,
+      completed,
     }: IssueDTO,
     notFutureDateErrorLanguage: INotFutureDateErrorLanguage
   ) {
@@ -32,5 +34,6 @@ export class Issue {
       : undefined;
     this.ownerEmail = ownerEmail;
     this.assignedToEmail = assignedToEmail || undefined;
+    this.completed = completed || false;
   }
 }
