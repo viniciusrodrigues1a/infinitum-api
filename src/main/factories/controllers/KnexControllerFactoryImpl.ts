@@ -11,6 +11,7 @@ import {
   KickParticipantFromProjectController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
+  UpdateParticipantRoleInProjectController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 import {
@@ -35,12 +36,23 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
 
+  makeUpdateParticipantRoleInProjectController(
+    language: ILanguage
+  ): UpdateParticipantRoleInProjectController {
+    return new UpdateParticipantRoleInProjectController(
+      this.useCaseFactory.makeUpdateParticipantRoleInProjectUseCase(language),
+      this.validationFactory.makeUpdateParticipantRoleInProjectControllerValidation(
+        language
+      )
+    );
+  }
+
   makeRevokeInvitationController(
     language: ILanguage
   ): RevokeInvitationController {
     return new RevokeInvitationController(
       this.useCaseFactory.makeRevokeInvitationUseCase(language),
-      this.validationFactory.makeRevokeInvitationUseCaseValidation(language)
+      this.validationFactory.makeRevokeInvitationControllerValidation(language)
     );
   }
 

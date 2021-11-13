@@ -14,7 +14,24 @@ type Field = {
 };
 
 export class ControllerValidationFactory {
-  makeRevokeInvitationUseCaseValidation(
+  makeUpdateParticipantRoleInProjectControllerValidation(
+    language: ILanguage
+  ): ValidationComposite {
+    const requiredAndStringFields = [
+      { accessor: "projectId", i18n: language.getProjectIdParamMessage() },
+      { accessor: "accountEmail", i18n: language.getEmailParamMessage() },
+      { accessor: "roleName", i18n: language.getRoleNameParamMessage() },
+    ];
+
+    const required = this.makeAllRequired(requiredAndStringFields, language);
+    const string = this.makeAllString(requiredAndStringFields, language);
+
+    const validations = [...required, ...string];
+
+    return new ValidationComposite(validations);
+  }
+
+  makeRevokeInvitationControllerValidation(
     language: ILanguage
   ): ValidationComposite {
     const requiredAndStringFields = [

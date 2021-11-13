@@ -1,6 +1,18 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getCannotUpdateRoleToOwnerErrorMessage(): string {
+    return "You cannot update someone's role to owner";
+  }
+
+  getCannotUpdateYourOwnRoleErrorMessage(): string {
+    return "You cannot update your own role";
+  }
+
+  getCannotUpdateRoleOfOwnerMessage(): string {
+    return "You cannot update the role of the owner of the project";
+  }
+
   getInvalidInvitationTokenErrorMessage(): string {
     return "Invitation token is not valid";
   }

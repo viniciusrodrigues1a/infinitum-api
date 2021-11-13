@@ -13,6 +13,9 @@ import {
 import {
   IAccountAlreadyParticipatesInProjectErrorLanguage,
   IAccountHasAlreadyBeenInvitedErrorLanguage,
+  ICannotUpdateRoleOfOwnerErrorLanguage,
+  ICannotUpdateRoleToOwnerErrorLanguage,
+  ICannotUpdateYourOwnRoleErrorLanguage,
   IInvalidInvitationTokenErrorLanguage,
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
@@ -51,4 +54,7 @@ export interface ILanguage
     IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
     IAccountHasAlreadyBeenInvitedErrorLanguage,
     IAccountAlreadyParticipatesInProjectErrorLanguage,
-    IInvalidInvitationTokenErrorLanguage {}
+    IInvalidInvitationTokenErrorLanguage,
+    ICannotUpdateRoleToOwnerErrorLanguage,
+    ICannotUpdateYourOwnRoleErrorLanguage,
+    ICannotUpdateRoleOfOwnerErrorLanguage {}

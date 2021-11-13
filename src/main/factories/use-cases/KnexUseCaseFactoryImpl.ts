@@ -8,6 +8,7 @@ import {
   KickParticipantFromProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
   RevokeInvitationUseCase,
+  UpdateParticipantRoleInProjectUseCase,
   UpdateProjectUseCase,
 } from "@modules/project/use-cases";
 import {
@@ -26,6 +27,25 @@ import NodemailerSendKickedOutOfProjectEmailServiceFactory from "../services/Nod
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeUpdateParticipantRoleInProjectUseCase(
+    language: ILanguage
+  ): UpdateParticipantRoleInProjectUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new UpdateParticipantRoleInProjectUseCase(
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      language,
+      language,
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeRevokeInvitationUseCase(language: ILanguage): RevokeInvitationUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

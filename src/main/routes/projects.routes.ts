@@ -41,3 +41,12 @@ projectsRoutes.get(
     knexControllerFactoryImpl.makeListProjectsOwnedByAccountController()
   )
 );
+
+projectsRoutes.patch(
+  "/participantRole",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeUpdateParticipantRoleInProjectController(
+      language
+    )
+  )
+);

@@ -13,6 +13,7 @@ import {
   DeleteProjectController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
+  UpdateParticipantRoleInProjectController,
   UpdateProjectController,
 } from "@modules/project/presentation/controllers";
 import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
@@ -41,4 +42,7 @@ export interface IControllerFactory {
   makeRevokeInvitationController(
     language: ILanguage
   ): RevokeInvitationController;
+  makeUpdateParticipantRoleInProjectController(
+    language: ILanguage
+  ): UpdateParticipantRoleInProjectController;
 }

@@ -10,6 +10,7 @@ import {
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
 import * as RoleModule from "@modules/project/entities/value-objects/Role";
+import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
 import {
   IDoesParticipantExistRepository,
@@ -35,6 +36,7 @@ function makeSut() {
   const updateParticipantRoleInProjectRepositoryMock =
     mock<IUpdateParticipantRoleInProjectRepository>();
   const doesProjectExistRepositoryMock = mock<IDoesProjectExistRepository>();
+  const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const findParticipantRoleInProjectRepositoryMock =
@@ -71,6 +73,7 @@ function makeSut() {
     sut,
     updateParticipantRoleInProjectRepositoryMock,
     doesProjectExistRepositoryMock,
+    doesAccountExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
   };
@@ -80,7 +83,7 @@ describe("updateParticipantRoleInProject use-case", () => {
   let roleSpy: any;
   beforeEach(() => {
     roleSpy = jest.spyOn(RoleModule, "Role");
-    roleSpy.mockImplementationOnce(
+    roleSpy.mockImplementation(
       (name: string) =>
         ({
           name: name as unknown,
@@ -201,7 +204,7 @@ describe("updateParticipantRoleInProject use-case", () => {
     await expect(when).rejects.toThrow(NotParticipantInProjectError);
   });
 
-  it("should instantiate Role", async () => {
+  it("should instantiate Role twice", async () => {
     expect.assertions(1);
 
     const {
@@ -226,7 +229,7 @@ describe("updateParticipantRoleInProject use-case", () => {
 
     await sut.updateParticipantRole(givenRequest);
 
-    expect(roleSpy).toHaveBeenCalledTimes(1);
+    expect(roleSpy).toHaveBeenCalledTimes(2);
   });
 
   it("should throw RoleInsufficientPermissionError if accountEmailMakingRequest doesn't have enough permission", async () => {

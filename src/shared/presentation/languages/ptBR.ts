@@ -1,6 +1,18 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getCannotUpdateRoleToOwnerErrorMessage(): string {
+    return "Você não pode atualizar o cargo de um usuário para dono";
+  }
+
+  getCannotUpdateYourOwnRoleErrorMessage(): string {
+    return "Você não pode atualizar seu próprio cargo";
+  }
+
+  getCannotUpdateRoleOfOwnerMessage(): string {
+    return "Você não pode atualizar o cargo do dono do projeto";
+  }
+
   getInvalidInvitationTokenErrorMessage(): string {
     return "Token de convite para projeto não é válido";
   }

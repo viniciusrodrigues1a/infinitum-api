@@ -256,7 +256,7 @@ export class KnexProjectRepository
         "issue.expires_at as issue_expires_at",
         "issue.created_at as issue_created_at"
       )
-      .where("project.owner_id", "=", accountId);
+      .where("project.owner_id", "=", accountId!);
 
     const reducedProjects = projects.reduce(
       (acc, val) => this.projectsOutputFormatter(acc, val),
@@ -430,6 +430,8 @@ export class KnexProjectRepository
   }: DoesParticipantExistRepositoryDTO): Promise<boolean> {
     const accountId = await this.findAccountIdByEmail(accountEmail);
 
+    if (!accountId) return false;
+
     const accountProjectRelationshipExists = await connection(
       "account_project_project_role"
     )
@@ -503,13 +505,17 @@ export class KnexProjectRepository
     }
   }
 
-  private async findAccountIdByEmail(accountEmail: string): Promise<string> {
-    const { id: accountId } = await connection("account")
+  private async findAccountIdByEmail(
+    accountEmail: string
+  ): Promise<string | undefined> {
+    const account = await connection("account")
       .select("id")
       .where({ email: accountEmail })
       .first();
 
-    return accountId;
+    if (!account) return undefined;
+
+    return account.id;
   }
 
   private async findRoleIdByRoleName(roleName: string): Promise<string> {

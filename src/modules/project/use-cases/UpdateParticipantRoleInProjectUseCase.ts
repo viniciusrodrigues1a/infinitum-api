@@ -91,6 +91,9 @@ export class UpdateParticipantRoleInProjectUseCase {
       );
     }
 
+    /* eslint-disable-next-line */
+    new Role(roleName, this.invalidRoleNameErrorLanguage);
+
     const participantRole =
       await this.findParticipantRoleInProjectRepository.findParticipantRole({
         projectId,

@@ -1,12 +1,13 @@
 import { jwtToken } from "@modules/account/infra/authentication";
 import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
-import { BeginsAtMustBeBeforeFinishesAtError } from "@modules/project/entities/errors";
-import { OwnerCantBeUsedAsARoleForAnInvitationError } from "@modules/project/entities/errors/OwnerCantBeUsedAsARoleForAnInvitationError";
 import {
-  AccountAlreadyParticipatesInProjectError,
-  AccountHasAlreadyBeenInvitedError,
+  BeginsAtMustBeBeforeFinishesAtError,
+  InvalidRoleNameError,
+} from "@modules/project/entities/errors";
+import {
+  CannotUpdateRoleToOwnerError,
+  CannotUpdateYourOwnRoleError,
 } from "@modules/project/use-cases/errors";
-import { InvalidInvitationTokenError } from "@modules/project/use-cases/errors/InvalidInvitationTokenError";
 import { NotFutureDateError } from "@shared/entities/errors";
 import { configuration, connection } from "@shared/infra/database/connection";
 import {
@@ -23,12 +24,13 @@ import { api, defaultLanguage } from "../helpers";
 describe("/projects/ endpoint", () => {
   let authorizationToken: string;
   let accountId: string;
+  let accountEmail: string;
 
   beforeEach(async () => {
     await connection.migrate.latest(configuration.migrations);
 
     accountId = "account-id-0";
-    const accountEmail = "jorge@email.com";
+    accountEmail = "jorge@email.com";
     await connection("account").insert({
       id: accountId,
       name: "jorge",
@@ -233,6 +235,257 @@ describe("/projects/ endpoint", () => {
         .where({ name: "my project" })
         .first();
       projectId = id;
+    });
+
+    describe("method PATCH /participantRole", () => {
+      let memberParticipantEmail: string;
+      beforeEach(async () => {
+        memberParticipantEmail = "newaccount@email.com";
+        const newAccount = {
+          id: "account-id-123421",
+          email: memberParticipantEmail,
+          name: "new account",
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        };
+        const { id: memberRoleId } = await connection("project_role")
+          .select("id")
+          .where({ name: "member" })
+          .first();
+        await connection("account").insert(newAccount); // create new account
+        await connection("account_project_project_role").insert({
+          // make new account participant of already existent project
+          project_role_id: memberRoleId,
+          account_id: newAccount.id,
+          project_id: projectId,
+        });
+      });
+
+      it("should return 204", async () => {
+        expect.assertions(1);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const givenRequest = {
+          accountEmail: memberParticipantEmail,
+          projectId,
+          roleName: "espectator",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(204);
+      });
+
+      it("should return 404 if project cannot be found", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const givenRequest = {
+          accountEmail: memberParticipantEmail,
+          projectId: "inexistent-project-id-123031273201",
+          roleName: "espectator",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(404);
+        const expectedBodyMessage = new ProjectNotFoundError(defaultLanguage)
+          .message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if authorized account doesn't participate in project", async () => {
+        expect.assertions(2);
+
+        const notParticipantEmail = "notparticipant@email.com";
+        await connection("account").insert({
+          id: "account-id-2",
+          name: "jorge",
+          email: notParticipantEmail,
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        });
+        const authorizationTokenWithDifferentEmail = jwtToken.sign({
+          email: notParticipantEmail,
+        });
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationTokenWithDifferentEmail}`,
+        };
+        const givenRequest = {
+          accountEmail: memberParticipantEmail,
+          projectId,
+          roleName: "espectator",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new NotParticipantInProjectError(
+          notParticipantEmail,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if account having their role updated doesn't participate in project", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const givenRequest = {
+          accountEmail: "nonexistent@email.com",
+          projectId,
+          roleName: "espectator",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new NotParticipantInProjectError(
+          givenRequest.accountEmail,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if roleName equals to 'owner'", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const givenRequest = {
+          accountEmail: memberParticipantEmail,
+          projectId,
+          roleName: "owner",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new CannotUpdateRoleToOwnerError(
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if account having their role updated is the same email of the authorized user", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const givenRequest = {
+          accountEmail,
+          projectId,
+          roleName: "espectator",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new CannotUpdateYourOwnRoleError(
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if roleName is invalid", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const givenRequest = {
+          accountEmail: memberParticipantEmail,
+          projectId,
+          roleName: "invalid-role-name",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage = new InvalidRoleNameError(
+          givenRequest.roleName,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if authorized account doesn't have enough permission", async () => {
+        expect.assertions(2);
+
+        const authorizationTokenWithMemberParticipant = jwtToken.sign({
+          email: memberParticipantEmail,
+        });
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationTokenWithMemberParticipant}`,
+        };
+        const newParticipant = {
+          id: "account-id-97123923179421",
+          email: "newparticipant@email.com",
+          name: "new participant",
+          password_hash: "hash",
+          salt: "salt",
+          iterations: 1,
+        };
+        const { id: memberRoleId } = await connection("project_role")
+          .select("id")
+          .where({ name: "member" })
+          .first();
+        await connection("account").insert(newParticipant); // create new account
+        await connection("account_project_project_role").insert({
+          // make new account participant of already existent project
+          project_role_id: memberRoleId,
+          account_id: newParticipant.id,
+          project_id: projectId,
+        });
+        const givenRequest = {
+          accountEmail: newParticipant.email,
+          projectId,
+          roleName: "espectator",
+        };
+
+        const response = await api
+          .patch("/projects/participantRole")
+          .set(givenAuthHeader)
+          .send(givenRequest);
+
+        expect(response.statusCode).toBe(401);
+        const expectedBodyMessage = new RoleInsufficientPermissionError(
+          "member",
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
     });
 
     describe("method DELETE /", () => {
