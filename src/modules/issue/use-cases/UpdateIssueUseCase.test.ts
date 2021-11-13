@@ -116,6 +116,7 @@ describe("updateIssue use-case", () => {
       issueId: givenNewIssue.issueId,
       expiresAt: new Date(),
       createdAt: new Date(),
+      completed: false,
     });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
@@ -159,6 +160,7 @@ describe("updateIssue use-case", () => {
       issueId: givenNewIssue.issueId,
       expiresAt: new Date(),
       createdAt: new Date(),
+      completed: false,
     });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
@@ -219,6 +221,7 @@ describe("updateIssue use-case", () => {
       issueId: givenRequest.issueId,
       expiresAt: new Date(),
       createdAt: new Date(),
+      completed: false,
     });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       undefined
@@ -253,6 +256,7 @@ describe("updateIssue use-case", () => {
       issueId: givenRequest.issueId,
       expiresAt: new Date(),
       createdAt: new Date(),
+      completed: false,
     });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
@@ -291,6 +295,7 @@ describe("updateIssue use-case", () => {
       issueId: givenRequest.issueId,
       expiresAt: new Date(),
       createdAt: new Date(),
+      completed: false,
     });
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
