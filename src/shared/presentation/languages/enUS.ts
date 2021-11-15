@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getIssuesWeeklyOverviewWeekdays(): string[] {
+    return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+  }
+
   getCompletedParamMessage(): string {
     return "completed";
   }

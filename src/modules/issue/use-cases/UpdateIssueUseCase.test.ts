@@ -111,7 +111,6 @@ describe("updateIssue use-case", () => {
     findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
       title: "old title",
       description: "old description",
-      ownerEmail: "jorge@email.com",
       assignedToEmail: "jorge",
       issueId: givenNewIssue.issueId,
       expiresAt: new Date(),
@@ -155,7 +154,6 @@ describe("updateIssue use-case", () => {
     findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
       title: "old title",
       description: "old description",
-      ownerEmail: "jorge@email.com",
       assignedToEmail: "jorge",
       issueId: givenNewIssue.issueId,
       expiresAt: new Date(),
@@ -216,7 +214,6 @@ describe("updateIssue use-case", () => {
     findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
       title: "old title",
       description: "old description",
-      ownerEmail: givenRequest.accountEmailMakingRequest,
       assignedToEmail: "jorge",
       issueId: givenRequest.issueId,
       expiresAt: new Date(),
@@ -251,7 +248,6 @@ describe("updateIssue use-case", () => {
     findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
       title: "old title",
       description: "old description",
-      ownerEmail: givenRequest.accountEmailMakingRequest,
       assignedToEmail: "jorge",
       issueId: givenRequest.issueId,
       expiresAt: new Date(),
@@ -290,7 +286,6 @@ describe("updateIssue use-case", () => {
     findOneIssueRepositoryMock.findOneIssue.mockResolvedValueOnce({
       title: "old title",
       description: "old description",
-      ownerEmail: givenRequest.accountEmailMakingRequest,
       assignedToEmail: "jorge",
       issueId: givenRequest.issueId,
       expiresAt: new Date(),

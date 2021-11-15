@@ -392,7 +392,6 @@ describe("project repository using Knex", () => {
       const issue = {
         id: "issue-id-0",
         issue_group_id: issueGroup.id,
-        owner_id: accountId,
         title: "My issue",
         description: "My issue's description",
       };
@@ -651,7 +650,6 @@ describe("project repository using Knex", () => {
       const issue = {
         id: "issue-id-0",
         issue_group_id: issueGroup.id,
-        owner_id: accountId,
         title: "My issue",
         description: "My issue's description",
       };

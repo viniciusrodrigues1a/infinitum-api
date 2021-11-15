@@ -100,12 +100,11 @@ export class CreateIssueUseCase {
     }
 
     const issue = new Issue(
-      { title, description, expiresAt, ownerEmail: accountEmailMakingRequest },
+      { title, description, expiresAt },
       this.notFutureDateErrorLanguage
     );
 
     await this.createIssueRepository.createIssue({
-      ownerEmail: issue.ownerEmail,
       expiresAt: issue.expiresAt,
       description: issue.description,
       title: issue.title,

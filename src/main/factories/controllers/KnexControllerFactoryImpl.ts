@@ -25,6 +25,7 @@ import {
 import {
   CreateIssueController,
   DeleteIssueController,
+  OverviewMetricsController,
   UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
 import { IControllerFactory } from "./IControllerFactory";
@@ -35,6 +36,19 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeOverviewMetricsController(
+    language: ILanguage
+  ): OverviewMetricsController {
+    const issueRepository = this.repositoryFactory.makeIssueRepository();
+    return new OverviewMetricsController(
+      issueRepository,
+      issueRepository,
+      issueRepository,
+      issueRepository,
+      language
+    );
+  }
 
   makeUpdateParticipantRoleInProjectController(
     language: ILanguage

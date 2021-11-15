@@ -27,7 +27,6 @@ describe("entity Issue constructor", () => {
         {
           title: "My issue",
           description: "My issue's description",
-          ownerEmail: "jorge@email.com",
           expiresAt: new Date(),
         },
         notFutureDateErrorLanguageMock

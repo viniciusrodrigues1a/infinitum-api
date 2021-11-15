@@ -8,7 +8,6 @@ export class Issue {
   description: string;
   createdAt: Date;
   expiresAt: Date | undefined;
-  ownerEmail: string;
   assignedToEmail: string | undefined;
   completed: boolean;
 
@@ -16,7 +15,6 @@ export class Issue {
     {
       title,
       description,
-      ownerEmail,
       assignedToEmail,
       issueId,
       expiresAt,
@@ -32,7 +30,6 @@ export class Issue {
     this.expiresAt = expiresAt
       ? new FutureDate(expiresAt, notFutureDateErrorLanguage).value
       : undefined;
-    this.ownerEmail = ownerEmail;
     this.assignedToEmail = assignedToEmail || undefined;
     this.completed = completed || false;
   }

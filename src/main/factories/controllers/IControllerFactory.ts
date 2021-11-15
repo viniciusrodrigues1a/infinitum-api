@@ -5,6 +5,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import {
   CreateIssueController,
   DeleteIssueController,
+  OverviewMetricsController,
   UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
 import {
@@ -45,4 +46,5 @@ export interface IControllerFactory {
   makeUpdateParticipantRoleInProjectController(
     language: ILanguage
   ): UpdateParticipantRoleInProjectController;
+  makeOverviewMetricsController(language: ILanguage): OverviewMetricsController;
 }

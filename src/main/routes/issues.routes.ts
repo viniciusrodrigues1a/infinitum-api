@@ -34,3 +34,10 @@ issuesRoutes.put(
     knexControllerFactoryImpl.makeUpdateIssueController(language)
   )
 );
+
+issuesRoutes.get(
+  "/overview",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeOverviewMetricsController(language)
+  )
+);

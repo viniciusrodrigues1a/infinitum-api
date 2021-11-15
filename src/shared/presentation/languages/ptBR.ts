@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getIssuesWeeklyOverviewWeekdays(): string[] {
+    return ["dom", "seg", "ter", "qua", "qui", "sex", "sab"];
+  }
+
   getCompletedParamMessage(): string {
     return "finalizado";
   }

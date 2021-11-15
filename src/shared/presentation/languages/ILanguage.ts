@@ -4,6 +4,7 @@ import {
   IAccountNotFoundErrorLanguage,
   IEmailAlreadyInUseErrorLanguage,
 } from "@modules/account/use-cases/interfaces/languages";
+import { IIssuesWeeklyOverviewWeekdaysLanguage } from "@modules/issue/presentation/interfaces/languages";
 import { IIssueNotFoundErrorLanguage } from "@modules/issue/use-cases/interfaces/languages";
 import {
   IBeginsAtMustBeBeforeFinishesAtErrorLanguage,
@@ -57,4 +58,5 @@ export interface ILanguage
     IInvalidInvitationTokenErrorLanguage,
     ICannotUpdateRoleToOwnerErrorLanguage,
     ICannotUpdateYourOwnRoleErrorLanguage,
-    ICannotUpdateRoleOfOwnerErrorLanguage {}
+    ICannotUpdateRoleOfOwnerErrorLanguage,
+    IIssuesWeeklyOverviewWeekdaysLanguage {}

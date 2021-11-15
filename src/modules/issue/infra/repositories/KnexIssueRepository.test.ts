@@ -62,7 +62,6 @@ describe("issue repository using Knex", () => {
         id: "issue-id-0",
         title: "My issue",
         description: "My issue's description",
-        owner_id: accountId,
         issue_group_id: issueGroupId,
       });
 
@@ -80,7 +79,6 @@ describe("issue repository using Knex", () => {
         id: "issue-id-0",
         title: "My issue",
         description: "My issue's description",
-        owner_id: accountId,
         issue_group_id: issueGroupId,
       });
 
@@ -100,7 +98,6 @@ describe("issue repository using Knex", () => {
         id: "issue-id-0",
         title: "My issue",
         description: "My issue's description",
-        owner_id: accountId,
         issue_group_id: issueGroupId,
       });
       const updatedIssueTitle = "updated issue name";
@@ -123,7 +120,6 @@ describe("issue repository using Knex", () => {
       const issue = {
         id: "issue-id-0",
         issue_group_id: issueGroupId,
-        owner_id: accountId,
         title: "My issue",
         description: "My issue's description",
       };
@@ -147,7 +143,6 @@ describe("issue repository using Knex", () => {
 
       const issue = {
         id: "issue-id-0",
-        owner_id: accountId,
         issue_group_id: issueGroupId,
         title: "My issue",
         description: "My issue's description",
@@ -172,13 +167,12 @@ describe("issue repository using Knex", () => {
 
   describe("createIssue method", () => {
     it("should insert an issue associated to a user and a project", async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
       const { sut } = makeSut();
       const givenIssue = {
         title: "My issue",
         description: "My issue's description",
-        ownerEmail: accountEmail,
         issueId: "issue-id-0",
         issueGroupId,
         createdAt: new Date(),
@@ -192,7 +186,6 @@ describe("issue repository using Knex", () => {
         .first();
 
       expect(insertedIssue.issue_group_id).toBe(issueGroupId);
-      expect(insertedIssue.owner_id).toBe(accountId);
       expect(insertedIssue.id).toBe(givenIssue.issueId);
     });
   });
