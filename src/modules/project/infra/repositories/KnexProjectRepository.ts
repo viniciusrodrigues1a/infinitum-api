@@ -252,6 +252,7 @@ export class KnexProjectRepository
         "issue_group.created_at as issue_group_created_at",
         "issue.id as issue_id",
         "issue.title as issue_title",
+        "issue.completed as issue_completed",
         "issue.description as issue_description",
         "issue.expires_at as issue_expires_at",
         "issue.created_at as issue_created_at"
@@ -328,10 +329,16 @@ export class KnexProjectRepository
         acc[index].issueGroups[issueGroupIndex].issues = issues;
       }
     }
-    acc[index].participants = [
-      ...acc[index].participants,
-      this.formatParticipantObject(val),
-    ];
+
+    const hasParticipantBeenSeen = acc[index].participants.findIndex(
+      (participant: any) => participant.email === val.account_email
+    );
+    if (hasParticipantBeenSeen === -1) {
+      acc[index].participants = [
+        ...acc[index].participants,
+        this.formatParticipantObject(val),
+      ];
+    }
   }
 
   private formatProjectObject(val: any) {
@@ -371,6 +378,7 @@ export class KnexProjectRepository
       description: val.issue_description,
       expiresAt: val.issue_expires_at,
       createdAt: val.issue_created_at,
+      completed: val.issue_completed,
     };
   }
 
