@@ -26,7 +26,7 @@ export class PTBRLanguage implements ILanguage {
   }
 
   getOwnerCantBeUsedAsARoleForAnInvitationErrorMessage(): string {
-    return "Você não pode convidar um usuário para a função de dono do projeto";
+    return "Você não pode convidar um usuário para o cargo de dono do projeto";
   }
 
   getAccountHasAlreadyBeenInvitedErrorMessage(_email: string): string {
