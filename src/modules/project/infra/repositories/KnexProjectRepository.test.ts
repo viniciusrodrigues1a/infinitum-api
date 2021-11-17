@@ -181,8 +181,8 @@ describe("project repository using Knex", () => {
   });
 
   describe("acceptInvitationToken method", () => {
-    it("should insert new row in the account_project_project_role table given invitation token", async () => {
-      expect.assertions(1);
+    it("should insert new row in the account_project_project_role table given invitation token and should remove row from project_invitation table", async () => {
+      expect.assertions(2);
 
       const { sut } = makeSut();
       const project = {
@@ -225,7 +225,14 @@ describe("project repository using Knex", () => {
         .select("*")
         .where(expectedParticipant)
         .first();
+      const insertedInvitationToken = await connection("project_invitation")
+        .select("*")
+        .where({
+          token: projectInvitation.token,
+        })
+        .first();
       expect(insertedRow).toMatchObject(expectedParticipant);
+      expect(insertedInvitationToken).toBeUndefined();
     });
   });
 

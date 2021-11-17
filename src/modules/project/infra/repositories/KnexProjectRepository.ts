@@ -112,6 +112,8 @@ export class KnexProjectRepository
       project_id: invitation.project_id,
       project_role_id: invitation.project_role_id,
     });
+
+    await connection("project_invitation").where({ token }).del();
   }
 
   async isInvitationTokenValid(token: string): Promise<boolean> {
