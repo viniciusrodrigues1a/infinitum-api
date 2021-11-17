@@ -1,3 +1,6 @@
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
+import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
+import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -37,12 +40,14 @@ export class InviteAccountToProjectUseCase {
     private readonly createInvitationTokenRepository: ICreateInvitationTokenRepository,
     private readonly sendInvitationToProjectEmailService: ISendInvitationToProjectEmailService,
     private readonly doesProjectExistRepository: IDoesProjectExistRepository,
+    private readonly doesAccountExistRepository: IDoesAccountExistRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasAccountBeenInvitedToProjectRepository: IHasAccountBeenInvitedToProjectRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly ownerCantBeUsedAsARoleForAnInvitationErrorLanguage: IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
+    private readonly accountNotFoundErrorLanguage: IAccountNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly accountHasAlreadyBeenInvitedErrorLanguage: IAccountHasAlreadyBeenInvitedErrorLanguage,
     private readonly accountAlreadyParticipatesInProjectErrorLanguage: IAccountAlreadyParticipatesInProjectErrorLanguage,
@@ -60,6 +65,15 @@ export class InviteAccountToProjectUseCase {
       await this.doesProjectExistRepository.doesProjectExist(projectId);
     if (!doesProjectExist) {
       throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
+    }
+
+    const doesAccountBeingInvitedExists =
+      await this.doesAccountExistRepository.doesAccountExist(accountEmail);
+    if (!doesAccountBeingInvitedExists) {
+      throw new AccountNotFoundError(
+        accountEmail,
+        this.accountNotFoundErrorLanguage
+      );
     }
 
     const doesAccountInvitingParticipatesInProject =

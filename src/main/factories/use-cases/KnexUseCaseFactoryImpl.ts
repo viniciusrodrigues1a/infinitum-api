@@ -111,13 +111,16 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
     language: ILanguage
   ): InviteAccountToProjectUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();
+    const accountRepository = this.repositoryFactory.makeAccountRepository();
     return new InviteAccountToProjectUseCase(
       projectRepository,
       NodemailerSendInvitationToProjectEmailServiceFactory.make(),
       projectRepository,
+      accountRepository,
       projectRepository,
       projectRepository,
       projectRepository,
+      language,
       language,
       language,
       language,

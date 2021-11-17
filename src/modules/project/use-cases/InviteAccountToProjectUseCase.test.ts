@@ -1,3 +1,6 @@
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
+import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
+import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -42,6 +45,7 @@ function makeSut() {
   const sendInvitationToProjectEmailServiceMock =
     mock<ISendInvitationToProjectEmailService>();
   const doesProjectExistRepositoryMock = mock<IDoesProjectExistRepository>();
+  const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const hasAccountBeenInvitedToProjectRepositoryMock =
@@ -54,6 +58,8 @@ function makeSut() {
     mock<IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
+  const accountNotFoundErrorLanguageMock =
+    mock<IAccountNotFoundErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
     mock<INotParticipantInProjectErrorLanguage>();
   const accountHasAlreadyBeenInvitedErrorLanguageMock =
@@ -67,12 +73,14 @@ function makeSut() {
     createInvitationTokenRepositoryMock,
     sendInvitationToProjectEmailServiceMock,
     doesProjectExistRepositoryMock,
+    doesAccountExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasAccountBeenInvitedToProjectRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
     invalidRoleNameErrorLanguageMock,
     ownerCantBeUsedAsARoleForAnInvitationErrorLanguageMock,
     projectNotFoundErrorLanguageMock,
+    accountNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
     accountHasAlreadyBeenInvitedErrorLanguageMock,
     accountAlreadyParticipatesInProjectErrorLanguageMock,
@@ -84,6 +92,7 @@ function makeSut() {
     createInvitationTokenRepositoryMock,
     sendInvitationToProjectEmailServiceMock,
     doesProjectExistRepositoryMock,
+    doesAccountExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasAccountBeenInvitedToProjectRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
@@ -118,6 +127,7 @@ describe("inviteAccountToProject use-case", () => {
       createInvitationTokenRepositoryMock,
       sendInvitationToProjectEmailServiceMock,
       doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasAccountBeenInvitedToProjectRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
@@ -130,6 +140,7 @@ describe("inviteAccountToProject use-case", () => {
       roleName: "member",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.accountEmailMakingRequest)
@@ -160,6 +171,31 @@ describe("inviteAccountToProject use-case", () => {
     expect(Invitation).toHaveBeenCalledTimes(1);
   });
 
+  it("should throw AccountNotFoundError if doesAccountExistRepository returns false", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
+    } = makeSut();
+    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(
+      false
+    );
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
+      projectId: "project-id-0",
+      projectName: "my project",
+      accountEmail: "garcia@email.com",
+      roleName: "member",
+    };
+
+    const when = () => sut.invite(givenRequest);
+
+    await expect(when).rejects.toBeInstanceOf(AccountNotFoundError);
+  });
+
   it("should throw ProjectNotFoundError if doesProjectExistRepository returns false", async () => {
     expect.assertions(1);
 
@@ -186,6 +222,7 @@ describe("inviteAccountToProject use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
       doesParticipantExistRepositoryMock,
     } = makeSut();
     const givenRequest = {
@@ -196,6 +233,7 @@ describe("inviteAccountToProject use-case", () => {
       roleName: "member",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
       false
     );
@@ -211,6 +249,7 @@ describe("inviteAccountToProject use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
       doesParticipantExistRepositoryMock,
     } = makeSut();
     const givenRequest = {
@@ -221,6 +260,7 @@ describe("inviteAccountToProject use-case", () => {
       roleName: "member",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.accountEmailMakingRequest)
@@ -243,6 +283,7 @@ describe("inviteAccountToProject use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasAccountBeenInvitedToProjectRepositoryMock,
     } = makeSut();
@@ -254,6 +295,7 @@ describe("inviteAccountToProject use-case", () => {
       roleName: "member",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.accountEmailMakingRequest)
@@ -279,6 +321,7 @@ describe("inviteAccountToProject use-case", () => {
     const {
       sut,
       doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       hasAccountBeenInvitedToProjectRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
@@ -291,6 +334,7 @@ describe("inviteAccountToProject use-case", () => {
       roleName: "member",
     };
     doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.accountEmailMakingRequest)

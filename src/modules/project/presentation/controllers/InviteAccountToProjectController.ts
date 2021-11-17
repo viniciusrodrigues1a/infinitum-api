@@ -1,3 +1,4 @@
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
 import { OwnerCantBeUsedAsARoleForAnInvitationError } from "@modules/project/entities/errors/OwnerCantBeUsedAsARoleForAnInvitationError";
 import { InviteAccountToProjectUseCase } from "@modules/project/use-cases";
 import { InviteAccountToProjectUseCaseDTO } from "@modules/project/use-cases/DTOs";
@@ -52,7 +53,10 @@ export class InviteAccountToProjectController implements IController {
         return badRequestResponse(err);
       }
 
-      if (err instanceof ProjectNotFoundError) {
+      if (
+        err instanceof ProjectNotFoundError ||
+        err instanceof AccountNotFoundError
+      ) {
         return notFoundResponse(err);
       }
 

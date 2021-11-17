@@ -1,3 +1,5 @@
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
+import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { OwnerCantBeUsedAsARoleForAnInvitationError } from "@modules/project/entities/errors/OwnerCantBeUsedAsARoleForAnInvitationError";
 import { IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage } from "@modules/project/entities/interfaces/languages";
 import { InviteAccountToProjectUseCase } from "@modules/project/use-cases";
@@ -25,6 +27,7 @@ import { mock } from "jest-mock-extended";
 import { InviteAccountToProjectController } from "./InviteAccountToProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
+const accountNotFoundErrorLanguageMock = mock<IAccountNotFoundErrorLanguage>();
 const notParticipantInProjectErrorLanguageMock =
   mock<INotParticipantInProjectErrorLanguage>();
 const accountAlreadyParticipatesInProjectErrorLanguageMock =
@@ -208,6 +211,30 @@ describe("invitAccountToProject controller", () => {
 
     expect(response.statusCode).toBe(HttpStatusCodes.notFound);
     expect(response.body).toBeInstanceOf(ProjectNotFoundError);
+  });
+
+  it("should return HttpStatusCode.notFound if AccountNotFoundError thrown", async () => {
+    expect.assertions(2);
+
+    const { sut, inviteAccountToProjectUseCaseMock } = makeSut();
+    const givenRequest = {
+      roleName: "member",
+      projectId: "project-id-0",
+      projectName: "my project",
+      accountEmail: "garcia@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
+      throw new AccountNotFoundError(
+        givenRequest.accountEmail,
+        accountNotFoundErrorLanguageMock
+      );
+    });
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.notFound);
+    expect(response.body).toBeInstanceOf(AccountNotFoundError);
   });
 
   it("should return HttpStatusCode.unauthorized if RoleInsufficientPermissionError is thrown", async () => {

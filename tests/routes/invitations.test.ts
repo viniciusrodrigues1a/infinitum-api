@@ -453,7 +453,7 @@ describe("/invitations/ endpoint", () => {
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 
-    it.skip("should return 404 if account to be invited cannot be found", async () => {
+    it("should return 404 if account to be invited cannot be found", async () => {
       expect.assertions(2);
 
       const givenAuthHeader = {
