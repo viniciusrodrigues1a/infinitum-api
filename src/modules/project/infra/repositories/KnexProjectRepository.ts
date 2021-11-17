@@ -220,12 +220,18 @@ export class KnexProjectRepository
   async listProjects(accountEmail: string): Promise<Project[]> {
     const accountId = await this.findAccountIdByEmail(accountEmail);
 
-    const projects = await connection("project")
+    const projectIds = (
+      await connection("account_project_project_role")
+        .select("project_id")
+        .where({ account_id: accountId })
+    ).map((p) => p.project_id);
+
+    const projects = await connection("account_project_project_role")
       .leftJoin(
-        "account_project_project_role",
-        "project.id",
+        "project",
+        "account_project_project_role.project_id",
         "=",
-        "account_project_project_role.project_id"
+        "project.id"
       )
       .leftJoin(
         "account",
@@ -257,7 +263,7 @@ export class KnexProjectRepository
         "issue.expires_at as issue_expires_at",
         "issue.created_at as issue_created_at"
       )
-      .where("project.owner_id", "=", accountId!);
+      .whereIn("project.id", projectIds);
 
     const reducedProjects = projects.reduce(
       (acc, val) => this.projectsOutputFormatter(acc, val),

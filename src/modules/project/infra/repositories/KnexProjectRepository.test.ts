@@ -606,7 +606,17 @@ describe("project repository using Knex", () => {
         name: "My project",
         description: "My project's description",
       };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      const participant = {
+        project_id: project.id,
+        account_id: accountId,
+        project_role_id: roleId,
+      };
       await connection("project").insert(project);
+      await connection("account_project_project_role").insert(participant);
 
       const projects = await sut.listProjects(accountEmail);
 
@@ -653,7 +663,17 @@ describe("project repository using Knex", () => {
         title: "My issue",
         description: "My issue's description",
       };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      const participant = {
+        project_id: project.id,
+        account_id: accountId,
+        project_role_id: roleId,
+      };
       await connection("project").insert(project);
+      await connection("account_project_project_role").insert(participant);
       await connection("issue_group").insert(issueGroup);
       await connection("issue").insert(issue);
 
@@ -678,8 +698,17 @@ describe("project repository using Knex", () => {
         project_id: project.id,
         title: "In progress",
       };
-
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      const participant = {
+        project_id: project.id,
+        account_id: accountId,
+        project_role_id: roleId,
+      };
       await connection("project").insert(project);
+      await connection("account_project_project_role").insert(participant);
       await connection("issue_group").insert(issueGroup);
 
       const response = await sut.listProjects(accountEmail);
@@ -697,15 +726,77 @@ describe("project repository using Knex", () => {
         name: "My project",
         description: "My project's description",
       };
-
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      const participant = {
+        project_id: project.id,
+        account_id: accountId,
+        project_role_id: roleId,
+      };
       await connection("project").insert(project);
+      await connection("account_project_project_role").insert(participant);
 
       const response = await sut.listProjects(accountEmail);
 
       expect(response[0].issueGroups).toStrictEqual([]);
     });
 
-    it.todo("should return an array of projects joined with participants");
+    it("should return an array of projects joined with participants", async () => {
+      expect.assertions(2);
+
+      const { sut } = makeSut();
+      const newAccount = {
+        id: "account-id-123421",
+        email: "newaccount@email.com",
+        name: "new account",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const project = {
+        id: "project-id-0",
+        owner_id: newAccount.id,
+        name: "My project",
+        description: "My project's description",
+      };
+      const { id: memberRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "member" })
+        .first();
+      const memberParticipant = {
+        project_id: project.id,
+        account_id: accountId,
+        project_role_id: memberRoleId,
+      };
+      const { id: ownerRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      const ownerParticipant = {
+        project_id: project.id,
+        account_id: newAccount.id,
+        project_role_id: ownerRoleId,
+      };
+      await connection("account").insert(newAccount);
+      await connection("project").insert(project);
+      await connection("account_project_project_role").insert(ownerParticipant);
+      await connection("account_project_project_role").insert(
+        memberParticipant
+      );
+
+      const response = await sut.listProjects(accountEmail);
+
+      const doesResponseContainOwnerParticipant = response[0].participants.find(
+        (p: any) => p.email === accountEmail
+      );
+      const doesResponseContainMemberParticipant =
+        response[0].participants.find((p: any) => p.email === newAccount.email);
+
+      expect(doesResponseContainOwnerParticipant).toBeTruthy();
+      expect(doesResponseContainMemberParticipant).toBeTruthy();
+    });
   });
 
   describe("updateProject method", () => {
