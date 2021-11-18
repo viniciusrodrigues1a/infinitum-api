@@ -16,6 +16,7 @@ import {
   RevokeInvitationController,
   UpdateParticipantRoleInProjectController,
   UpdateProjectController,
+  UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
 import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
 import { InviteAccountToProjectController } from "@modules/project/presentation/controllers/InviteAccountToProjectController";
@@ -47,4 +48,5 @@ export interface IControllerFactory {
     language: ILanguage
   ): UpdateParticipantRoleInProjectController;
   makeOverviewMetricsController(language: ILanguage): OverviewMetricsController;
+  makeUpdateProjectImageController(): UpdateProjectImageController;
 }

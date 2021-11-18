@@ -14,6 +14,7 @@ export function ExpressControllerAdapter(
         ...request.body,
         ...request.query,
         ...request.params,
+        fileBuffer: request.fileBuffer,
         accountEmailMakingRequest: request.authorizedAccountEmail,
       });
 

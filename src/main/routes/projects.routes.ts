@@ -1,12 +1,16 @@
 import { Router } from "express";
+import multer from "multer";
 import {
   ExpressControllerAdapter,
   ExpressMiddlewareAdapter,
+  ExpressUploadFileBufferAdapter,
 } from "@main/adapters";
 import { knexControllerFactoryImpl } from "@main/factories/controllers";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 
 export const projectsRoutes = Router();
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 projectsRoutes.use(
   ExpressMiddlewareAdapter(() =>
@@ -48,5 +52,14 @@ projectsRoutes.patch(
     knexControllerFactoryImpl.makeUpdateParticipantRoleInProjectController(
       language
     )
+  )
+);
+
+projectsRoutes.patch(
+  "/image",
+  upload.single("file"),
+  ExpressUploadFileBufferAdapter(),
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeUpdateProjectImageController()
   )
 );

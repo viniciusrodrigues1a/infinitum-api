@@ -3,5 +3,6 @@ declare namespace Express {
   export interface Request {
     authorizedAccountEmail: string;
     language: any;
+    fileBuffer: Buffer;
   }
 }

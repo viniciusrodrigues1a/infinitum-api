@@ -13,6 +13,7 @@ import {
   RevokeInvitationController,
   UpdateParticipantRoleInProjectController,
   UpdateProjectController,
+  UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
 import {
   IRepositoryFactory,
@@ -36,6 +37,11 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeUpdateProjectImageController(): UpdateProjectImageController {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new UpdateProjectImageController(projectRepository);
+  }
 
   makeOverviewMetricsController(
     language: ILanguage
