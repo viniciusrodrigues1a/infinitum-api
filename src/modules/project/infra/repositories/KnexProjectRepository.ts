@@ -1,4 +1,10 @@
+import fs from "fs";
+import path from "path";
 import { Project } from "@modules/project/entities";
+import {
+  IUpdateProjectImageRepository,
+  UpdateProjectImageRepositoryDTO,
+} from "@modules/project/presentation/interfaces/repositories";
 import {
   CreateInvitationTokenRepositoryDTO,
   CreateIssueGroupForProjectRepositoryDTO,
@@ -55,8 +61,25 @@ export class KnexProjectRepository
     IAcceptInvitationTokenRepository,
     IKickParticipantFromProjectRepository,
     IRevokeInvitationRepository,
-    IUpdateParticipantRoleInProjectRepository
+    IUpdateParticipantRoleInProjectRepository,
+    IUpdateProjectImageRepository
 {
+  async updateProjectImage({
+    projectId,
+    file,
+  }: UpdateProjectImageRepositoryDTO): Promise<void> {
+    const filePath = path.resolve(__dirname, file.path);
+    const fileData = fs.readFileSync(filePath);
+
+    await connection("project")
+      .update({
+        image: fileData,
+      })
+      .where({ id: projectId });
+
+    fs.rmSync(filePath);
+  }
+
   async updateParticipantRole({
     roleName,
     projectId,

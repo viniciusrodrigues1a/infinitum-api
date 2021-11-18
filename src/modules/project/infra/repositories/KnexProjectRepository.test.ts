@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { configuration, connection } from "@shared/infra/database/connection";
 import { KnexProjectRepository } from "./KnexProjectRepository";
 
@@ -31,6 +33,42 @@ describe("project repository using Knex", () => {
 
   afterAll(async () => {
     await connection.destroy();
+  });
+
+  describe("updateProjectImage method", () => {
+    it("should update column image in the project table with given file and remove file", async () => {
+      expect.assertions(2);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      const filePath = path.resolve(__dirname, "tmpTestFile");
+      const givenRequest = {
+        file: {
+          path: filePath,
+        },
+        projectId: project.id,
+      };
+      fs.writeFileSync(filePath, Buffer.from("file content"));
+      const fileData = fs.readFileSync(filePath);
+      await connection("project").insert(project);
+
+      await sut.updateProjectImage(givenRequest);
+
+      const insertedRow = await connection("project")
+        .select("*")
+        .where({
+          id: project.id,
+        })
+        .first();
+      expect(insertedRow.image).toStrictEqual(fileData);
+      expect(fs.existsSync(filePath)).toBe(false);
+    });
   });
 
   describe("updateParticipantRole method", () => {
