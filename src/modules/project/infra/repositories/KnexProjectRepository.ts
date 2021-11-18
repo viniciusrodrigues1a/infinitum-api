@@ -326,13 +326,20 @@ export class KnexProjectRepository
           ...acc[index].issueGroups,
           this.formatIssueGroupObject(val, issues),
         ];
-      } else {
-        const issues = val.issue_id
-          ? [
-              ...acc[index].issueGroups[issueGroupIndex].issues,
-              this.formatIssueObject(val),
-            ]
-          : [];
+        return;
+      }
+
+      const issueIndex = acc[index].issueGroups[
+        issueGroupIndex
+      ].issues.findIndex((issue: any) => issue.issueId === val.issue_id);
+
+      if (issueIndex === -1) {
+        if (val.issue_id) return;
+
+        const issues = [
+          ...acc[index].issueGroups[issueGroupIndex].issues,
+          this.formatIssueObject(val),
+        ];
 
         acc[index].issueGroups[issueGroupIndex].issues = issues;
       }
