@@ -8,7 +8,7 @@ import { IUpdateProjectImageRepository } from "../interfaces/repositories";
 
 export type UpdateProjectImageControllerRequest = {
   projectId: string;
-  file: any;
+  fileBuffer: Buffer;
 };
 
 export class UpdateProjectImageController implements IController {

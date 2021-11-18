@@ -20,7 +20,7 @@ describe("updateProjectImage controller", () => {
     const { sut, updateProjectImageRepositoryMock } = makeSut();
     const givenRequest = {
       projectId: "project-id-0",
-      file: { path: "file-path" },
+      fileBuffer: Buffer.from("image content"),
     };
 
     const response = await sut.handleRequest(givenRequest);
@@ -42,7 +42,7 @@ describe("updateProjectImage controller", () => {
     );
     const givenRequest = {
       projectId: "project-id-0",
-      file: { path: "file-path" },
+      fileBuffer: Buffer.from("image content"),
     };
 
     const response = await sut.handleRequest(givenRequest);

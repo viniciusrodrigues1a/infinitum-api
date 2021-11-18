@@ -36,8 +36,8 @@ describe("project repository using Knex", () => {
   });
 
   describe("updateProjectImage method", () => {
-    it("should update column image in the project table with given file and remove file", async () => {
-      expect.assertions(2);
+    it("should update column image in the project table with given file", async () => {
+      expect.assertions(1);
 
       const { sut } = makeSut();
       const project = {
@@ -47,16 +47,11 @@ describe("project repository using Knex", () => {
         description: "My project's description",
         archived: true,
       };
-      const filePath = path.resolve(__dirname, "tmpTestFile");
-      const givenRequest = {
-        file: {
-          path: filePath,
-        },
-        projectId: project.id,
-      };
-      fs.writeFileSync(filePath, Buffer.from("file content"));
-      const fileData = fs.readFileSync(filePath);
       await connection("project").insert(project);
+      const givenRequest = {
+        projectId: project.id,
+        fileBuffer: Buffer.from("image content"),
+      };
 
       await sut.updateProjectImage(givenRequest);
 
@@ -66,8 +61,7 @@ describe("project repository using Knex", () => {
           id: project.id,
         })
         .first();
-      expect(insertedRow.image).toStrictEqual(fileData);
-      expect(fs.existsSync(filePath)).toBe(false);
+      expect(insertedRow.image).toStrictEqual(givenRequest.fileBuffer);
     });
   });
 

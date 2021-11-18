@@ -1,5 +1,5 @@
 export type UpdateProjectImageRepositoryDTO = {
-  file: any;
+  fileBuffer: Buffer;
   projectId: string;
 };
 

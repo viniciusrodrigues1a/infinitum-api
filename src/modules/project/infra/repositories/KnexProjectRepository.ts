@@ -66,18 +66,13 @@ export class KnexProjectRepository
 {
   async updateProjectImage({
     projectId,
-    file,
+    fileBuffer,
   }: UpdateProjectImageRepositoryDTO): Promise<void> {
-    const filePath = path.resolve(__dirname, file.path);
-    const fileData = fs.readFileSync(filePath);
-
     await connection("project")
       .update({
-        image: fileData,
+        image: fileBuffer,
       })
       .where({ id: projectId });
-
-    fs.rmSync(filePath);
   }
 
   async updateParticipantRole({
