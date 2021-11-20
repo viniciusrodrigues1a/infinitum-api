@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from "path";
 import { configuration, connection } from "@shared/infra/database/connection";
 import { KnexProjectRepository } from "./KnexProjectRepository";
 
@@ -33,6 +31,27 @@ describe("project repository using Knex", () => {
 
   afterAll(async () => {
     await connection.destroy();
+  });
+
+  describe("findProjectImageBuffer", () => {
+    it("should return the image column of given project id", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: false,
+        image: Buffer.from("image content", "base64"),
+      };
+      await connection("project").insert(project);
+
+      const imageBuffer = await sut.findProjectImageBuffer(project.id);
+
+      expect(imageBuffer).toStrictEqual(project.image);
+    });
   });
 
   describe("updateProjectImage method", () => {

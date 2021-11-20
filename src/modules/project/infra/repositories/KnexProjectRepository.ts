@@ -1,7 +1,6 @@
-import fs from "fs";
-import path from "path";
 import { Project } from "@modules/project/entities";
 import {
+  IFindProjectImageBufferRepository,
   IUpdateProjectImageRepository,
   UpdateProjectImageRepositoryDTO,
 } from "@modules/project/presentation/interfaces/repositories";
@@ -62,8 +61,22 @@ export class KnexProjectRepository
     IKickParticipantFromProjectRepository,
     IRevokeInvitationRepository,
     IUpdateParticipantRoleInProjectRepository,
-    IUpdateProjectImageRepository
+    IUpdateProjectImageRepository,
+    IFindProjectImageBufferRepository
 {
+  async findProjectImageBuffer(projectId: string): Promise<Buffer | undefined> {
+    const project = await connection("project")
+      .select("image")
+      .where({ id: projectId })
+      .first();
+
+    if (!project.image) return undefined;
+
+    const buffer = Buffer.from(project.image, "base64");
+
+    return buffer;
+  }
+
   async updateProjectImage({
     projectId,
     fileBuffer,

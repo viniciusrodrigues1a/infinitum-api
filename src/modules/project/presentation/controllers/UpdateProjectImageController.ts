@@ -20,6 +20,12 @@ export class UpdateProjectImageController implements IController {
     request: UpdateProjectImageControllerRequest
   ): Promise<HttpResponse> {
     try {
+      const twoMegabytes = 2000000;
+
+      if (request.fileBuffer.length > twoMegabytes) {
+        throw new Error("File is too big");
+      }
+
       await this.updateProjectImageRepository.updateProjectImage(request);
 
       return noContentResponse();

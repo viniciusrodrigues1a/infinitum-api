@@ -7,6 +7,7 @@ import {
   CreateIssueGroupForProjectController,
   CreateProjectController,
   DeleteProjectController,
+  FindProjectImageDataURLController,
   InviteAccountToProjectController,
   KickParticipantFromProjectController,
   ListProjectsOwnedByAccountController,
@@ -37,6 +38,11 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeFindProjectImageDataURLController(): FindProjectImageDataURLController {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    return new FindProjectImageDataURLController(projectRepository);
+  }
 
   makeUpdateProjectImageController(): UpdateProjectImageController {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

@@ -63,3 +63,10 @@ projectsRoutes.patch(
     knexControllerFactoryImpl.makeUpdateProjectImageController()
   )
 );
+
+projectsRoutes.get(
+  "/:projectId/image",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeFindProjectImageDataURLController()
+  )
+);

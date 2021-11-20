@@ -12,6 +12,7 @@ import {
   AcceptInvitationToProjectController,
   CreateProjectController,
   DeleteProjectController,
+  FindProjectImageDataURLController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
   UpdateParticipantRoleInProjectController,
@@ -49,4 +50,5 @@ export interface IControllerFactory {
   ): UpdateParticipantRoleInProjectController;
   makeOverviewMetricsController(language: ILanguage): OverviewMetricsController;
   makeUpdateProjectImageController(): UpdateProjectImageController;
+  makeFindProjectImageDataURLController(): FindProjectImageDataURLController;
 }

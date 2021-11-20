@@ -9,3 +9,4 @@ export * from "./KickParticipantFromProjectController";
 export * from "./RevokeInvitationController";
 export * from "./UpdateParticipantRoleInProjectController";
 export * from "./UpdateProjectImageController";
+export * from "./FindProjectImageDataURLController";
