@@ -1,4 +1,10 @@
+import { Issue } from "@modules/issue/entities";
 import { Project } from "@modules/project/entities";
+import {
+  IssueGroup,
+  Participant,
+  Role,
+} from "@modules/project/entities/value-objects";
 import {
   IFindProjectImageBufferRepository,
   IUpdateProjectImageRepository,
@@ -253,12 +259,6 @@ export class KnexProjectRepository
   async listProjects(accountEmail: string): Promise<Project[]> {
     const accountId = await this.findAccountIdByEmail(accountEmail);
 
-    const projectIds = (
-      await connection("account_project_project_role")
-        .select("project_id")
-        .where({ account_id: accountId })
-    ).map((p) => p.project_id);
-
     const projects = await connection("account_project_project_role")
       .leftJoin(
         "project",
@@ -266,6 +266,88 @@ export class KnexProjectRepository
         "=",
         "project.id"
       )
+      .select(
+        "project.id as id",
+        "project.name as name",
+        "project.description as description",
+        "project.created_at as createdAt",
+        "project.begins_at as beginsAt",
+        "project.finishes_at as finishesAt"
+      )
+      .where({ account_id: accountId });
+
+    const formattedProjects: Project[] = [];
+
+    /* eslint-disable */
+    for (const project of projects) {
+      const issueGroups = await this.listIssueGroupsByProjectId(project.id);
+      const participants = await this.listParticipantsByProjectId(project.id);
+
+      formattedProjects.push({
+        projectId: project.id,
+        name: project.name,
+        description: project.description,
+        createdAt: project.created_at,
+        beginsAt: project.begins_at,
+        finishesAt: project.finishes_at,
+        participants,
+        issueGroups,
+      } as Project);
+    }
+
+    return formattedProjects;
+  }
+
+  async listIssueGroupsByProjectId(projectId: string): Promise<IssueGroup[]> {
+    const issueGroups = await connection("issue_group").select("*").where({
+      project_id: projectId,
+    });
+
+    const formattedIssueGroups: IssueGroup[] = [];
+
+    for (const issueGroup of issueGroups) {
+      const issues = await this.listIssuesByIssueGroupId(issueGroup.id);
+
+      formattedIssueGroups.push({
+        issues,
+        title: issueGroup.title,
+        issueGroupId: issueGroup.id,
+      });
+    }
+
+    return formattedIssueGroups;
+  }
+
+  async listIssuesByIssueGroupId(issueGroupId: string): Promise<Issue[]> {
+    const issues = await connection("issue")
+      .leftJoin("account", "issue.assigned_to_account_id", "=", "account.id")
+      .select(
+        "issue.id as issue_id",
+        "issue.title as issue_title",
+        "issue.description as issue_description",
+        "issue.completed as issue_completed",
+        "issue.created_at as issue_created_at",
+        "issue.expires_at as issue_expires_at",
+        "account.email as account_email"
+      )
+      .where({ issue_group_id: issueGroupId })
+      .orderBy("issue.created_at");
+
+    const formattedIssues: Issue[] = issues.map((i) => ({
+      issueId: i.issue_id,
+      title: i.issue_title,
+      description: i.issue_description,
+      completed: Boolean(i.issue_completed),
+      createdAt: new Date(i.issue_created_at),
+      expiresAt: i.issue_expires_at ? new Date(i.issue_expires_at) : undefined,
+      assignedToEmail: i.account_email || undefined,
+    }));
+
+    return formattedIssues;
+  }
+
+  async listParticipantsByProjectId(projectId: string): Promise<Participant[]> {
+    const participants = await connection("account_project_project_role")
       .leftJoin(
         "account",
         "account_project_project_role.account_id",
@@ -278,163 +360,22 @@ export class KnexProjectRepository
         "=",
         "project_role.id"
       )
-      .leftJoin("issue_group", "project.id", "=", "issue_group.project_id")
-      .leftJoin("issue", "issue_group.id", "=", "issue.issue_group_id")
       .select(
-        "project.*",
         "account.name as account_name",
         "account.email as account_email",
-        "account_project_project_role.account_id",
-        "project_role.name as project_role_name",
-        "issue_group.id as issue_group_id",
-        "issue_group.title as issue_group_title",
-        "issue_group.created_at as issue_group_created_at",
-        "issue.id as issue_id",
-        "issue.title as issue_title",
-        "issue.completed as issue_completed",
-        "issue.description as issue_description",
-        "issue.expires_at as issue_expires_at",
-        "issue.created_at as issue_created_at"
+        "project_role.name as role_name"
       )
-      .whereIn("project.id", projectIds);
+      .where({ project_id: projectId });
 
-    const reducedProjects = projects.reduce(
-      (acc, val) => this.projectsOutputFormatter(acc, val),
-      []
-    );
-
-    const projectsWithSortedIssues = reducedProjects.map((p: any) => ({
-      ...p,
-      issueGroups: p.issueGroups
-        .map((ig: any) => ({
-          ...ig,
-          issues: ig.issues.sort(this.compareByCreatedAt),
-        }))
-        .sort(this.compareByCreatedAt),
+    const formattedParticipants: Participant[] = participants.map((p) => ({
+      account: {
+        name: p.account_name,
+        email: p.account_email,
+      },
+      role: { name: { value: p.role_name } } as Role,
     }));
 
-    const sortedProjects = projectsWithSortedIssues.sort(
-      this.compareByCreatedAt
-    );
-
-    sortedProjects.map((p: any) => ({
-      id: p.projectId,
-      createdAt: p.createdAt,
-    }));
-
-    return sortedProjects;
-  }
-
-  private compareByCreatedAt(
-    a: { createdAt: string },
-    b: { createdAt: string }
-  ): number {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  }
-
-  private projectsOutputFormatter(acc: any, val: any): any {
-    const index = acc.findIndex((p: any) => p.projectId === val.id);
-
-    if (index !== -1) {
-      this.accumulateProjectObject(acc, val, index);
-    } else {
-      const project = this.formatProjectObject(val);
-      acc.push(project);
-    }
-
-    return acc;
-  }
-
-  private accumulateProjectObject(acc: any, val: any, index: number) {
-    if (val.issue_group_id) {
-      const issueGroupIndex = acc[index].issueGroups.findIndex(
-        (issueGroup: any) => issueGroup.issueGroupId === val.issue_group_id
-      );
-
-      if (issueGroupIndex === -1) {
-        const issues = val.issue_id ? [this.formatIssueObject(val)] : [];
-        acc[index].issueGroups = [
-          ...acc[index].issueGroups,
-          this.formatIssueGroupObject(val, issues),
-        ];
-        return;
-      }
-
-      const issueIndex = acc[index].issueGroups[
-        issueGroupIndex
-      ].issues.findIndex((issue: any) => issue.issueId === val.issue_id);
-
-      if (issueIndex === -1) {
-        if (val.issue_id) return;
-
-        const issues = [
-          ...acc[index].issueGroups[issueGroupIndex].issues,
-          this.formatIssueObject(val),
-        ];
-
-        acc[index].issueGroups[issueGroupIndex].issues = issues;
-      }
-    }
-
-    const hasParticipantBeenSeen = acc[index].participants.findIndex(
-      (participant: any) => participant.email === val.account_email
-    );
-    if (hasParticipantBeenSeen === -1) {
-      acc[index].participants = [
-        ...acc[index].participants,
-        this.formatParticipantObject(val),
-      ];
-    }
-  }
-
-  private formatProjectObject(val: any) {
-    const issues = val.issue_id ? [this.formatIssueObject(val)] : [];
-    const issueGroups = val.issue_group_id
-      ? [this.formatIssueGroupObject(val, issues)]
-      : [];
-    const participants = [this.formatParticipantObject(val)];
-    const project = {
-      projectId: val.id,
-      name: val.name,
-      description: val.description,
-      beginsAt: val.begins_at,
-      finishesAt: val.finishes_at,
-      createdAt: val.created_at,
-      archived: val.archived,
-      issueGroups,
-      participants,
-    };
-
-    return project;
-  }
-
-  private formatIssueGroupObject(val: any, issues: any[]): any {
-    return {
-      issueGroupId: val.issue_group_id,
-      title: val.issue_group_title,
-      createdAt: val.issue_group_created_at,
-      issues,
-    };
-  }
-
-  private formatIssueObject(val: any): any {
-    return {
-      issueId: val.issue_id,
-      title: val.issue_title,
-      description: val.issue_description,
-      expiresAt: val.issue_expires_at,
-      createdAt: val.issue_created_at,
-      completed: val.issue_completed,
-    };
-  }
-
-  private formatParticipantObject(val: any): any {
-    return {
-      id: val.account_id,
-      name: val.account_name,
-      email: val.account_email,
-      projectRoleName: val.project_role_name,
-    };
+    return formattedParticipants;
   }
 
   async updateProject({
