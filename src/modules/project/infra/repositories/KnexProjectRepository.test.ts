@@ -793,6 +793,7 @@ describe("project repository using Knex", () => {
               issueGroupId: issueGroup.id,
               title: issueGroup.title,
               issues: expectedFormattedIssues,
+              shouldUpdateIssuesToCompleted: false,
             },
           ],
         } as Project;
@@ -820,11 +821,13 @@ describe("project repository using Knex", () => {
             title: issueGroup.title,
             issueGroupId: issueGroup.id,
             issues: expectedFormattedIssues,
+            shouldUpdateIssuesToCompleted: false,
           },
           {
             issues: [],
             title: issueGroup1.title,
             issueGroupId: issueGroup1.id,
+            shouldUpdateIssuesToCompleted: false,
           },
         ];
 

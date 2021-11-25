@@ -17,6 +17,7 @@ import {
 } from "@main/factories/repositories";
 import {
   CreateIssueUseCase,
+  MoveIssueToAnotherIssueGroupUseCase,
   UpdateIssueUseCase,
 } from "@modules/issue/use-cases";
 import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
@@ -27,6 +28,28 @@ import NodemailerSendKickedOutOfProjectEmailServiceFactory from "../services/Nod
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeMoveIssueToAnotherIssueGroupUseCase(
+    language: ILanguage
+  ): MoveIssueToAnotherIssueGroupUseCase {
+    const projectRepository = this.repositoryFactory.makeProjectRepository();
+    const issueRepository = this.repositoryFactory.makeIssueRepository();
+    return new MoveIssueToAnotherIssueGroupUseCase(
+      issueRepository,
+      issueRepository,
+      issueRepository,
+      projectRepository,
+      projectRepository,
+      projectRepository,
+      issueRepository,
+      issueRepository,
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeUpdateParticipantRoleInProjectUseCase(
     language: ILanguage

@@ -312,6 +312,7 @@ export class KnexProjectRepository
         issues,
         title: issueGroup.title,
         issueGroupId: issueGroup.id,
+        shouldUpdateIssuesToCompleted: Boolean(issueGroup.is_final),
       });
     }
 

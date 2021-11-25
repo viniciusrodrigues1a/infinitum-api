@@ -5,6 +5,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import {
   CreateIssueController,
   DeleteIssueController,
+  MoveIssueToAnotherIssueGroupController,
   OverviewMetricsController,
   UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
@@ -51,4 +52,7 @@ export interface IControllerFactory {
   makeOverviewMetricsController(language: ILanguage): OverviewMetricsController;
   makeUpdateProjectImageController(): UpdateProjectImageController;
   makeFindProjectImageDataURLController(): FindProjectImageDataURLController;
+  makeMoveIssueToAnotherIssueGroupController(
+    language: ILanguage
+  ): MoveIssueToAnotherIssueGroupController;
 }

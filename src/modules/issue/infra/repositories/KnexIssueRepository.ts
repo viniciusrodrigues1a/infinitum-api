@@ -12,13 +12,17 @@ import {
 } from "@modules/issue/presentation/interfaces/repositories";
 import {
   CreateIssueRepositoryDTO,
+  MoveIssueToAnotherIssueGroupRepositoryDTO,
   UpdateIssueRepositoryDTO,
 } from "@modules/issue/use-cases/DTOs";
 import {
   ICreateIssueRepository,
   IDeleteIssueRepository,
   IDoesIssueExistRepository,
+  IDoesIssueGroupExistRepository,
   IFindOneIssueRepository,
+  IMoveIssueToAnotherIssueGroupRepository,
+  IShouldIssueGroupUpdateIssuesToCompletedRepository,
   IUpdateIssueRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
@@ -35,8 +39,47 @@ export class KnexIssueRepository
     IReportExpiredIssuesMetricsRepository,
     IReportIssuesForTodayMetricsRepository,
     IReportAllIssuesMetricsRepository,
-    IReportIssuesWeeklyOverviewMetricsRepository
+    IReportIssuesWeeklyOverviewMetricsRepository,
+    IDoesIssueGroupExistRepository,
+    IShouldIssueGroupUpdateIssuesToCompletedRepository,
+    IMoveIssueToAnotherIssueGroupRepository
 {
+  async moveIssue({
+    issueId,
+    moveToIssueGroupId,
+  }: MoveIssueToAnotherIssueGroupRepositoryDTO): Promise<void> {
+    await connection("issue")
+      .where({
+        id: issueId,
+      })
+      .update("issue_group_id", moveToIssueGroupId);
+  }
+
+  async shouldIssueGroupUpdateIssues(issueGroupId: string): Promise<boolean> {
+    const issueGroup = await connection("issue_group")
+      .select("is_final")
+      .where({ id: issueGroupId })
+      .first();
+
+    return Boolean(issueGroup.is_final);
+  }
+
+  async doesIssueGroupExist(issueGroupId: string): Promise<boolean> {
+    try {
+      const issueGroup = await connection("issue_group")
+        .select("id")
+        .where({ id: issueGroupId })
+        .first();
+
+      return !!issueGroup;
+    } catch (err) {
+      if (err.message.includes("invalid input syntax for type uuid"))
+        return false;
+
+      throw err;
+    }
+  }
+
   async reportIssuesWeeklyOverview(
     { accountEmailMakingRequest }: AccountMakingRequestDTO,
     issuesWeeklyOverviewWeekdaysLanguage: IIssuesWeeklyOverviewWeekdaysLanguage

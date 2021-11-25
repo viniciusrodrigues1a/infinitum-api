@@ -27,6 +27,7 @@ import {
 import {
   CreateIssueController,
   DeleteIssueController,
+  MoveIssueToAnotherIssueGroupController,
   OverviewMetricsController,
   UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
@@ -38,6 +39,17 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     new ControllerValidationFactory();
+
+  makeMoveIssueToAnotherIssueGroupController(
+    language: ILanguage
+  ): MoveIssueToAnotherIssueGroupController {
+    return new MoveIssueToAnotherIssueGroupController(
+      this.useCaseFactory.makeMoveIssueToAnotherIssueGroupUseCase(language),
+      this.validationFactory.makeMoveIssueToAnotherIssueGroupControllerValidation(
+        language
+      )
+    );
+  }
 
   makeFindProjectImageDataURLController(): FindProjectImageDataURLController {
     const projectRepository = this.repositoryFactory.makeProjectRepository();

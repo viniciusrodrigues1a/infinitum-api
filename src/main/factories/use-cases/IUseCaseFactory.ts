@@ -2,6 +2,7 @@ import { ILanguage } from "@modules/account/presentation/languages";
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
 import {
   CreateIssueUseCase,
+  MoveIssueToAnotherIssueGroupUseCase,
   UpdateIssueUseCase,
 } from "@modules/issue/use-cases";
 import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
@@ -43,4 +44,7 @@ export interface IUseCaseFactory {
   makeUpdateParticipantRoleInProjectUseCase(
     language: ILanguage
   ): UpdateParticipantRoleInProjectUseCase;
+  makeMoveIssueToAnotherIssueGroupUseCase(
+    language: ILanguage
+  ): MoveIssueToAnotherIssueGroupUseCase;
 }

@@ -1,6 +1,14 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getIssueGroupNotFoundErrorMessage(): string {
+    return "Issue section couldn't be found";
+  }
+
+  getIssueGroupBelongsToDifferentProjectErrorMessage(): string {
+    return "You cannot move this issue to a section of a different project";
+  }
+
   getIssuesWeeklyOverviewWeekdays(): string[] {
     return ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
   }

@@ -4,4 +4,5 @@ export type IssueGroupDTO = {
   issueGroupId?: string;
   title: string;
   issues: Issue[];
+  shouldUpdateIssuesToCompleted?: boolean;
 };

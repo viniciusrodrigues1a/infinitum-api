@@ -1,6 +1,14 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getIssueGroupNotFoundErrorMessage(): string {
+    return "Seção de tickets não encontrada";
+  }
+
+  getIssueGroupBelongsToDifferentProjectErrorMessage(): string {
+    return "Você não pode mover este ticket para uma seção de outro projeto";
+  }
+
   getIssuesWeeklyOverviewWeekdays(): string[] {
     return ["dom", "seg", "ter", "qua", "qui", "sex", "sab"];
   }

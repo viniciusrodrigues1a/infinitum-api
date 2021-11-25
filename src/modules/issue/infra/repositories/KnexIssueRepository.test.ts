@@ -10,6 +10,7 @@ function makeSut() {
 describe("issue repository using Knex", () => {
   let accountId: string;
   let accountEmail: string;
+  let projectId: string;
   let issueGroupId: string;
   beforeEach(async () => {
     await connection.migrate.latest(configuration.migrations);
@@ -17,6 +18,7 @@ describe("issue repository using Knex", () => {
     accountId = "account-id-0";
     accountEmail = "jorge@email.com";
     issueGroupId = "ig-id-0";
+    projectId = "project-id-0";
 
     const account = {
       id: accountId,
@@ -27,7 +29,7 @@ describe("issue repository using Knex", () => {
       iterations: 1,
     };
     const project = {
-      id: "project-id-0",
+      id: projectId,
       owner_id: accountId,
       name: "my project",
       description: "my project's description",
@@ -49,6 +51,93 @@ describe("issue repository using Knex", () => {
 
   afterAll(async () => {
     await connection.destroy();
+  });
+
+  describe("moveIssue", () => {
+    it("should update the column issue_group_id of a row in the table issue", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const newIssueGroup = {
+        id: "ig-id-9123387129",
+        project_id: projectId,
+        title: "In progress",
+        is_final: true,
+      };
+      const issue = {
+        id: "issue-id-0",
+        title: "My issue",
+        description: "My issue's description",
+        issue_group_id: issueGroupId,
+      };
+      await connection("issue_group").insert(newIssueGroup);
+      await connection("issue").insert(issue);
+      const givenRequest = {
+        issueId: issue.id,
+        moveToIssueGroupId: newIssueGroup.id,
+      };
+
+      await sut.moveIssue(givenRequest);
+
+      const storedIssue = await connection("issue")
+        .select("*")
+        .where({ id: issue.id })
+        .first();
+      expect(storedIssue.issue_group_id).toBe(newIssueGroup.id);
+    });
+  });
+
+  describe("shouldIssueGroupUpdateIssues", () => {
+    it("should return true if is_final column is true in table issue_group", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const newIssueGroup = {
+        id: "ig-id-9123387129",
+        project_id: projectId,
+        title: "In progress",
+        is_final: true,
+      };
+      await connection("issue_group").insert(newIssueGroup);
+
+      const response = await sut.shouldIssueGroupUpdateIssues(newIssueGroup.id);
+
+      expect(response).toBe(true);
+    });
+
+    it("should return false if is_final column is false in table issue_group", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const response = await sut.shouldIssueGroupUpdateIssues(issueGroupId);
+
+      expect(response).toBe(false);
+    });
+  });
+
+  describe("doesIssueGroupExist method", () => {
+    it("should return true if issue_group exists", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const response = await sut.doesIssueGroupExist(issueGroupId);
+
+      expect(response).toBe(true);
+    });
+
+    it("should return false if issue_group doesn't exist", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+
+      const response = await sut.doesIssueGroupExist(
+        "inexistent-ig-id-912378312"
+      );
+
+      expect(response).toBe(false);
+    });
   });
 
   describe("findOneIssue method", () => {

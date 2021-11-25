@@ -15,6 +15,24 @@ type Field = {
 };
 
 export class ControllerValidationFactory {
+  makeMoveIssueToAnotherIssueGroupControllerValidation(
+    language: ILanguage
+  ): ValidationComposite {
+    const requiredAndStringFields = [
+      {
+        accessor: "moveToIssueGroupId",
+        i18n: language.getIssueGroupIdParamMessage(),
+      },
+    ];
+
+    const required = this.makeAllRequired(requiredAndStringFields, language);
+    const string = this.makeAllString(requiredAndStringFields, language);
+
+    const validations = [...required, ...string];
+
+    return new ValidationComposite(validations);
+  }
+
   makeUpdateParticipantRoleInProjectControllerValidation(
     language: ILanguage
   ): ValidationComposite {

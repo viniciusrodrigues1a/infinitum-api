@@ -35,6 +35,15 @@ issuesRoutes.put(
   )
 );
 
+issuesRoutes.patch(
+  "/:issueId/move",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeMoveIssueToAnotherIssueGroupController(
+      language
+    )
+  )
+);
+
 issuesRoutes.get(
   "/overview",
   ExpressControllerAdapter((language) =>

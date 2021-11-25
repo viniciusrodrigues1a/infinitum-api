@@ -1,5 +1,9 @@
 import { jwtToken } from "@modules/account/infra/authentication";
-import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
+import {
+  IssueGroupBelongsToDifferentProjectError,
+  IssueGroupNotFoundError,
+  IssueNotFoundError,
+} from "@modules/issue/use-cases/errors";
 import {
   ProjectHasntBegunError,
   ProjectIsArchivedError,
@@ -51,7 +55,7 @@ describe("/issues/ endpoint", () => {
     const issueGroupsResponse = await api
       .post("/issueGroups/")
       .set(authHeader)
-      .send({ projectId, title: "My issue" });
+      .send({ projectId, title: "My issue group" });
     issueGroupId = issueGroupsResponse.body.id;
   });
 
@@ -77,6 +81,140 @@ describe("/issues/ endpoint", () => {
           description: "My issue's description",
         });
       issueId = id;
+    });
+
+    describe("method PATCH /:issueId/move", () => {
+      it("should return 204", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const issueGroupsResponse = await api
+          .post("/issueGroups/")
+          .set(givenAuthHeader)
+          .send({ projectId, title: "In progress" });
+        const newIssueGroupId = issueGroupsResponse.body.id;
+
+        const response = await api
+          .patch(`/issues/${issueId}/move`)
+          .set(givenAuthHeader)
+          .send({
+            moveToIssueGroupId: newIssueGroupId,
+          });
+
+        const storedIssue = await connection("issue")
+          .select("issue_group_id")
+          .where({ id: issueId })
+          .first();
+        expect(response.statusCode).toBe(204);
+        expect(storedIssue.issue_group_id).toBe(newIssueGroupId);
+      });
+
+      it("should return 404 if issue cannot be found", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .patch("/issues/inexistent-issue-id-9231731297/move")
+          .set(givenAuthHeader)
+          .send({
+            moveToIssueGroupId: issueGroupId,
+          });
+
+        expect(response.statusCode).toBe(404);
+        const expectedBodyMessage = new IssueNotFoundError(defaultLanguage)
+          .message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 404 if issueGroup cannot be found", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .patch(`/issues/${issueId}/move`)
+          .set(givenAuthHeader)
+          .send({
+            moveToIssueGroupId: "inexistent-issueGroup-id-0312870312",
+          });
+
+        expect(response.statusCode).toBe(404);
+        const expectedBodyMessage = new IssueGroupNotFoundError(defaultLanguage)
+          .message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if you try to move an issue to an issue group of another project", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const projectsResponse = await api
+          .post("/projects/")
+          .set(givenAuthHeader)
+          .send({
+            name: "my project",
+            description: "my project's description",
+          });
+        const newProjectId = projectsResponse.body.id;
+        const issueGroupsResponse = await api
+          .post("/issueGroups/")
+          .set(givenAuthHeader)
+          .send({ projectId: newProjectId, title: "My issue group" });
+        const newIssueGroupId = issueGroupsResponse.body.id;
+
+        const response = await api
+          .patch(`/issues/${issueId}/move`)
+          .set(givenAuthHeader)
+          .send({
+            moveToIssueGroupId: newIssueGroupId,
+          });
+
+        expect(response.statusCode).toBe(400);
+        const expectedBodyMessage =
+          new IssueGroupBelongsToDifferentProjectError(defaultLanguage).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 401 if account doesn't have enough permission", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+        const roleName = "espectator";
+        const { id: memberRoleId } = await connection("project_role")
+          .select("id")
+          .where({ name: roleName })
+          .first();
+        await connection("account_project_project_role")
+          .update({
+            project_role_id: memberRoleId,
+          })
+          .where({ account_id: accountId });
+
+        const response = await api
+          .patch(`/issues/${issueId}/move`)
+          .set(givenAuthHeader)
+          .send({
+            moveToIssueGroupId: issueGroupId,
+          });
+
+        expect(response.statusCode).toBe(401);
+        const expectedBodyMessage = new RoleInsufficientPermissionError(
+          roleName,
+          defaultLanguage
+        ).message;
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
     });
 
     describe("method PUT /:issueId", () => {
