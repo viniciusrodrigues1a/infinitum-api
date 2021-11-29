@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getCannotKickOwnerOfProjectErrorLanguage(): string {
+    return "You cannot kick the owner of the project";
+  }
+
   getIssueGroupNotFoundErrorMessage(): string {
     return "Issue section couldn't be found";
   }

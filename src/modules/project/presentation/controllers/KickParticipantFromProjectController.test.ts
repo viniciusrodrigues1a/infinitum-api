@@ -1,4 +1,6 @@
 import { KickParticipantFromProjectUseCase } from "@modules/project/use-cases";
+import { CannotKickOwnerOfProjectError } from "@modules/project/use-cases/errors";
+import { ICannotKickOwnerOfProjectErrorLanguage } from "@modules/project/use-cases/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
 import {
@@ -17,6 +19,8 @@ import { KickParticipantFromProjectController } from "./KickParticipantFromProje
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
 const notParticipantInProjectErrorLanguageMock =
   mock<INotParticipantInProjectErrorLanguage>();
+const cannotKickOwnerOfProjectErrorLanguageMock =
+  mock<ICannotKickOwnerOfProjectErrorLanguage>();
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
 
@@ -104,6 +108,28 @@ describe("kickParticipantFromProject controller", () => {
     const errorThrown = new NotParticipantInProjectError(
       givenRequest.accountEmail,
       notParticipantInProjectErrorLanguageMock
+    );
+    kickParticipantFromProjectUseCaseMock.kick.mockImplementationOnce(() => {
+      throw errorThrown;
+    });
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toBe(errorThrown);
+  });
+
+  it("should return HttpStatusCodes.badRequest if CannotKickOwnerOfProjectError is thrown", async () => {
+    expect.assertions(2);
+
+    const { sut, kickParticipantFromProjectUseCaseMock } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    const errorThrown = new CannotKickOwnerOfProjectError(
+      cannotKickOwnerOfProjectErrorLanguageMock
     );
     kickParticipantFromProjectUseCaseMock.kick.mockImplementationOnce(() => {
       throw errorThrown;

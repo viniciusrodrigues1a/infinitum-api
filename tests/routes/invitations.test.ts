@@ -4,6 +4,7 @@ import { OwnerCantBeUsedAsARoleForAnInvitationError } from "@modules/project/ent
 import {
   AccountAlreadyParticipatesInProjectError,
   AccountHasAlreadyBeenInvitedError,
+  CannotKickOwnerOfProjectError,
 } from "@modules/project/use-cases/errors";
 import { InvalidInvitationTokenError } from "@modules/project/use-cases/errors/InvalidInvitationTokenError";
 import { configuration, connection } from "@shared/infra/database/connection";
@@ -307,6 +308,57 @@ describe("/invitations/ endpoint", () => {
       expect(response.statusCode).toBe(400);
       const expectedBodyMessage = new NotParticipantInProjectError(
         newAccount.email,
+        defaultLanguage
+      ).message;
+      expect(response.body.error.message).toBe(expectedBodyMessage);
+    });
+
+    it("should return 400 if user with permission tries to kick owner of the project", async () => {
+      expect.assertions(2);
+
+      const givenAuthHeader = {
+        authorization: `Bearer ${authorizationToken}`,
+      };
+      const newAccount = {
+        id: "account-id-123421",
+        email: "newaccount@email.com",
+        name: "new account",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const { id: ownerRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "owner" })
+        .first();
+      await connection("account").insert(newAccount); // create new account
+      // make new account owner of already existent project
+      await connection("project")
+        .update({ owner_id: newAccount.id })
+        .where({ id: projectId });
+      await connection("account_project_project_role").insert({
+        project_role_id: ownerRoleId,
+        account_id: newAccount.id,
+        project_id: projectId,
+      });
+      const { id: adminRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "admin" })
+        .first();
+      await connection("account_project_project_role") // change authenticated account role to admin
+        .update({ project_role_id: adminRoleId })
+        .where({ account_id: accountId });
+
+      const response = await api
+        .post("/invitations/kick/")
+        .set(givenAuthHeader)
+        .send({
+          projectId,
+          accountEmail: newAccount.email,
+        });
+
+      expect(response.statusCode).toBe(400);
+      const expectedBodyMessage = new CannotKickOwnerOfProjectError(
         defaultLanguage
       ).message;
       expect(response.body.error.message).toBe(expectedBodyMessage);

@@ -18,6 +18,7 @@ import {
 import {
   IAccountAlreadyParticipatesInProjectErrorLanguage,
   IAccountHasAlreadyBeenInvitedErrorLanguage,
+  ICannotKickOwnerOfProjectErrorLanguage,
   ICannotUpdateRoleOfOwnerErrorLanguage,
   ICannotUpdateRoleToOwnerErrorLanguage,
   ICannotUpdateYourOwnRoleErrorLanguage,
@@ -65,4 +66,5 @@ export interface ILanguage
     ICannotUpdateRoleOfOwnerErrorLanguage,
     IIssuesWeeklyOverviewWeekdaysLanguage,
     IIssueGroupNotFoundErrorLanguage,
-    IIssueGroupBelongsToDifferentProjectErrorLanguage {}
+    IIssueGroupBelongsToDifferentProjectErrorLanguage,
+    ICannotKickOwnerOfProjectErrorLanguage {}

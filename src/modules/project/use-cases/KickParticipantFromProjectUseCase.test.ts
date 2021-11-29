@@ -19,6 +19,8 @@ import { IKickParticipantFromProjectRepository } from "./interfaces/repositories
 import { ISendKickedOutOfProjectEmailService } from "./interfaces/services/ISendKickedOutOfProjectEmailService";
 import { KickParticipantFromProjectUseCase } from "./KickParticipantFromProjectUseCase";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
+import { CannotKickOwnerOfProjectError } from "./errors";
+import { ICannotKickOwnerOfProjectErrorLanguage } from "./interfaces/languages";
 
 function makeSut() {
   const kickParticipantFromProjectRepositoryMock =
@@ -34,6 +36,8 @@ function makeSut() {
     mock<IProjectNotFoundErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
     mock<INotParticipantInProjectErrorLanguage>();
+  const cannotKickOwnerOfProjectErrorLanguageMock =
+    mock<ICannotKickOwnerOfProjectErrorLanguage>();
   const invalidRoleNameErrorLanguageMock =
     mock<IInvalidRoleNameErrorLanguage>();
   const roleInsufficientPermissionErrorLanguageMock =
@@ -47,6 +51,7 @@ function makeSut() {
     sendKickedOutOfProjectEmailServiceMock,
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
+    cannotKickOwnerOfProjectErrorLanguageMock,
     invalidRoleNameErrorLanguageMock,
     roleInsufficientPermissionErrorLanguageMock
   );
@@ -96,7 +101,7 @@ describe("kickParticipantFromProject use-case", () => {
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
       true
     );
-    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockResolvedValueOnce(
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockResolvedValue(
       "roleWithPermission"
     );
 
@@ -130,6 +135,36 @@ describe("kickParticipantFromProject use-case", () => {
       });
 
     await expect(when).rejects.toThrow(ProjectNotFoundError);
+  });
+
+  it("should throw CannotKickOwnerOfProjectError if account being kicked is the owner of the project", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      doesProjectExistRepositoryMock,
+      doesParticipantExistRepositoryMock,
+      findParticipantRoleInProjectRepositoryMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmailMakingRequest: "jorge@email.com",
+      accountEmail: "garcia@email.com",
+    };
+    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
+      true
+    );
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockImplementationOnce(
+      async ({ accountEmail }) => {
+        if (accountEmail === givenRequest.accountEmail) return "owner";
+        return "roleWithPermission";
+      }
+    );
+
+    const when = () => sut.kick(givenRequest);
+
+    await expect(when).rejects.toThrow(CannotKickOwnerOfProjectError);
   });
 
   it("should throw NotParticipantInProjectError if accountEmailMakingRequest cannot be found in this project", async () => {
@@ -203,7 +238,7 @@ describe("kickParticipantFromProject use-case", () => {
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
       true
     );
-    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockImplementationOnce(
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.accountEmailMakingRequest)
           return "roleWithoutPermission";

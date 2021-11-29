@@ -9,8 +9,10 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
-import { Role } from "../entities/value-objects";
+import { Role, RoleName } from "../entities/value-objects";
 import { KickParticipantFromProjectUseCaseDTO } from "./DTOs";
+import { CannotKickOwnerOfProjectError } from "./errors";
+import { ICannotKickOwnerOfProjectErrorLanguage } from "./interfaces/languages";
 import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
@@ -28,6 +30,7 @@ export class KickParticipantFromProjectUseCase {
     private readonly sendKickedOutOfProjectEmailService: ISendKickedOutOfProjectEmailService,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
+    private readonly cannotKickOwnerOfProjectErrorLanguage: ICannotKickOwnerOfProjectErrorLanguage,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly roleInsufficientPermissionErrorLanguage: IRoleInsufficientPermissionErrorLanguage
   ) {}
@@ -64,6 +67,17 @@ export class KickParticipantFromProjectUseCase {
       throw new NotParticipantInProjectError(
         accountEmail,
         this.notParticipantInProjectErrorLanguage
+      );
+    }
+
+    const accountBeingKickedRole =
+      await this.findParticipantRoleInProjectRepository.findParticipantRole({
+        accountEmail,
+        projectId,
+      });
+    if (accountBeingKickedRole === "owner") {
+      throw new CannotKickOwnerOfProjectError(
+        this.cannotKickOwnerOfProjectErrorLanguage
       );
     }
 

@@ -1,6 +1,10 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getCannotKickOwnerOfProjectErrorLanguage(): string {
+    return "Você não pode remover o dono do projeto";
+  }
+
   getIssueGroupNotFoundErrorMessage(): string {
     return "Seção de tickets não encontrada";
   }

@@ -6,3 +6,4 @@ export * from "./IInvalidInvitationTokenErrorLanguage";
 export * from "./ICannotUpdateYourOwnRoleErrorLanguage";
 export * from "./ICannotUpdateRoleOfOwnerErrorLanguage";
 export * from "./ICannotUpdateRoleToOwnerErrorLanguage";
+export * from "./ICannotKickOwnerOfProjectErrorLanguage";

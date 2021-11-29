@@ -97,6 +97,7 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
       language,
       language,
       language,
+      language,
       language
     );
   }
