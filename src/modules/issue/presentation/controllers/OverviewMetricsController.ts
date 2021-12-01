@@ -10,6 +10,7 @@ import {
   IReportAllIssuesMetricsRepository,
   IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
+  IReportIssuesMonthlyOverviewMetricsRepository,
   IReportIssuesWeeklyOverviewMetricsRepository,
 } from "../interfaces/repositories";
 
@@ -19,6 +20,7 @@ export class OverviewMetricsController implements IController {
     private readonly reportIssuesForTodayMetricsRepository: IReportIssuesForTodayMetricsRepository,
     private readonly reportAllIssuesMetricsRepository: IReportAllIssuesMetricsRepository,
     private readonly reportIssuesWeeklyOverviewMetricsRepositoryMock: IReportIssuesWeeklyOverviewMetricsRepository,
+    private readonly reportIssuesMonthlyOverviewMetricsRepositoryMock: IReportIssuesMonthlyOverviewMetricsRepository,
     private readonly issuesWeeklyOverviewWeekdaysLanguage: IIssuesWeeklyOverviewWeekdaysLanguage
   ) {}
 
@@ -47,11 +49,17 @@ export class OverviewMetricsController implements IController {
           this.issuesWeeklyOverviewWeekdaysLanguage
         );
 
+      const issuesMonthlyOverview =
+        await this.reportIssuesMonthlyOverviewMetricsRepositoryMock.reportIssuesMonthlyOverview(
+          { accountEmailMakingRequest }
+        );
+
       return okResponse({
         expiredIssues,
         issuesForToday,
         allIssues,
         issuesWeeklyOverview,
+        issuesMonthlyOverview,
       });
     } catch (err) {
       return serverErrorResponse(err);

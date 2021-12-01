@@ -70,6 +70,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       issueRepository,
       issueRepository,
       issueRepository,
+      issueRepository,
       language
     );
   }

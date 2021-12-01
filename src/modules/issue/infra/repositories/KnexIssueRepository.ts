@@ -6,8 +6,10 @@ import {
   IReportAllIssuesMetricsRepository,
   IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
+  IReportIssuesMonthlyOverviewMetricsRepository,
   IReportIssuesWeeklyOverviewMetricsRepository,
   IssuesForTodayMetrics,
+  IssuesMonthlyOverviewMetrics,
   IssuesWeeklyOverviewMetrics,
 } from "@modules/issue/presentation/interfaces/repositories";
 import {
@@ -42,8 +44,68 @@ export class KnexIssueRepository
     IReportIssuesWeeklyOverviewMetricsRepository,
     IDoesIssueGroupExistRepository,
     IShouldIssueGroupUpdateIssuesToCompletedRepository,
-    IMoveIssueToAnotherIssueGroupRepository
+    IMoveIssueToAnotherIssueGroupRepository,
+    IReportIssuesMonthlyOverviewMetricsRepository
 {
+  async reportIssuesMonthlyOverview({
+    accountEmailMakingRequest,
+  }: AccountMakingRequestDTO): Promise<IssuesMonthlyOverviewMetrics> {
+    const accountId = await this.findAccountIdByEmail(
+      accountEmailMakingRequest
+    );
+
+    const fullYear = new Date().getFullYear();
+    const monthIndex = new Date().getMonth();
+    const lastDayOfPreviousMonthDayIndex = 0;
+    const daysInMonth = new Date(
+      fullYear,
+      monthIndex + 1,
+      lastDayOfPreviousMonthDayIndex
+    ).getDate();
+
+    const monthDays: any[] = [];
+    const nowUtc = moment().utc();
+
+    for (let i = 0; i < daysInMonth; i++) {
+      const start = moment(nowUtc).date(i + 1);
+      start.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      const end = moment(nowUtc).date(i + 1);
+      end.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
+
+      monthDays.push({
+        issuesCompleted: 0,
+        start,
+        end,
+      });
+    }
+
+    const issues = await connection("issue")
+      .select("*")
+      .where({ assigned_to_account_id: accountId, completed: true });
+
+    issues.forEach((issue) => {
+      if (issue.expires_at) {
+        monthDays.forEach((monthDay, index) => {
+          if (
+            moment(issue.expires_at).isBetween(
+              monthDay.start.toISOString(),
+              monthDay.end.toISOString()
+            )
+          ) {
+            monthDays[index].issuesCompleted += 1;
+          }
+        });
+      }
+    });
+
+    const formattedMonthlyOverview = monthDays.map((monthDay, index) => ({
+      date: String(index + 1).padStart(2, "0"),
+      value: monthDay.issuesCompleted,
+    }));
+
+    return formattedMonthlyOverview;
+  }
+
   async moveIssue({
     issueId,
     moveToIssueGroupId,

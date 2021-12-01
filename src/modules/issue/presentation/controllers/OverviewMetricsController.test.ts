@@ -5,6 +5,7 @@ import {
   IReportAllIssuesMetricsRepository,
   IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
+  IReportIssuesMonthlyOverviewMetricsRepository,
   IReportIssuesWeeklyOverviewMetricsRepository,
 } from "../interfaces/repositories";
 import { OverviewMetricsController } from "./OverviewMetricsController";
@@ -18,6 +19,8 @@ function makeSut() {
     mock<IReportAllIssuesMetricsRepository>();
   const reportIssuesWeeklyOverviewMetricsRepositoryMock =
     mock<IReportIssuesWeeklyOverviewMetricsRepository>();
+  const reportIssuesMonthlyOverviewMetricsRepositoryMock =
+    mock<IReportIssuesMonthlyOverviewMetricsRepository>();
   const issuesWeeklyOverviewWeekdaysLanguageMock =
     mock<IIssuesWeeklyOverviewWeekdaysLanguage>();
 
@@ -26,6 +29,7 @@ function makeSut() {
     reportIssuesForTodayMetricsRepositoryMock,
     reportAllIssuesMetricsRepositoryMock,
     reportIssuesWeeklyOverviewMetricsRepositoryMock,
+    reportIssuesMonthlyOverviewMetricsRepositoryMock,
     issuesWeeklyOverviewWeekdaysLanguageMock
   );
 
@@ -35,6 +39,7 @@ function makeSut() {
     reportIssuesForTodayMetricsRepositoryMock,
     reportAllIssuesMetricsRepositoryMock,
     reportIssuesWeeklyOverviewMetricsRepositoryMock,
+    reportIssuesMonthlyOverviewMetricsRepositoryMock,
     issuesWeeklyOverviewWeekdaysLanguageMock,
   };
 }
@@ -48,6 +53,7 @@ describe("overviewMetrics controller", () => {
       reportExpiredIssuesMetricsRepositoryMock,
       reportIssuesForTodayMetricsRepositoryMock,
       reportAllIssuesMetricsRepositoryMock,
+      reportIssuesMonthlyOverviewMetricsRepositoryMock,
       reportIssuesWeeklyOverviewMetricsRepositoryMock,
     } = makeSut();
 
@@ -67,6 +73,9 @@ describe("overviewMetrics controller", () => {
     ).toHaveBeenCalledTimes(1);
     expect(
       reportIssuesWeeklyOverviewMetricsRepositoryMock.reportIssuesWeeklyOverview
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      reportIssuesMonthlyOverviewMetricsRepositoryMock.reportIssuesMonthlyOverview
     ).toHaveBeenCalledTimes(1);
   });
 
