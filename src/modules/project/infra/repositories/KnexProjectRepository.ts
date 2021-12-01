@@ -283,8 +283,6 @@ export class KnexProjectRepository
       const issueGroups = await this.listIssueGroupsByProjectId(project.id);
       const participants = await this.listParticipantsByProjectId(project.id);
 
-      console.log(project);
-
       formattedProjects.push({
         projectId: project.id,
         name: project.name,
