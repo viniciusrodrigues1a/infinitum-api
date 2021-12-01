@@ -8,7 +8,6 @@ import {
   ProjectHasntBegunError,
   ProjectIsArchivedError,
 } from "@modules/project/use-cases/errors";
-import { NotFutureDateError } from "@shared/entities/errors";
 import { configuration, connection } from "@shared/infra/database/connection";
 import {
   InvalidParamError,
@@ -290,31 +289,6 @@ describe("/issues/ endpoint", () => {
         expect(response.statusCode).toBe(400);
         const expectedBodyMessage = new NotParticipantInProjectError(
           notParticipantEmail,
-          defaultLanguage
-        ).message;
-        expect(response.body.error.message).toBe(expectedBodyMessage);
-      });
-
-      it("should return 400 if NotFutureDateError is thrown", async () => {
-        expect.assertions(2);
-
-        const givenAuthHeader = {
-          authorization: `Bearer ${authorizationToken}`,
-        };
-
-        const nowMs = new Date().getTime();
-        const yesterday = new Date(nowMs - 86400 * 1000);
-        const response = await api
-          .put(`/issues/${issueId}`)
-          .set(givenAuthHeader)
-          .send({
-            newTitle: "updated title",
-            newExpiresAt: yesterday,
-          });
-
-        expect(response.statusCode).toBe(400);
-        const expectedBodyMessage = new NotFutureDateError(
-          yesterday,
           defaultLanguage
         ).message;
         expect(response.body.error.message).toBe(expectedBodyMessage);
@@ -803,32 +777,6 @@ describe("/issues/ endpoint", () => {
       expect(response.statusCode).toBe(400);
       const expectedBodyMessage = new ProjectIsArchivedError(defaultLanguage)
         .message;
-      expect(response.body.error.message).toBe(expectedBodyMessage);
-    });
-
-    it("should return 400 if expiresAt date is in the past", async () => {
-      expect.assertions(2);
-
-      const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
-      const nowMs = new Date().getTime();
-      const yesterdayIso = new Date(nowMs - 86400 * 1000).toISOString();
-      const givenBody = {
-        issueGroupId,
-        title: "My issue",
-        description: "My issue's description",
-        expiresAt: yesterdayIso,
-      };
-
-      const response = await api
-        .post("/issues/")
-        .set(givenAuthHeader)
-        .send(givenBody);
-
-      expect(response.statusCode).toBe(400);
-      const expectedBodyMessage = new NotFutureDateError(
-        new Date(yesterdayIso),
-        defaultLanguage
-      ).message;
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 

@@ -280,13 +280,15 @@ export class KnexIssueRepository
     newCompleted,
     newAssignedToEmail,
   }: UpdateIssueRepositoryDTO): Promise<void> {
-    let assignedToAccountId: string | undefined;
+    let assignedToAccountId: string | undefined | null;
     if (newAssignedToEmail) {
       const account = await connection("account")
         .select("id")
         .where({ email: newAssignedToEmail })
         .first();
       assignedToAccountId = account ? account.id : undefined;
+    } else if (newAssignedToEmail === null) {
+      assignedToAccountId = null;
     }
 
     await connection("issue")

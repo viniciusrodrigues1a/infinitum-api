@@ -15,7 +15,6 @@ import {
   IHasProjectBegunRepository,
   IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
-import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -38,7 +37,6 @@ export class CreateIssueUseCase {
     private readonly hasProjectBegunRepository: IHasProjectBegunRepository,
     private readonly isProjectArchivedRepository: IIsProjectArchivedRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
-    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly projectHasntBegunErrorLanguage: IProjectHasntBegunErrorLanguage,
@@ -99,10 +97,7 @@ export class CreateIssueUseCase {
       );
     }
 
-    const issue = new Issue(
-      { title, description, expiresAt },
-      this.notFutureDateErrorLanguage
-    );
+    const issue = new Issue({ title, description, expiresAt });
 
     await this.createIssueRepository.createIssue({
       expiresAt: issue.expiresAt,

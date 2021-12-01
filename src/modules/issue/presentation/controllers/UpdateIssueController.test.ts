@@ -1,8 +1,6 @@
 import { UpdateIssueUseCase } from "@modules/issue/use-cases";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
 import { IIssueNotFoundErrorLanguage } from "@modules/issue/use-cases/interfaces/languages";
-import { NotFutureDateError } from "@shared/entities/errors";
-import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
 import {
@@ -24,7 +22,6 @@ const notParticipantInProjectErrorLanguageMock =
   mock<INotParticipantInProjectErrorLanguage>();
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
-const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
 
 function makeSut() {
   const updateIssueUseCaseMock = mock<UpdateIssueUseCase>();
@@ -127,31 +124,6 @@ describe("updateIssue controller", () => {
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body).toBeInstanceOf(NotParticipantInProjectError);
-  });
-
-  it("should return HttpStatusCodes.badRequest if NotFutureDateError is thrown", async () => {
-    expect.assertions(2);
-
-    const { sut, updateIssueUseCaseMock } = makeSut();
-    const nowMs = new Date().getTime();
-    const yesterday = new Date(nowMs - 86400 * 1000);
-    const givenRequest = {
-      newTitle: "new issue's title",
-      accountEmailMakingRequest: "jorge@email.com",
-      issueId: "issue-id-0",
-      expiresAt: yesterday,
-    };
-    updateIssueUseCaseMock.update.mockImplementationOnce(() => {
-      throw new NotFutureDateError(
-        givenRequest.expiresAt,
-        notFutureDateErrorLanguageMock
-      );
-    });
-
-    const response = await sut.handleRequest(givenRequest);
-
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body).toBeInstanceOf(NotFutureDateError);
   });
 
   it("should return HttpStatusCodes.unauthorized if RoleInsufficientPermissionError is thrown", async () => {

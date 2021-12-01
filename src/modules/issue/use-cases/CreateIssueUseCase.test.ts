@@ -12,7 +12,6 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { IInvalidRoleNameErrorLanguage } from "@modules/project/entities/interfaces/languages";
-import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -44,7 +43,6 @@ function makeSut() {
   const isProjectArchivedRepositoryMock = mock<IIsProjectArchivedRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
-  const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
@@ -64,7 +62,6 @@ function makeSut() {
     hasProjectBegunRepositoryMock,
     isProjectArchivedRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
-    notFutureDateErrorLanguageMock,
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
     projectHasntBegunErrorLanguageMock,

@@ -7,8 +7,6 @@ import {
   IProjectHasntBegunErrorLanguage,
   IProjectIsArchivedErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
-import { NotFutureDateError } from "@shared/entities/errors";
-import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
 import {
@@ -33,7 +31,6 @@ const projectIsArchivedErrorLanguageMock =
   mock<IProjectIsArchivedErrorLanguage>();
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
-const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
 
 function makeSut() {
   const createIssueUseCaseMock = mock<CreateIssueUseCase>();
@@ -187,30 +184,6 @@ describe("createIssue controller", () => {
 
     expect(response.statusCode).toBe(HttpStatusCodes.unauthorized);
     expect(response.body).toBeInstanceOf(RoleInsufficientPermissionError);
-  });
-
-  it("should return HttpStatusCodes.badRequest if NotFutureDateError is thrown", async () => {
-    expect.assertions(2);
-
-    const { sut, createIssueUseCaseMock } = makeSut();
-    const givenRequest = {
-      issueGroupId: "ig-id-0",
-      title: "My issue",
-      description: "My issue's description",
-      accountEmailMakingRequest: "jorge@email.com",
-      begins_at: new Date(),
-    };
-    createIssueUseCaseMock.create.mockImplementationOnce(() => {
-      throw new NotFutureDateError(
-        givenRequest.begins_at,
-        notFutureDateErrorLanguageMock
-      );
-    });
-
-    const response = await sut.handleRequest(givenRequest);
-
-    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
-    expect(response.body).toBeInstanceOf(NotFutureDateError);
   });
 
   it("should return HttpStatusCodes.serverError with the issue's id", async () => {

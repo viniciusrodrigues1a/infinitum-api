@@ -1,7 +1,6 @@
 import { UpdateIssueUseCase } from "@modules/issue/use-cases";
 import { UpdateIssueUseCaseDTO } from "@modules/issue/use-cases/DTOs";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
-import { NotFutureDateError } from "@shared/entities/errors";
 import {
   badRequestResponse,
   noContentResponse,
@@ -54,10 +53,7 @@ export class UpdateIssueController implements IController {
         return notFoundResponse(err);
       }
 
-      if (
-        err instanceof NotParticipantInProjectError ||
-        err instanceof NotFutureDateError
-      ) {
+      if (err instanceof NotParticipantInProjectError) {
         return badRequestResponse(err);
       }
 

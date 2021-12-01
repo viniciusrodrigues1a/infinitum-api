@@ -4,7 +4,6 @@ import {
   ProjectHasntBegunError,
   ProjectIsArchivedError,
 } from "@modules/project/use-cases/errors";
-import { NotFutureDateError } from "@shared/entities/errors";
 import {
   badRequestResponse,
   createdResponse,
@@ -57,8 +56,7 @@ export class CreateIssueController implements IController {
       if (
         err instanceof NotParticipantInProjectError ||
         err instanceof ProjectHasntBegunError ||
-        err instanceof ProjectIsArchivedError ||
-        err instanceof NotFutureDateError
+        err instanceof ProjectIsArchivedError
       ) {
         return badRequestResponse(err);
       }

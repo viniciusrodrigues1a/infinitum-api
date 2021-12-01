@@ -5,7 +5,6 @@ import {
   IFindParticipantRoleInProjectRepository,
   IFindProjectIdByIssueIdRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
-import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -32,7 +31,6 @@ export class UpdateIssueUseCase {
     private readonly findProjectIdByIssueIdRepository: IFindProjectIdByIssueIdRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
-    private readonly notFutureDateErrorLanguage: INotFutureDateErrorLanguage,
     private readonly issueNotFoundErrorLanguage: IIssueNotFoundErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
@@ -87,16 +85,13 @@ export class UpdateIssueUseCase {
       );
     }
 
-    const newIssue = new Issue(
-      {
-        title: newTitle || oldIssue.title,
-        description: newDescription || oldIssue.description,
-        expiresAt: newExpiresAt || oldIssue.expiresAt,
-        completed: newCompleted || oldIssue.completed,
-        assignedToEmail: newAssignedToEmail || oldIssue.assignedToEmail,
-      },
-      this.notFutureDateErrorLanguage
-    );
+    const newIssue = new Issue({
+      title: newTitle || oldIssue.title,
+      description: newDescription || oldIssue.description,
+      expiresAt: newExpiresAt || oldIssue.expiresAt,
+      completed: newCompleted || oldIssue.completed,
+      assignedToEmail: newAssignedToEmail || oldIssue.assignedToEmail,
+    });
 
     await this.updateIssueRepository.updateIssue({
       issueId,

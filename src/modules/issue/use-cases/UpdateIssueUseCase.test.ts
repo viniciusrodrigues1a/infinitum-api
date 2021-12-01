@@ -16,7 +16,6 @@ import {
 import { mock } from "jest-mock-extended";
 import * as RoleModule from "@modules/project/entities/value-objects";
 import { IInvalidRoleNameErrorLanguage } from "@modules/project/entities/interfaces/languages";
-import { INotFutureDateErrorLanguage } from "@shared/entities/interfaces/languages";
 import { IssueNotFoundError } from "./errors";
 import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
 import {
@@ -38,7 +37,6 @@ function makeSut() {
     mock<IDoesParticipantExistRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
-  const notFutureDateErrorLanguageMock = mock<INotFutureDateErrorLanguage>();
   const issueNotFoundErrorLanguageMock = mock<IIssueNotFoundErrorLanguage>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
@@ -54,7 +52,6 @@ function makeSut() {
     findProjectIdByIssueIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
-    notFutureDateErrorLanguageMock,
     issueNotFoundErrorLanguageMock,
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
