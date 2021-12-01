@@ -135,11 +135,13 @@ export class ControllerValidationFactory {
   ): ValidationComposite {
     const requiredAndStringFields = [
       { accessor: "title", i18n: language.getTitleParamMessage() },
-      { accessor: "description", i18n: language.getDescriptionParamMessage() },
       {
         accessor: "issueGroupId",
         i18n: language.getIssueGroupIdParamMessage(),
       },
+    ];
+    const stringFields = [
+      { accessor: "description", i18n: language.getDescriptionParamMessage() },
     ];
     const dateFields = [
       { accessor: "expiresAt", i18n: language.getExpiresAtParamMessage() },
@@ -150,7 +152,10 @@ export class ControllerValidationFactory {
     );
 
     const required = this.makeAllRequired(requiredAndStringFields, language);
-    const string = this.makeAllString(requiredAndStringFields, language);
+    const string = this.makeAllString(
+      [...requiredAndStringFields, ...stringFields],
+      language
+    );
     const date = this.makeAllDate(dateFields, language);
 
     const validations = [notEmptyValidation, ...required, ...string, ...date];

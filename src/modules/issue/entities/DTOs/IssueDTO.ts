@@ -1,6 +1,6 @@
 export type IssueDTO = {
   title: string;
-  description: string;
+  description?: string;
   issueId?: string;
   createdAt?: Date;
   expiresAt?: Date;

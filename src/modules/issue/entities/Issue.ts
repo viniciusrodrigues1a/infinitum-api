@@ -4,7 +4,7 @@ import { IssueDTO } from "./DTOs";
 export class Issue {
   issueId: string;
   title: string;
-  description: string;
+  description: string | undefined;
   createdAt: Date;
   expiresAt: Date | undefined;
   assignedToEmail: string | undefined;
@@ -21,7 +21,7 @@ export class Issue {
   }: IssueDTO) {
     this.issueId = issueId || new Id().value;
     this.title = title;
-    this.description = description;
+    this.description = description || undefined;
     this.createdAt = createdAt || new Date();
     this.expiresAt = expiresAt ? new Date(expiresAt) : undefined;
     this.assignedToEmail = assignedToEmail || null!;
