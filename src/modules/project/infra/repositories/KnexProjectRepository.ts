@@ -366,7 +366,8 @@ export class KnexProjectRepository
         "account.email as account_email",
         "project_role.name as role_name"
       )
-      .where({ project_id: projectId });
+      .where({ project_id: projectId })
+      .orderBy("account_project_project_role.created_at");
 
     const formattedParticipants: Participant[] = participants.map((p) => ({
       account: {

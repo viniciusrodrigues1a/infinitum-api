@@ -487,33 +487,6 @@ describe("/issues/ endpoint", () => {
         expect(response.body.error.message).toBe(expectedBodyMessage);
       });
 
-      it("should return 400 if description is missing", async () => {
-        expect.assertions(2);
-
-        const givenAuthHeader = {
-          authorization: `Bearer ${authorizationToken}`,
-        };
-        const nowMs = new Date().getTime();
-        const yesterdayIso = new Date(nowMs - 86400 * 1000).toISOString();
-        const givenBody = {
-          issueGroupId,
-          title: "My issue",
-          expiresAt: yesterdayIso,
-        };
-
-        const response = await api
-          .post("/issues/")
-          .set(givenAuthHeader)
-          .send(givenBody);
-
-        expect(response.statusCode).toBe(400);
-        const expectedBodyMessage = new MissingParamsError(
-          [defaultLanguage.getDescriptionParamMessage()],
-          defaultLanguage
-        ).message;
-        expect(response.body.error.message).toBe(expectedBodyMessage);
-      });
-
       it("should return 400 if description is not a string", async () => {
         expect.assertions(2);
 

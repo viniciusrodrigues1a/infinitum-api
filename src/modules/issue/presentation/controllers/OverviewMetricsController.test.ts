@@ -46,7 +46,7 @@ function makeSut() {
 
 describe("overviewMetrics controller", () => {
   it("should return HttpStatusCodes.ok and call the repositories", async () => {
-    expect.assertions(5);
+    expect.assertions(6);
 
     const {
       sut,

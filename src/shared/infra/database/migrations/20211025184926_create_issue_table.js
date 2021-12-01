@@ -16,7 +16,7 @@ exports.up = function (knex) {
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
     table.string("title").notNullable();
-    table.string("description").notNullable();
+    table.string("description");
     table.timestamp("expires_at");
     table.timestamp("created_at").defaultTo(knex.fn.now());
   });

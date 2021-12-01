@@ -22,6 +22,7 @@ exports.up = function (knex) {
       .onDelete("CASCADE")
       .onUpdate("CASCADE");
     table.primary(["account_id", "project_id", "project_role_id"]);
+    table.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };
 
