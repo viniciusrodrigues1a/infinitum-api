@@ -2,5 +2,7 @@ import { UpdateIssueUseCaseDTO } from "./UpdateIssueUseCaseDTO";
 
 export type UpdateIssueRepositoryDTO = Omit<
   UpdateIssueUseCaseDTO,
-  "accountEmailMakingRequest"
->;
+  "accountEmailMakingRequest" | "newAssignedToEmail"
+> & {
+  newAssignedToEmail?: string | false;
+};

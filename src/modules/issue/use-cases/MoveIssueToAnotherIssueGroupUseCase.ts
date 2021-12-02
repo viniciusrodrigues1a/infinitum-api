@@ -99,9 +99,11 @@ export class MoveIssueToAnotherIssueGroupUseCase {
       await this.shouldIssueGroupUpdateIssuesToCompleted.shouldIssueGroupUpdateIssues(
         moveToIssueGroupId
       );
-    await this.updateIssueRepository.updateIssue({
-      issueId,
-      newCompleted: shouldUpdateIssuesToCompleted,
-    });
+    if (shouldUpdateIssuesToCompleted) {
+      await this.updateIssueRepository.updateIssue({
+        issueId,
+        newCompleted: true,
+      });
+    }
   }
 }

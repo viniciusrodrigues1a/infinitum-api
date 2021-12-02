@@ -114,7 +114,9 @@ export class KnexIssueRepository
       .where({
         id: issueId,
       })
-      .update("issue_group_id", moveToIssueGroupId);
+      .update({
+        issue_group_id: moveToIssueGroupId,
+      });
   }
 
   async shouldIssueGroupUpdateIssues(issueGroupId: string): Promise<boolean> {
