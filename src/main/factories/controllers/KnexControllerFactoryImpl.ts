@@ -31,10 +31,16 @@ import {
   OverviewMetricsController,
   UpdateIssueController,
 } from "@modules/issue/presentation/controllers";
+import UpdateIssueGroupFinalStatusController from "@modules/project/presentation/controllers/UpdateIssueGroupFinalStatusController";
 import { IControllerFactory } from "./IControllerFactory";
 import { ControllerValidationFactory } from "../validation";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
+  makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController {
+    return new UpdateIssueGroupFinalStatusController(
+      this.repositoryFactory.makeProjectRepository()
+    );
+  }
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =

@@ -22,6 +22,8 @@ import {
 } from "@modules/project/presentation/controllers";
 import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
 import { InviteAccountToProjectController } from "@modules/project/presentation/controllers/InviteAccountToProjectController";
+import UpdateIssueGroupFinalStatusController from "@modules/project/presentation/controllers/UpdateIssueGroupFinalStatusController";
+import { IUpdateIssueGroupFinalStatusRepository } from "@modules/project/presentation/interfaces/repositories";
 
 export interface IControllerFactory {
   makeRegisterController(language: ILanguage): RegisterController;
@@ -55,4 +57,5 @@ export interface IControllerFactory {
   makeMoveIssueToAnotherIssueGroupController(
     language: ILanguage
   ): MoveIssueToAnotherIssueGroupController;
+  makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController;
 }

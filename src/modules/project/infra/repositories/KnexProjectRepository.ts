@@ -7,7 +7,9 @@ import {
 } from "@modules/project/entities/value-objects";
 import {
   IFindProjectImageBufferRepository,
+  IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
+  UpdateIssueGroupFinalStatusRepository,
   UpdateProjectImageRepositoryDTO,
 } from "@modules/project/presentation/interfaces/repositories";
 import {
@@ -68,8 +70,20 @@ export class KnexProjectRepository
     IRevokeInvitationRepository,
     IUpdateParticipantRoleInProjectRepository,
     IUpdateProjectImageRepository,
-    IFindProjectImageBufferRepository
+    IFindProjectImageBufferRepository,
+    IUpdateIssueGroupFinalStatusRepository
 {
+  async updateIssueGroupFinalStatus({
+    issueGroupId,
+    newIsFinal,
+  }: UpdateIssueGroupFinalStatusRepository): Promise<void> {
+    await connection("issue_group")
+      .update({
+        is_final: newIsFinal,
+      })
+      .where({ id: issueGroupId });
+  }
+
   async findProjectImageBuffer(projectId: string): Promise<Buffer | undefined> {
     const project = await connection("project")
       .select("image")
@@ -299,9 +313,12 @@ export class KnexProjectRepository
   }
 
   async listIssueGroupsByProjectId(projectId: string): Promise<IssueGroup[]> {
-    const issueGroups = await connection("issue_group").select("*").where({
-      project_id: projectId,
-    });
+    const issueGroups = await connection("issue_group")
+      .select("*")
+      .where({
+        project_id: projectId,
+      })
+      .orderBy("issue_group.created_at");
 
     const formattedIssueGroups: IssueGroup[] = [];
 

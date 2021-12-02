@@ -20,3 +20,10 @@ issueGroupsRoutes.post(
     knexControllerFactoryImpl.makeCreateIssueGroupForProjectController(language)
   )
 );
+
+issueGroupsRoutes.patch(
+  "/:issueGroupId/final",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeUpdateIssueGroupFinalStatusController()
+  )
+);
