@@ -1,3 +1,4 @@
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
 import { RevokeInvitationUseCase } from "@modules/project/use-cases";
 import { RevokeInvitationUseCaseDTO } from "@modules/project/use-cases/DTOs";
 import {
@@ -35,7 +36,10 @@ export class RevokeInvitationController implements IController {
 
       return noContentResponse();
     } catch (err) {
-      if (err instanceof ProjectNotFoundError) {
+      if (
+        err instanceof ProjectNotFoundError ||
+        err instanceof AccountNotFoundError
+      ) {
         return notFoundResponse(err);
       }
 

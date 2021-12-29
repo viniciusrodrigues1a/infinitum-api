@@ -1,3 +1,5 @@
+import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
+import { IAccountNotFoundErrorLanguage } from "@modules/account/use-cases/interfaces/languages";
 import { RevokeInvitationUseCase } from "@modules/project/use-cases";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
@@ -15,6 +17,7 @@ import { mock } from "jest-mock-extended";
 import { RevokeInvitationController } from "./RevokeInvitationController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
+const accountNotFoundErrorLanguageMock = mock<IAccountNotFoundErrorLanguage>();
 const notParticipantInProjectErrorLanguageMock =
   mock<INotParticipantInProjectErrorLanguage>();
 const roleInsufficientPermissionErrorLanguageMock =
@@ -79,6 +82,29 @@ describe("revokeInvitation controller", () => {
     };
     const errorThrown = new ProjectNotFoundError(
       projectNotFoundErrorLanguageMock
+    );
+    revokeInvitationUseCaseMock.revokeInvitation.mockImplementationOnce(() => {
+      throw errorThrown;
+    });
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.notFound);
+    expect(response.body).toBe(errorThrown);
+  });
+
+  it("should return HttpStatusCodes.notFound and body with an AccountNotFoundError", async () => {
+    expect.assertions(2);
+
+    const { sut, revokeInvitationUseCaseMock } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    const errorThrown = new AccountNotFoundError(
+      givenRequest.accountEmail,
+      accountNotFoundErrorLanguageMock
     );
     revokeInvitationUseCaseMock.revokeInvitation.mockImplementationOnce(() => {
       throw errorThrown;

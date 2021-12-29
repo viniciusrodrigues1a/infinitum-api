@@ -73,11 +73,14 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
 
   makeRevokeInvitationUseCase(language: ILanguage): RevokeInvitationUseCase {
     const projectRepository = this.repositoryFactory.makeProjectRepository();
+    const accountRepository = this.repositoryFactory.makeAccountRepository();
     return new RevokeInvitationUseCase(
       projectRepository,
       projectRepository,
+      accountRepository,
       projectRepository,
       projectRepository,
+      language,
       language,
       language,
       language,

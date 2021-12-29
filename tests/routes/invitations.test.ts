@@ -130,6 +130,30 @@ describe("/invitations/ endpoint", () => {
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 
+    it("should return 404 if account having their token revoked cannot be found", async () => {
+      expect.assertions(2);
+
+      const givenAuthHeader = {
+        authorization: `Bearer ${authorizationToken}`,
+      };
+      const inexistentAccountEmail = "user832678312@email.com";
+
+      const response = await api
+        .delete("/invitations/")
+        .set(givenAuthHeader)
+        .send({
+          projectId,
+          accountEmail: inexistentAccountEmail,
+        });
+
+      expect(response.statusCode).toBe(404);
+      const expectedBodyMessage = new AccountNotFoundError(
+        inexistentAccountEmail,
+        defaultLanguage
+      ).message;
+      expect(response.body.error.message).toBe(expectedBodyMessage);
+    });
+
     it("should return 400 if authorized user doesn't participate in project", async () => {
       expect.assertions(2);
 
@@ -154,7 +178,7 @@ describe("/invitations/ endpoint", () => {
         .set(givenAuthHeader)
         .send({
           projectId,
-          accountEmail: "user123978@email.com",
+          accountEmail: accountBeingInvitedEmail,
         });
 
       expect(response.statusCode).toBe(400);
