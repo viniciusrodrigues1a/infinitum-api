@@ -5,6 +5,7 @@ import {
   AccountAlreadyParticipatesInProjectError,
   AccountHasAlreadyBeenInvitedError,
   CannotKickOwnerOfProjectError,
+  CannotKickYourselfError,
 } from "@modules/project/use-cases/errors";
 import { InvalidInvitationTokenError } from "@modules/project/use-cases/errors/InvalidInvitationTokenError";
 import { configuration, connection } from "@shared/infra/database/connection";
@@ -18,6 +19,7 @@ import { api, defaultLanguage } from "../helpers";
 describe("/invitations/ endpoint", () => {
   let authorizationToken: string;
   let accountId: string;
+  let accountEmail: string;
   let projectId: string;
   let accountBeingInvitedEmail: string;
   let invitationToken: string;
@@ -27,7 +29,7 @@ describe("/invitations/ endpoint", () => {
 
     // inserting account
     accountId = "account-id-0";
-    const accountEmail = "jorge@email.com";
+    accountEmail = "jorge@email.com";
     await connection("account").insert({
       id: accountId,
       name: "jorge",
@@ -359,6 +361,27 @@ describe("/invitations/ endpoint", () => {
       const expectedBodyMessage = new CannotKickOwnerOfProjectError(
         defaultLanguage
       ).message;
+      expect(response.body.error.message).toBe(expectedBodyMessage);
+    });
+
+    it("should return 400 if user with permission tries to kick themselves", async () => {
+      expect.assertions(2);
+
+      const givenAuthHeader = {
+        authorization: `Bearer ${authorizationToken}`,
+      };
+
+      const response = await api
+        .post("/invitations/kick/")
+        .set(givenAuthHeader)
+        .send({
+          projectId,
+          accountEmail,
+        });
+
+      expect(response.statusCode).toBe(400);
+      const expectedBodyMessage = new CannotKickYourselfError(defaultLanguage)
+        .message;
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 

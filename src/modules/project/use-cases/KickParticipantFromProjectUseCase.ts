@@ -9,10 +9,16 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
-import { Role, RoleName } from "../entities/value-objects";
+import { Role } from "../entities/value-objects";
 import { KickParticipantFromProjectUseCaseDTO } from "./DTOs";
-import { CannotKickOwnerOfProjectError } from "./errors";
-import { ICannotKickOwnerOfProjectErrorLanguage } from "./interfaces/languages";
+import {
+  CannotKickOwnerOfProjectError,
+  CannotKickYourselfError,
+} from "./errors";
+import {
+  ICannotKickOwnerOfProjectErrorLanguage,
+  ICannotKickYourselfErrorLanguage,
+} from "./interfaces/languages";
 import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
@@ -29,6 +35,7 @@ export class KickParticipantFromProjectUseCase {
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
     private readonly sendKickedOutOfProjectEmailService: ISendKickedOutOfProjectEmailService,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
+    private readonly cannotKickYourselfErrorLanguage: ICannotKickYourselfErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly cannotKickOwnerOfProjectErrorLanguage: ICannotKickOwnerOfProjectErrorLanguage,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
@@ -44,6 +51,10 @@ export class KickParticipantFromProjectUseCase {
       await this.doesProjectExistRepository.doesProjectExist(projectId);
     if (!doesProjectExist) {
       throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
+    }
+
+    if (accountEmailMakingRequest === accountEmail) {
+      throw new CannotKickYourselfError(this.cannotKickYourselfErrorLanguage);
     }
 
     const doesParticipantKickingExist =

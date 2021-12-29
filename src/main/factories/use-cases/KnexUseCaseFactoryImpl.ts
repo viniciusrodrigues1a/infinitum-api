@@ -1,4 +1,5 @@
 import { ILanguage } from "@modules/account/presentation/languages";
+
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
 import {
   CreateIssueGroupForProjectUseCase,
@@ -94,6 +95,7 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
       projectRepository,
       projectRepository,
       NodemailerSendKickedOutOfProjectEmailServiceFactory.make(),
+      language,
       language,
       language,
       language,

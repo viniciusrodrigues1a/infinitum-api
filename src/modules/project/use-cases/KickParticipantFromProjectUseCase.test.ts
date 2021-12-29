@@ -19,8 +19,14 @@ import { IKickParticipantFromProjectRepository } from "./interfaces/repositories
 import { ISendKickedOutOfProjectEmailService } from "./interfaces/services/ISendKickedOutOfProjectEmailService";
 import { KickParticipantFromProjectUseCase } from "./KickParticipantFromProjectUseCase";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
-import { CannotKickOwnerOfProjectError } from "./errors";
-import { ICannotKickOwnerOfProjectErrorLanguage } from "./interfaces/languages";
+import {
+  CannotKickOwnerOfProjectError,
+  CannotKickYourselfError,
+} from "./errors";
+import {
+  ICannotKickOwnerOfProjectErrorLanguage,
+  ICannotKickYourselfErrorLanguage,
+} from "./interfaces/languages";
 
 function makeSut() {
   const kickParticipantFromProjectRepositoryMock =
@@ -34,6 +40,8 @@ function makeSut() {
     mock<ISendKickedOutOfProjectEmailService>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
+  const cannotKickYourselfErrorLanguageMock =
+    mock<ICannotKickYourselfErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
     mock<INotParticipantInProjectErrorLanguage>();
   const cannotKickOwnerOfProjectErrorLanguageMock =
@@ -50,6 +58,7 @@ function makeSut() {
     findParticipantRoleInProjectRepositoryMock,
     sendKickedOutOfProjectEmailServiceMock,
     projectNotFoundErrorLanguageMock,
+    cannotKickYourselfErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
     cannotKickOwnerOfProjectErrorLanguageMock,
     invalidRoleNameErrorLanguageMock,
@@ -249,5 +258,21 @@ describe("kickParticipantFromProject use-case", () => {
     const when = () => sut.kick(givenRequest);
 
     await expect(when).rejects.toThrow(RoleInsufficientPermissionError);
+  });
+
+  it("should throw CannotKickYourselfError if trying to kick your own email", async () => {
+    expect.assertions(1);
+
+    const { sut, doesProjectExistRepositoryMock } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmailMakingRequest: "jorge@email.com",
+      accountEmail: "jorge@email.com",
+    };
+    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+
+    const when = () => sut.kick(givenRequest);
+
+    await expect(when).rejects.toThrow(CannotKickYourselfError);
   });
 });

@@ -1,3 +1,3 @@
 export interface ICannotKickOwnerOfProjectErrorLanguage {
-  getCannotKickOwnerOfProjectErrorLanguage(): string;
+  getCannotKickOwnerOfProjectErrorMessage(): string;
 }

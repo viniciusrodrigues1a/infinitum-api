@@ -1,6 +1,12 @@
 import { KickParticipantFromProjectUseCase } from "@modules/project/use-cases";
-import { CannotKickOwnerOfProjectError } from "@modules/project/use-cases/errors";
-import { ICannotKickOwnerOfProjectErrorLanguage } from "@modules/project/use-cases/interfaces/languages";
+import {
+  CannotKickOwnerOfProjectError,
+  CannotKickYourselfError,
+} from "@modules/project/use-cases/errors";
+import {
+  ICannotKickOwnerOfProjectErrorLanguage,
+  ICannotKickYourselfErrorLanguage,
+} from "@modules/project/use-cases/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
 import {
@@ -21,6 +27,8 @@ const notParticipantInProjectErrorLanguageMock =
   mock<INotParticipantInProjectErrorLanguage>();
 const cannotKickOwnerOfProjectErrorLanguageMock =
   mock<ICannotKickOwnerOfProjectErrorLanguage>();
+const cannotKickYourselfErrorLanguageMock =
+  mock<ICannotKickYourselfErrorLanguage>();
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
 
@@ -130,6 +138,28 @@ describe("kickParticipantFromProject controller", () => {
     };
     const errorThrown = new CannotKickOwnerOfProjectError(
       cannotKickOwnerOfProjectErrorLanguageMock
+    );
+    kickParticipantFromProjectUseCaseMock.kick.mockImplementationOnce(() => {
+      throw errorThrown;
+    });
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
+    expect(response.body).toBe(errorThrown);
+  });
+
+  it("should return HttpStatusCodes.badRequest if CannotKickYourselfError is thrown", async () => {
+    expect.assertions(2);
+
+    const { sut, kickParticipantFromProjectUseCaseMock } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    const errorThrown = new CannotKickYourselfError(
+      cannotKickYourselfErrorLanguageMock
     );
     kickParticipantFromProjectUseCaseMock.kick.mockImplementationOnce(() => {
       throw errorThrown;

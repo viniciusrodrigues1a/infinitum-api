@@ -1,6 +1,9 @@
 import { KickParticipantFromProjectUseCase } from "@modules/project/use-cases";
 import { KickParticipantFromProjectUseCaseDTO } from "@modules/project/use-cases/DTOs";
-import { CannotKickOwnerOfProjectError } from "@modules/project/use-cases/errors";
+import {
+  CannotKickOwnerOfProjectError,
+  CannotKickYourselfError,
+} from "@modules/project/use-cases/errors";
 import {
   badRequestResponse,
   noContentResponse,
@@ -42,7 +45,8 @@ export class KickParticipantFromProjectController implements IController {
 
       if (
         err instanceof NotParticipantInProjectError ||
-        err instanceof CannotKickOwnerOfProjectError
+        err instanceof CannotKickOwnerOfProjectError ||
+        err instanceof CannotKickYourselfError
       ) {
         return badRequestResponse(err);
       }

@@ -1,7 +1,11 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
-  getCannotKickOwnerOfProjectErrorLanguage(): string {
+  getCannotKickYourselfErrorMessage(): string {
+    return "You cannot kick yourself from this project";
+  }
+
+  getCannotKickOwnerOfProjectErrorMessage(): string {
     return "You cannot kick the owner of the project";
   }
 

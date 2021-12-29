@@ -6,3 +6,4 @@ export * from "./CannotUpdateYourOwnRoleError";
 export * from "./CannotUpdateRoleOfOwnerError";
 export * from "./CannotUpdateRoleToOwnerError";
 export * from "./CannotKickOwnerOfProjectError";
+export * from "./CannotKickYourselfError";
