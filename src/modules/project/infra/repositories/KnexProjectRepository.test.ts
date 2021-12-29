@@ -42,6 +42,26 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findProjectNameByProjectId method", () => {
+    it("should return the name column of given project id", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: false,
+      };
+      await connection("project").insert(project);
+
+      const name = await sut.findProjectNameByProjectId(project.id);
+
+      expect(name).toBe(project.name);
+    });
+  });
+
   describe("findProjectImageBuffer", () => {
     it("should return the image column of given project id", async () => {
       expect.assertions(1);

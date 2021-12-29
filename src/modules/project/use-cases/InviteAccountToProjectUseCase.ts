@@ -31,6 +31,7 @@ import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IFindProjectNameByProjectIdRepository,
   IHasAccountBeenInvitedToProjectRepository,
 } from "./interfaces/repositories";
 import { ISendInvitationToProjectEmailService } from "./interfaces/services";
@@ -44,6 +45,7 @@ export class InviteAccountToProjectUseCase {
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasAccountBeenInvitedToProjectRepository: IHasAccountBeenInvitedToProjectRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
+    private readonly findProjectNameByProjectIdRepository: IFindProjectNameByProjectIdRepository,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly ownerCantBeUsedAsARoleForAnInvitationErrorLanguage: IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
@@ -56,7 +58,6 @@ export class InviteAccountToProjectUseCase {
 
   async invite({
     projectId,
-    projectName,
     accountEmail,
     roleName,
     accountEmailMakingRequest,
@@ -136,6 +137,11 @@ export class InviteAccountToProjectUseCase {
       { projectId, accountEmail, role: invitedAccountRole },
       this.ownerCantBeUsedAsARoleForAnInvitationErrorLanguage
     );
+
+    const projectName =
+      await this.findProjectNameByProjectIdRepository.findProjectNameByProjectId(
+        projectId
+      );
 
     await this.createInvitationTokenRepository.createInvitationToken({
       accountEmail,

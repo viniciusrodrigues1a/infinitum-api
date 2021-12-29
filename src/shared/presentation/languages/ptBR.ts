@@ -61,10 +61,6 @@ export class PTBRLanguage implements ILanguage {
     return "nome do cargo";
   }
 
-  getProjectNameParamMessage(): string {
-    return "nome do projeto";
-  }
-
   getExpiresAtParamMessage(): string {
     return "data de expiração";
   }

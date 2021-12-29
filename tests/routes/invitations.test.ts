@@ -19,7 +19,6 @@ describe("/invitations/ endpoint", () => {
   let authorizationToken: string;
   let accountId: string;
   let projectId: string;
-  let projectName: string;
   let accountBeingInvitedEmail: string;
   let invitationToken: string;
 
@@ -41,12 +40,11 @@ describe("/invitations/ endpoint", () => {
     authorizationToken = jwtToken.sign({ email: accountEmail });
 
     // inserting project
-    projectName = "my project";
     await api
       .post("/projects/")
       .set({ authorization: `Bearer ${authorizationToken}` })
       .send({
-        name: projectName,
+        name: "my project",
         description: "my project's description",
       });
 
@@ -469,7 +467,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "member",
         projectId,
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
 
@@ -490,7 +487,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "member",
         projectId: "non-existent-project-id-01237340127",
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
 
@@ -514,7 +510,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "member",
         projectId,
-        projectName,
         accountEmail: "non-existent-email1239873129@email.com",
       };
 
@@ -552,7 +547,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "member",
         projectId,
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
 
@@ -587,7 +581,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "member",
         projectId,
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
 
@@ -604,7 +597,7 @@ describe("/invitations/ endpoint", () => {
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 
-    it("should return 400 if project has already been invited", async () => {
+    it("should return 400 if account has already been invited", async () => {
       expect.assertions(2);
 
       const givenAuthHeader = {
@@ -613,7 +606,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "member",
         projectId,
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
       await api.post("/invitations/").set(givenAuthHeader).send(givenRequest);
@@ -640,7 +632,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName: "owner",
         projectId,
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
 
@@ -665,7 +656,6 @@ describe("/invitations/ endpoint", () => {
       const givenRequest = {
         roleName,
         projectId,
-        projectName,
         accountEmail: accountToBeInvitedEmail,
       };
       const { id: memberRoleId } = await connection("project_role")

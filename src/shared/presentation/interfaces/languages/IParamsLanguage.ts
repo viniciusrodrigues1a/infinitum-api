@@ -10,7 +10,6 @@ export interface IParamsLanguage {
   getIssueGroupIdParamMessage(): string;
   getExpiresAtParamMessage(): string;
   getRoleNameParamMessage(): string;
-  getProjectNameParamMessage(): string;
   getIssueIdParamMessage(): string;
   getCompletedParamMessage(): string;
 }

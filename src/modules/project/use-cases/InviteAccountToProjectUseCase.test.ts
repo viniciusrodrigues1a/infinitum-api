@@ -31,6 +31,7 @@ import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
+  IFindProjectNameByProjectIdRepository,
   IHasAccountBeenInvitedToProjectRepository,
 } from "./interfaces/repositories";
 import { ISendInvitationToProjectEmailService } from "./interfaces/services";
@@ -52,6 +53,8 @@ function makeSut() {
     mock<IHasAccountBeenInvitedToProjectRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
+  const findProjectNameByProjectIdRepositoryMock =
+    mock<IFindProjectNameByProjectIdRepository>();
   const invalidRoleNameErrorLanguageMock =
     mock<IInvalidRoleNameErrorLanguage>();
   const ownerCantBeUsedAsARoleForAnInvitationErrorLanguageMock =
@@ -77,6 +80,7 @@ function makeSut() {
     doesParticipantExistRepositoryMock,
     hasAccountBeenInvitedToProjectRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
+    findProjectNameByProjectIdRepositoryMock,
     invalidRoleNameErrorLanguageMock,
     ownerCantBeUsedAsARoleForAnInvitationErrorLanguageMock,
     projectNotFoundErrorLanguageMock,
@@ -96,6 +100,7 @@ function makeSut() {
     doesParticipantExistRepositoryMock,
     hasAccountBeenInvitedToProjectRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
+    findProjectNameByProjectIdRepositoryMock,
   };
 }
 
@@ -135,7 +140,6 @@ describe("inviteAccountToProject use-case", () => {
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       roleName: "member",
     };
@@ -203,7 +207,6 @@ describe("inviteAccountToProject use-case", () => {
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       roleName: "member",
     };
@@ -228,7 +231,6 @@ describe("inviteAccountToProject use-case", () => {
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       roleName: "member",
     };
@@ -255,7 +257,6 @@ describe("inviteAccountToProject use-case", () => {
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       roleName: "member",
     };
@@ -290,7 +291,6 @@ describe("inviteAccountToProject use-case", () => {
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       roleName: "member",
     };
@@ -329,7 +329,6 @@ describe("inviteAccountToProject use-case", () => {
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       roleName: "member",
     };

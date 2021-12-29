@@ -3,6 +3,5 @@ import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
 
 export type InviteAccountToProjectUseCaseDTO = AccountMakingRequestDTO &
   Omit<InvitationDTO, "role"> & {
-    projectName: string;
     roleName: string;
   };

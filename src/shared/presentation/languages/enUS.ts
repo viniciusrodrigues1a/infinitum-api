@@ -61,10 +61,6 @@ export class ENUSLanguage implements ILanguage {
     return "role name";
   }
 
-  getProjectNameParamMessage(): string {
-    return "project name";
-  }
-
   getExpiresAtParamMessage(): string {
     return "expires at";
   }

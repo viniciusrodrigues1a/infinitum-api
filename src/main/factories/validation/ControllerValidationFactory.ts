@@ -115,7 +115,6 @@ export class ControllerValidationFactory {
   ): ValidationComposite {
     const requiredAndStringFields = [
       { accessor: "roleName", i18n: language.getRoleNameParamMessage() },
-      { accessor: "projectName", i18n: language.getProjectNameParamMessage() },
       { accessor: "projectId", i18n: language.getProjectIdParamMessage() },
       {
         accessor: "accountEmail",
