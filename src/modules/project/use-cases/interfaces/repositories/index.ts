@@ -17,3 +17,4 @@ export * from "./IAcceptInvitationTokenRepository";
 export * from "./IRevokeInvitationRepository";
 export * from "./IUpdateParticipantRoleInProjectRepository";
 export * from "./IFindProjectNameByProjectIdRepository";
+export * from "./IFindOneAccountEmailByInvitationTokenRepository";

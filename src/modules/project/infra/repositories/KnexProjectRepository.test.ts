@@ -42,6 +42,48 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findOneAccountEmailByInvitationToken method", () => {
+    it("should return the email of the account associated to given invitation token", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: false,
+      };
+      const accountBeingInvited = {
+        id: "account-id-123",
+        email: "garcia@email.com",
+        name: "garcia",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "member" })
+        .first();
+      const projectInvitation = {
+        account_id: accountBeingInvited.id,
+        project_id: project.id,
+        project_role_id: roleId,
+        token: "invitationToken-0",
+      };
+      await connection("project").insert(project);
+      await connection("account").insert(accountBeingInvited);
+      await connection("project_invitation").insert(projectInvitation);
+
+      const response = await sut.findOneAccountEmailByInvitationToken(
+        projectInvitation.token
+      );
+
+      expect(response).toBe(accountBeingInvited.email);
+    });
+  });
+
   describe("findProjectNameByProjectId method", () => {
     it("should return the name column of given project id", async () => {
       expect.assertions(1);

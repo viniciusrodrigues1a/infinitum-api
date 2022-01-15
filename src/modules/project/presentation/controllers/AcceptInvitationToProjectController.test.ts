@@ -23,14 +23,20 @@ describe("acceptInvitationToProject controller", () => {
     expect.assertions(2);
 
     const { sut, acceptInvitationToProjectUseCaseMock } = makeSut();
-    const givenToken = "invitationToken-0";
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
+      invitationToken: "invitationToken-0",
+    };
 
-    const response = await sut.handleRequest({ invitationToken: givenToken });
+    const response = await sut.handleRequest(givenRequest);
 
     expect(response.statusCode).toBe(HttpStatusCodes.noContent);
     expect(acceptInvitationToProjectUseCaseMock.accept).toHaveBeenNthCalledWith(
       1,
-      givenToken
+      {
+        accountEmailMakingRequest: givenRequest.accountEmailMakingRequest,
+        token: givenRequest.invitationToken,
+      }
     );
   });
 
@@ -41,10 +47,12 @@ describe("acceptInvitationToProject controller", () => {
     acceptInvitationToProjectUseCaseMock.accept.mockImplementationOnce(() => {
       throw new Error("unhandled server side err");
     });
-
-    const response = await sut.handleRequest({
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
       invitationToken: "invitationToken-0",
-    });
+    };
+
+    const response = await sut.handleRequest(givenRequest);
 
     expect(response.statusCode).toBe(HttpStatusCodes.serverError);
   });
@@ -59,10 +67,12 @@ describe("acceptInvitationToProject controller", () => {
     acceptInvitationToProjectUseCaseMock.accept.mockImplementationOnce(() => {
       throw errorThrown;
     });
-
-    const response = await sut.handleRequest({
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
       invitationToken: "invitationToken-0",
-    });
+    };
+
+    const response = await sut.handleRequest(givenRequest);
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
     expect(response.body).toBe(errorThrown);

@@ -41,6 +41,7 @@ import {
   IRevokeInvitationRepository,
   IUpdateParticipantRoleInProjectRepository,
   IFindProjectNameByProjectIdRepository,
+  IFindOneAccountEmailByInvitationTokenRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
 import { connection } from "@shared/infra/database/connection";
@@ -73,8 +74,23 @@ export class KnexProjectRepository
     IUpdateProjectImageRepository,
     IFindProjectImageBufferRepository,
     IUpdateIssueGroupFinalStatusRepository,
-    IFindProjectNameByProjectIdRepository
+    IFindProjectNameByProjectIdRepository,
+    IFindOneAccountEmailByInvitationTokenRepository
 {
+  async findOneAccountEmailByInvitationToken(token: string): Promise<string> {
+    const { account_id } = await connection("project_invitation")
+      .select("account_id")
+      .where({ token })
+      .first();
+
+    const { email } = await connection("account")
+      .select("email")
+      .where({ id: account_id })
+      .first();
+
+    return email;
+  }
+
   async findProjectNameByProjectId(projectId: string): Promise<string> {
     const { name } = await connection("project")
       .select("name")

@@ -459,8 +459,11 @@ describe("/invitations/ endpoint", () => {
     it("should return 204", async () => {
       expect.assertions(1);
 
+      const accountBeingInvitedAuthorizationToken = jwtToken.sign({
+        email: accountBeingInvitedEmail,
+      });
       const givenAuthHeader = {
-        authorization: `Bearer ${authorizationToken}`,
+        authorization: `Bearer ${accountBeingInvitedAuthorizationToken}`,
       };
 
       const response = await api

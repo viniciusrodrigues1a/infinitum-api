@@ -15,3 +15,4 @@ export * from "./RevokeInvitationRepositoryDTO";
 export * from "./RevokeInvitationUseCaseDTO";
 export * from "./UpdateParticipantRoleInProjectUseCaseDTO";
 export * from "./UpdateParticipantRoleInProjectRepositoryDTO";
+export * from "./AcceptInvitationToProjectUseCaseDTO";

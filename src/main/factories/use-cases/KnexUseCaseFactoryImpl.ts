@@ -114,6 +114,7 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
     return new AcceptInvitationToProjectUseCase(
       projectRepository,
       projectRepository,
+      projectRepository,
       language
     );
   }

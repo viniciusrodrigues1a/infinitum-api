@@ -4,6 +4,7 @@ import { InvalidInvitationTokenError } from "./errors/InvalidInvitationTokenErro
 import { IInvalidInvitationTokenErrorLanguage } from "./interfaces/languages";
 import {
   IAcceptInvitationTokenRepository,
+  IFindOneAccountEmailByInvitationTokenRepository,
   IIsInvitationTokenValidRepository,
 } from "./interfaces/repositories";
 
@@ -12,11 +13,14 @@ function makeSut() {
     mock<IAcceptInvitationTokenRepository>();
   const isInvitationTokenValidRepositoryMock =
     mock<IIsInvitationTokenValidRepository>();
+  const findOneAccountEmailByInvitationTokenRepositoryMock =
+    mock<IFindOneAccountEmailByInvitationTokenRepository>();
   const invalidInvitationTokenErrorLanguageMock =
     mock<IInvalidInvitationTokenErrorLanguage>();
   const sut = new AcceptInvitationToProjectUseCase(
     acceptInvitationTokenRepositoryMock,
     isInvitationTokenValidRepositoryMock,
+    findOneAccountEmailByInvitationTokenRepositoryMock,
     invalidInvitationTokenErrorLanguageMock
   );
 
@@ -24,6 +28,7 @@ function makeSut() {
     sut,
     acceptInvitationTokenRepositoryMock,
     isInvitationTokenValidRepositoryMock,
+    findOneAccountEmailByInvitationTokenRepositoryMock,
   };
 }
 
@@ -35,27 +40,70 @@ describe("acceptInvitationToProject use-case", () => {
       sut,
       acceptInvitationTokenRepositoryMock,
       isInvitationTokenValidRepositoryMock,
+      findOneAccountEmailByInvitationTokenRepositoryMock,
     } = makeSut();
-    const givenToken = "invitationToken-0";
     isInvitationTokenValidRepositoryMock.isInvitationTokenValid.mockResolvedValueOnce(
       true
     );
-    await sut.accept(givenToken);
+    findOneAccountEmailByInvitationTokenRepositoryMock.findOneAccountEmailByInvitationToken.mockResolvedValueOnce(
+      "jorge@email.com"
+    );
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
+      token: "invitationToken-0",
+    };
+
+    await sut.accept(givenRequest);
 
     expect(
       acceptInvitationTokenRepositoryMock.acceptInvitationToken
-    ).toHaveBeenNthCalledWith(1, givenToken);
+    ).toHaveBeenNthCalledWith(1, givenRequest.token);
   });
 
-  it("should throw InvalidInvitationTokenError", async () => {
+  it("should throw InvalidInvitationTokenError if token doesn't exist", async () => {
     expect.assertions(1);
 
-    const { sut, isInvitationTokenValidRepositoryMock } = makeSut();
+    const {
+      sut,
+      isInvitationTokenValidRepositoryMock,
+      findOneAccountEmailByInvitationTokenRepositoryMock,
+    } = makeSut();
     isInvitationTokenValidRepositoryMock.isInvitationTokenValid.mockResolvedValueOnce(
       false
     );
+    findOneAccountEmailByInvitationTokenRepositoryMock.findOneAccountEmailByInvitationToken.mockResolvedValueOnce(
+      "jorge@email.com"
+    );
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
+      token: "invitationToken-0",
+    };
 
-    const when = () => sut.accept("invitationToken-0");
+    const when = () => sut.accept(givenRequest);
+
+    await expect(when).rejects.toThrow(InvalidInvitationTokenError);
+  });
+
+  it("should throw InvalidInvitationTokenError if accountEmailMakingRequest is different than account being invited by the invitation token", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      isInvitationTokenValidRepositoryMock,
+      findOneAccountEmailByInvitationTokenRepositoryMock,
+    } = makeSut();
+    isInvitationTokenValidRepositoryMock.isInvitationTokenValid.mockResolvedValueOnce(
+      true
+    );
+    findOneAccountEmailByInvitationTokenRepositoryMock.findOneAccountEmailByInvitationToken.mockResolvedValueOnce(
+      "garcia@email.com"
+    );
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
+      token: "invitationToken-0",
+    };
+
+    const when = () => sut.accept(givenRequest);
 
     await expect(when).rejects.toThrow(InvalidInvitationTokenError);
   });
