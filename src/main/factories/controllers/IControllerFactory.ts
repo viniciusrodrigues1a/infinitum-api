@@ -16,6 +16,7 @@ import {
   FindProjectImageDataURLController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
+  UpdateIssueGroupColorController,
   UpdateParticipantRoleInProjectController,
   UpdateProjectController,
   UpdateProjectImageController,
@@ -23,7 +24,6 @@ import {
 import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
 import { InviteAccountToProjectController } from "@modules/project/presentation/controllers/InviteAccountToProjectController";
 import UpdateIssueGroupFinalStatusController from "@modules/project/presentation/controllers/UpdateIssueGroupFinalStatusController";
-import { IUpdateIssueGroupFinalStatusRepository } from "@modules/project/presentation/interfaces/repositories";
 
 export interface IControllerFactory {
   makeRegisterController(language: ILanguage): RegisterController;
@@ -58,4 +58,5 @@ export interface IControllerFactory {
     language: ILanguage
   ): MoveIssueToAnotherIssueGroupController;
   makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController;
+  makeUpdateIssueGroupColorController(): UpdateIssueGroupColorController;
 }

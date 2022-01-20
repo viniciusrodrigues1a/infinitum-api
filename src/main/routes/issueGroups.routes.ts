@@ -27,3 +27,10 @@ issueGroupsRoutes.patch(
     knexControllerFactoryImpl.makeUpdateIssueGroupFinalStatusController()
   )
 );
+
+issueGroupsRoutes.patch(
+  "/:issueGroupId/color",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeUpdateIssueGroupColorController()
+  )
+);

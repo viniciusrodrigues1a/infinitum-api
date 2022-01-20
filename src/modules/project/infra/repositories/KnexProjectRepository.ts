@@ -7,9 +7,11 @@ import {
 } from "@modules/project/entities/value-objects";
 import {
   IFindProjectImageBufferRepository,
+  IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
-  UpdateIssueGroupFinalStatusRepository,
+  UpdateIssueGroupColorRepositoryDTO,
+  UpdateIssueGroupFinalStatusRepositoryDTO,
   UpdateProjectImageRepositoryDTO,
 } from "@modules/project/presentation/interfaces/repositories";
 import {
@@ -75,8 +77,18 @@ export class KnexProjectRepository
     IFindProjectImageBufferRepository,
     IUpdateIssueGroupFinalStatusRepository,
     IFindProjectNameByProjectIdRepository,
-    IFindOneAccountEmailByInvitationTokenRepository
+    IFindOneAccountEmailByInvitationTokenRepository,
+    IUpdateIssueGroupColorRepository
 {
+  async updateIssueGroupColor({
+    issueGroupId,
+    newColor,
+  }: UpdateIssueGroupColorRepositoryDTO): Promise<void> {
+    await connection("issue_group")
+      .update({ color: newColor })
+      .where({ id: issueGroupId });
+  }
+
   async findOneAccountEmailByInvitationToken(token: string): Promise<string> {
     const { account_id } = await connection("project_invitation")
       .select("account_id")
@@ -103,7 +115,7 @@ export class KnexProjectRepository
   async updateIssueGroupFinalStatus({
     issueGroupId,
     newIsFinal,
-  }: UpdateIssueGroupFinalStatusRepository): Promise<void> {
+  }: UpdateIssueGroupFinalStatusRepositoryDTO): Promise<void> {
     await connection("issue_group")
       .update({
         is_final: newIsFinal,

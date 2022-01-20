@@ -11,3 +11,4 @@ export * from "./UpdateParticipantRoleInProjectController";
 export * from "./UpdateProjectImageController";
 export * from "./FindProjectImageDataURLController";
 export * from "./UpdateIssueGroupFinalStatusController";
+export * from "./UpdateIssueGroupColorController";

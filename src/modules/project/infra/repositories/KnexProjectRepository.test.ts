@@ -42,6 +42,40 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("updateIssueGroupColor method", () => {
+    it("should update the color column of the issue group table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        archived: true,
+      };
+      const issueGroup = {
+        id: "ig-id-0",
+        project_id: project.id,
+        title: "In progress",
+      };
+      await connection("project").insert(project);
+      await connection("issue_group").insert(issueGroup);
+      const givenRequest = {
+        issueGroupId: issueGroup.id,
+        newColor: "FF0000",
+      };
+
+      await sut.updateIssueGroupColor(givenRequest);
+
+      const updatedIssueGroup = await connection("issue_group")
+        .select("color")
+        .where({ id: issueGroup.id })
+        .first();
+      expect(updatedIssueGroup.color).toBe(givenRequest.newColor);
+    });
+  });
+
   describe("findOneAccountEmailByInvitationToken method", () => {
     it("should return the email of the account associated to given invitation token", async () => {
       expect.assertions(1);

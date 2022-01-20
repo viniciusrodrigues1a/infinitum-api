@@ -12,6 +12,7 @@ import {
   KickParticipantFromProjectController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
+  UpdateIssueGroupColorController,
   UpdateParticipantRoleInProjectController,
   UpdateProjectController,
   UpdateProjectImageController,
@@ -36,6 +37,12 @@ import { IControllerFactory } from "./IControllerFactory";
 import { ControllerValidationFactory } from "../validation";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
+  makeUpdateIssueGroupColorController(): UpdateIssueGroupColorController {
+    return new UpdateIssueGroupColorController(
+      this.repositoryFactory.makeProjectRepository()
+    );
+  }
+
   makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController {
     return new UpdateIssueGroupFinalStatusController(
       this.repositoryFactory.makeProjectRepository()

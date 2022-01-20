@@ -1,10 +1,10 @@
-export type UpdateIssueGroupFinalStatusRepository = {
+export type UpdateIssueGroupFinalStatusRepositoryDTO = {
   issueGroupId: string;
   newIsFinal: boolean;
 };
 
 export interface IUpdateIssueGroupFinalStatusRepository {
   updateIssueGroupFinalStatus(
-    data: UpdateIssueGroupFinalStatusRepository
+    data: UpdateIssueGroupFinalStatusRepositoryDTO
   ): Promise<void>;
 }
