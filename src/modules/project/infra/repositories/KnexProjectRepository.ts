@@ -359,7 +359,7 @@ export class KnexProjectRepository
       })
       .orderBy("issue_group.created_at");
 
-    const formattedIssueGroups: IssueGroup[] = [];
+    const formattedIssueGroups: any[] = [];
 
     for (const issueGroup of issueGroups) {
       const issues = await this.listIssuesByIssueGroupId(issueGroup.id);
@@ -369,6 +369,7 @@ export class KnexProjectRepository
         title: issueGroup.title,
         issueGroupId: issueGroup.id,
         shouldUpdateIssuesToCompleted: Boolean(issueGroup.is_final),
+        color: issueGroup.color,
       });
     }
 
