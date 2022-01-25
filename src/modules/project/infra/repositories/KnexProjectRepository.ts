@@ -302,10 +302,15 @@ export class KnexProjectRepository
     projectId,
     title,
   }: CreateIssueGroupForProjectRepositoryDTO): Promise<void> {
+    const colors = ["7566ff", "ff6e66", "4ac6ff", "6bff5b", "ffc824", "ff981a"];
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    const randomColor = colors[randomIndex];
+
     await connection("issue_group").insert({
       id: issueGroupId,
       project_id: projectId,
       title,
+      color: randomColor,
     });
   }
 
