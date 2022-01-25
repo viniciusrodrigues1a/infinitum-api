@@ -27,7 +27,7 @@ export type CreateProjectControllerRequest = Omit<
   finishesAt?: string;
 };
 
-type CreateProjectControllerLanguage = ITodoIssueGroupTitleLanguage &
+export type CreateProjectControllerLanguage = ITodoIssueGroupTitleLanguage &
   IInProgressIssueGroupTitleLanguage &
   ICompletedIssueGroupTitleLanguage;
 

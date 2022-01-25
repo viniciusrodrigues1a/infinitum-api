@@ -10,7 +10,13 @@ import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
 import { mock } from "jest-mock-extended";
 import {
+  ICompletedIssueGroupTitleLanguage,
+  IInProgressIssueGroupTitleLanguage,
+  ITodoIssueGroupTitleLanguage,
+} from "../interfaces/languages";
+import {
   CreateProjectController,
+  CreateProjectControllerLanguage,
   CreateProjectControllerRequest,
 } from "./CreateProjectController";
 
@@ -29,10 +35,14 @@ function makeSut() {
   const createIssueGroupForProjectUseCaseMock =
     mock<CreateIssueGroupForProjectUseCase>();
   const validationMock = mock<IValidation>();
+  const createProjectControllerLanguageMock =
+    mock<CreateProjectControllerLanguage>();
+
   const sut = new CreateProjectController(
     createProjectUseCaseMock,
     createIssueGroupForProjectUseCaseMock,
-    validationMock
+    validationMock,
+    createProjectControllerLanguageMock
   );
 
   return {

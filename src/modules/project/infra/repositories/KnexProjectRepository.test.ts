@@ -927,8 +927,12 @@ describe("project repository using Knex", () => {
           },
         ];
 
-        expect(response).toContainEqual(issueGroups[0]);
-        expect(response).toContainEqual(issueGroups[1]);
+        expect(response).toContainEqual(
+          expect.objectContaining(issueGroups[0])
+        );
+        expect(response).toContainEqual(
+          expect.objectContaining(issueGroups[1])
+        );
       });
     });
 
