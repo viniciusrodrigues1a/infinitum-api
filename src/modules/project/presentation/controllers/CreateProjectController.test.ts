@@ -14,6 +14,7 @@ import {
   IInProgressIssueGroupTitleLanguage,
   ITodoIssueGroupTitleLanguage,
 } from "../interfaces/languages";
+import { IUpdateIssueGroupColorRepository } from "../interfaces/repositories";
 import {
   CreateProjectController,
   CreateProjectControllerLanguage,
@@ -34,6 +35,8 @@ function makeSut() {
   const createProjectUseCaseMock = mock<CreateProjectUseCase>();
   const createIssueGroupForProjectUseCaseMock =
     mock<CreateIssueGroupForProjectUseCase>();
+  const updateIssueGroupColorRepositoryMock =
+    mock<IUpdateIssueGroupColorRepository>();
   const validationMock = mock<IValidation>();
   const createProjectControllerLanguageMock =
     mock<CreateProjectControllerLanguage>();
@@ -41,6 +44,7 @@ function makeSut() {
   const sut = new CreateProjectController(
     createProjectUseCaseMock,
     createIssueGroupForProjectUseCaseMock,
+    updateIssueGroupColorRepositoryMock,
     validationMock,
     createProjectControllerLanguageMock
   );

@@ -18,6 +18,7 @@ import {
   IInProgressIssueGroupTitleLanguage,
   ITodoIssueGroupTitleLanguage,
 } from "../interfaces/languages";
+import { IUpdateIssueGroupColorRepository } from "../interfaces/repositories";
 
 export type CreateProjectControllerRequest = Omit<
   CreateProjectDTO,
@@ -35,6 +36,7 @@ export class CreateProjectController implements IController {
   constructor(
     private readonly createProjectUseCase: CreateProjectUseCase,
     private readonly createIssueGroupForProjectUseCase: CreateIssueGroupForProjectUseCase,
+    private readonly updateIssueGroupColorRepository: IUpdateIssueGroupColorRepository,
     private readonly validation: IValidation,
     private readonly language: CreateProjectControllerLanguage
   ) {}
@@ -55,20 +57,38 @@ export class CreateProjectController implements IController {
           ? new Date(request.finishesAt)
           : undefined,
       });
-      await this.createIssueGroupForProjectUseCase.create({
-        projectId: id,
-        title: this.language.getTodoIssueGroupTitle(),
-        accountEmailMakingRequest: request.accountEmailMakingRequest,
+
+      const todoIssueGroupId =
+        await this.createIssueGroupForProjectUseCase.create({
+          projectId: id,
+          title: this.language.getTodoIssueGroupTitle(),
+          accountEmailMakingRequest: request.accountEmailMakingRequest,
+        });
+      await this.updateIssueGroupColorRepository.updateIssueGroupColor({
+        issueGroupId: todoIssueGroupId,
+        newColor: "ffc824",
       });
-      await this.createIssueGroupForProjectUseCase.create({
-        projectId: id,
-        title: this.language.getInProgressIssueGroupTitle(),
-        accountEmailMakingRequest: request.accountEmailMakingRequest,
+
+      const inProgressIssueGroupId =
+        await this.createIssueGroupForProjectUseCase.create({
+          projectId: id,
+          title: this.language.getInProgressIssueGroupTitle(),
+          accountEmailMakingRequest: request.accountEmailMakingRequest,
+        });
+      await this.updateIssueGroupColorRepository.updateIssueGroupColor({
+        issueGroupId: inProgressIssueGroupId,
+        newColor: "4ac6ff",
       });
-      await this.createIssueGroupForProjectUseCase.create({
-        projectId: id,
-        title: this.language.getCompletedIssueGroupTitle(),
-        accountEmailMakingRequest: request.accountEmailMakingRequest,
+
+      const completedIssueGroupId =
+        await this.createIssueGroupForProjectUseCase.create({
+          projectId: id,
+          title: this.language.getCompletedIssueGroupTitle(),
+          accountEmailMakingRequest: request.accountEmailMakingRequest,
+        });
+      await this.updateIssueGroupColorRepository.updateIssueGroupColor({
+        issueGroupId: completedIssueGroupId,
+        newColor: "6bff5b",
       });
 
       return createdResponse({ id });
