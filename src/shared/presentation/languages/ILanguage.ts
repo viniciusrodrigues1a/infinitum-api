@@ -16,6 +16,11 @@ import {
   IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
 } from "@modules/project/entities/interfaces/languages";
 import {
+  ICompletedIssueGroupTitleLanguage,
+  IInProgressIssueGroupTitleLanguage,
+  ITodoIssueGroupTitleLanguage,
+} from "@modules/project/presentation/interfaces/languages";
+import {
   IAccountAlreadyParticipatesInProjectErrorLanguage,
   IAccountHasAlreadyBeenInvitedErrorLanguage,
   ICannotKickOwnerOfProjectErrorLanguage,
@@ -69,4 +74,7 @@ export interface ILanguage
     IIssueGroupNotFoundErrorLanguage,
     IIssueGroupBelongsToDifferentProjectErrorLanguage,
     ICannotKickOwnerOfProjectErrorLanguage,
-    ICannotKickYourselfErrorLanguage {}
+    ICannotKickYourselfErrorLanguage,
+    ITodoIssueGroupTitleLanguage,
+    IInProgressIssueGroupTitleLanguage,
+    ICompletedIssueGroupTitleLanguage {}

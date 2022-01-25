@@ -1,6 +1,18 @@
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  getTodoIssueGroupTitle(): string {
+    return "A fazer";
+  }
+
+  getInProgressIssueGroupTitle(): string {
+    return "Em progresso";
+  }
+
+  getCompletedIssueGroupTitle(): string {
+    return "Concluído";
+  }
+
   getCannotKickYourselfErrorMessage(): string {
     return "Você não pode se expulsar deste projeto";
   }

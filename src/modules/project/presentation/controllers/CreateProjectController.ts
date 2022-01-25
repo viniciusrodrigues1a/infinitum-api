@@ -13,6 +13,11 @@ import {
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
 import { IValidation } from "@shared/presentation/validation";
+import {
+  ICompletedIssueGroupTitleLanguage,
+  IInProgressIssueGroupTitleLanguage,
+  ITodoIssueGroupTitleLanguage,
+} from "../interfaces/languages";
 
 export type CreateProjectControllerRequest = Omit<
   CreateProjectDTO,
@@ -22,11 +27,16 @@ export type CreateProjectControllerRequest = Omit<
   finishesAt?: string;
 };
 
+type CreateProjectControllerLanguage = ITodoIssueGroupTitleLanguage &
+  IInProgressIssueGroupTitleLanguage &
+  ICompletedIssueGroupTitleLanguage;
+
 export class CreateProjectController implements IController {
   constructor(
     private readonly createProjectUseCase: CreateProjectUseCase,
     private readonly createIssueGroupForProjectUseCase: CreateIssueGroupForProjectUseCase,
-    private readonly validation: IValidation
+    private readonly validation: IValidation,
+    private readonly language: CreateProjectControllerLanguage
   ) {}
 
   async handleRequest(
@@ -47,17 +57,17 @@ export class CreateProjectController implements IController {
       });
       await this.createIssueGroupForProjectUseCase.create({
         projectId: id,
-        title: "A fazer",
+        title: this.language.getTodoIssueGroupTitle(),
         accountEmailMakingRequest: request.accountEmailMakingRequest,
       });
       await this.createIssueGroupForProjectUseCase.create({
         projectId: id,
-        title: "Em progresso",
+        title: this.language.getInProgressIssueGroupTitle(),
         accountEmailMakingRequest: request.accountEmailMakingRequest,
       });
       await this.createIssueGroupForProjectUseCase.create({
         projectId: id,
-        title: "Concluído",
+        title: this.language.getCompletedIssueGroupTitle(),
         accountEmailMakingRequest: request.accountEmailMakingRequest,
       });
 

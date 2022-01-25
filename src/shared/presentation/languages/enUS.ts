@@ -1,6 +1,18 @@
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  getTodoIssueGroupTitle(): string {
+    return "Todo";
+  }
+
+  getInProgressIssueGroupTitle(): string {
+    return "In progress";
+  }
+
+  getCompletedIssueGroupTitle(): string {
+    return "Done";
+  }
+
   getCannotKickYourselfErrorMessage(): string {
     return "You cannot kick yourself from this project";
   }

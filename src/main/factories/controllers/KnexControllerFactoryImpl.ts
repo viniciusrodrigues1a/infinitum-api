@@ -192,7 +192,8 @@ class KnexControllerFactoryImpl implements IControllerFactory {
     return new CreateProjectController(
       this.useCaseFactory.makeCreateProjectUseCase(language),
       this.useCaseFactory.makeCreateIssueGroupForProjectUseCase(language),
-      this.validationFactory.makeCreateProjectControllerValidation(language)
+      this.validationFactory.makeCreateProjectControllerValidation(language),
+      language
     );
   }
 
