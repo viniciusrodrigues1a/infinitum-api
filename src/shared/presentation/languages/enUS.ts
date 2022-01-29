@@ -1,6 +1,9 @@
+import { IDateProvider } from "../interfaces/providers";
 import { ILanguage } from "./ILanguage";
 
 export class ENUSLanguage implements ILanguage {
+  constructor(private readonly dateProvider: IDateProvider) {}
+
   getTodoIssueGroupTitle(): string {
     return "Todo";
   }
@@ -125,8 +128,8 @@ export class ENUSLanguage implements ILanguage {
     return `Invalid param: ${param}`;
   }
 
-  getProjectHasntBegunErrorMessage(): string {
-    return "This project hasn't begun yet";
+  getProjectHasntBegunErrorMessage(date: Date): string {
+    return `This project will begin in ${this.dateProvider.getFullDate(date)}`;
   }
 
   getProjectIsArchivedErrorMessage(): string {

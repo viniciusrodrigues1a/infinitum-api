@@ -44,6 +44,7 @@ import {
   IUpdateParticipantRoleInProjectRepository,
   IFindProjectNameByProjectIdRepository,
   IFindOneAccountEmailByInvitationTokenRepository,
+  IFindStartDateByProjectIdRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
 import { connection } from "@shared/infra/database/connection";
@@ -78,8 +79,20 @@ export class KnexProjectRepository
     IUpdateIssueGroupFinalStatusRepository,
     IFindProjectNameByProjectIdRepository,
     IFindOneAccountEmailByInvitationTokenRepository,
-    IUpdateIssueGroupColorRepository
+    IUpdateIssueGroupColorRepository,
+    IFindStartDateByProjectIdRepository
 {
+  async findStartDate(projectId: string): Promise<Date | null> {
+    const { begins_at: startDate } = await connection("project")
+      .select("begins_at")
+      .where({ id: projectId })
+      .first();
+
+    if (!startDate) return null;
+
+    return new Date(startDate);
+  }
+
   async updateIssueGroupColor({
     issueGroupId,
     newColor,

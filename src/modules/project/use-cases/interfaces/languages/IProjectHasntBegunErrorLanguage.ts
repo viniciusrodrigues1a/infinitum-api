@@ -1,3 +1,3 @@
 export interface IProjectHasntBegunErrorLanguage {
-  getProjectHasntBegunErrorMessage(): string;
+  getProjectHasntBegunErrorMessage(date: Date): string;
 }

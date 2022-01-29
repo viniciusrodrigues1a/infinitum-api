@@ -5,49 +5,47 @@ import {
   ENUSAuthorizationMiddlewareLanguage,
   PTBRAuthorizationMiddlewareLanguage,
 } from "@main/languages";
+import { ptBR, enUS } from "date-fns/locale";
+import { DateFnsDateProvider } from "@shared/infra/providers/DateFnsDateProvider";
 
-function mergeTwoClassInstances(obj1: any, obj2: any): any {
-  const merged: any = {};
-
-  const objs = [obj1, obj2];
-  for (let i = 0; i < objs.length; i++) {
-    const objPrototype = Object.getPrototypeOf(objs[i]);
-    const objKeys = Object.getOwnPropertyNames(objPrototype);
-    for (let j = 0; j < objKeys.length; j++) {
-      const key = objKeys[j];
-      const value = objPrototype[key];
-      if (typeof value === "function" && key !== "constructor") {
-        merged[key] = value;
-      }
-    }
-  }
-
-  return merged;
-}
+const classToObject = (theClass: any) => {
+  const originalClass = theClass || {};
+  const keys = Object.getOwnPropertyNames(Object.getPrototypeOf(originalClass));
+  return keys.reduce((classAsObj, key) => {
+    (classAsObj as any)[key] = originalClass[key];
+    return classAsObj;
+  }, {});
+};
 
 class LanguagesFactory {
   makePTBRLanguage(): ILanguage {
-    const domainLanguage = new PTBRLanguage();
+    const domainLanguage = new PTBRLanguage(new DateFnsDateProvider(ptBR));
     const authorizationMiddlewareLanguage =
       new PTBRAuthorizationMiddlewareLanguage();
 
-    const merged = mergeTwoClassInstances(
+    const authLanguageObject = classToObject(authorizationMiddlewareLanguage);
+    const merged = Object.assign(
+      Object.create(Object.getPrototypeOf(domainLanguage)),
       domainLanguage,
-      authorizationMiddlewareLanguage
+      authLanguageObject
     );
 
     return merged;
   }
 
   makeENUSLanguage(): ILanguage {
-    const domainLanguage = new ENUSLanguage();
+    const domainLanguage = new ENUSLanguage(new DateFnsDateProvider(enUS));
     const authorizationMiddlewareLanguage =
       new ENUSAuthorizationMiddlewareLanguage();
 
-    return mergeTwoClassInstances(
+    const authLanguageObject = classToObject(authorizationMiddlewareLanguage);
+    const merged = Object.assign(
+      Object.create(Object.getPrototypeOf(domainLanguage)),
       domainLanguage,
-      authorizationMiddlewareLanguage
+      authLanguageObject
     );
+
+    return merged;
   }
 }
 

@@ -12,6 +12,7 @@ import {
   IDoesParticipantExistRepository,
   IFindParticipantRoleInProjectRepository,
   IFindProjectIdByIssueGroupIdRepository,
+  IFindStartDateByProjectIdRepository,
   IHasProjectBegunRepository,
   IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
@@ -35,6 +36,7 @@ export class CreateIssueUseCase {
     private readonly findProjectIdByIssueGroupIdRepository: IFindProjectIdByIssueGroupIdRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasProjectBegunRepository: IHasProjectBegunRepository,
+    private readonly findStartDateByProjectIdRepository: IFindStartDateByProjectIdRepository,
     private readonly isProjectArchivedRepository: IIsProjectArchivedRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
@@ -75,7 +77,14 @@ export class CreateIssueUseCase {
     const hasProjectBegun =
       await this.hasProjectBegunRepository.hasProjectBegun(projectId);
     if (!hasProjectBegun) {
-      throw new ProjectHasntBegunError(this.projectHasntBegunErrorLanguage);
+      const startDate =
+        (await this.findStartDateByProjectIdRepository.findStartDate(
+          projectId
+        )) as Date;
+      throw new ProjectHasntBegunError(
+        startDate,
+        this.projectHasntBegunErrorLanguage
+      );
     }
 
     const isProjectArchived =

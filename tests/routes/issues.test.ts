@@ -724,8 +724,10 @@ describe("/issues/ endpoint", () => {
         .send(givenBody);
 
       expect(response.statusCode).toBe(400);
-      const expectedBodyMessage = new ProjectHasntBegunError(defaultLanguage)
-        .message;
+      const expectedBodyMessage = new ProjectHasntBegunError(
+        new Date(tomorrowIso),
+        defaultLanguage
+      ).message;
       expect(response.body.error.message).toBe(expectedBodyMessage);
     });
 

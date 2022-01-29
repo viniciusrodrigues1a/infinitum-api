@@ -188,6 +188,7 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
       projectRepository,
       projectRepository,
       projectRepository,
+      projectRepository,
       language,
       language,
       language,

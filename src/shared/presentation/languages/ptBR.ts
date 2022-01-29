@@ -1,6 +1,9 @@
+import { IDateProvider } from "../interfaces/providers";
 import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
+  constructor(private readonly dateProvider: IDateProvider) {}
+
   getTodoIssueGroupTitle(): string {
     return "A fazer";
   }
@@ -125,8 +128,8 @@ export class PTBRLanguage implements ILanguage {
     return `Parâmetro inválido: ${param}`;
   }
 
-  getProjectHasntBegunErrorMessage(): string {
-    return "Este projeto ainda não começou";
+  getProjectHasntBegunErrorMessage(date: Date): string {
+    return `Este projeto começará em ${this.dateProvider.getFullDate(date)}`;
   }
 
   getProjectIsArchivedErrorMessage(): string {

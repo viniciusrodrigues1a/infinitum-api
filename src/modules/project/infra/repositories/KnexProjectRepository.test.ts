@@ -42,6 +42,43 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findStartDate method", () => {
+    it("should return the start date of a project", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+        begins_at: new Date().toISOString(),
+      };
+      await connection("project").insert(project);
+
+      const date = await sut.findStartDate(project.id);
+
+      expect(date).toStrictEqual(new Date(project.begins_at));
+    });
+
+    it("should return null if project doesn't have a start date", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        owner_id: accountId,
+        name: "My project",
+        description: "My project's description",
+      };
+      await connection("project").insert(project);
+
+      const date = await sut.findStartDate(project.id);
+
+      expect(date).toBeNull();
+    });
+  });
+
   describe("updateIssueGroupColor method", () => {
     it("should update the color column of the issue group table", async () => {
       expect.assertions(1);
@@ -52,7 +89,7 @@ describe("project repository using Knex", () => {
         owner_id: accountId,
         name: "My project",
         description: "My project's description",
-        archived: true,
+        archived: false,
       };
       const issueGroup = {
         id: "ig-id-0",

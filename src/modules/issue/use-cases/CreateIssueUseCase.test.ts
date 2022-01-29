@@ -3,6 +3,7 @@ import {
   IDoesParticipantExistRepository,
   IFindParticipantRoleInProjectRepository,
   IFindProjectIdByIssueGroupIdRepository,
+  IFindStartDateByProjectIdRepository,
   IHasProjectBegunRepository,
   IIsProjectArchivedRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
@@ -40,6 +41,8 @@ function makeSut() {
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const hasProjectBegunRepositoryMock = mock<IHasProjectBegunRepository>();
+  const findStartDateByProjectIdRepositoryMock =
+    mock<IFindStartDateByProjectIdRepository>();
   const isProjectArchivedRepositoryMock = mock<IIsProjectArchivedRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
@@ -60,6 +63,7 @@ function makeSut() {
     findProjectIdByIssueGroupIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasProjectBegunRepositoryMock,
+    findStartDateByProjectIdRepositoryMock,
     isProjectArchivedRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
     projectNotFoundErrorLanguageMock,
@@ -76,6 +80,7 @@ function makeSut() {
     findProjectIdByIssueGroupIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasProjectBegunRepositoryMock,
+    findStartDateByProjectIdRepositoryMock,
     isProjectArchivedRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
   };

@@ -134,7 +134,10 @@ describe("createIssue controller", () => {
       accountEmailMakingRequest: "jorge@email.com",
     };
     createIssueUseCaseMock.create.mockImplementationOnce(() => {
-      throw new ProjectHasntBegunError(projectHasntBegunErrorLanguageMock);
+      throw new ProjectHasntBegunError(
+        new Date(),
+        projectHasntBegunErrorLanguageMock
+      );
     });
 
     const response = await sut.handleRequest(givenRequest);
