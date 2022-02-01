@@ -30,7 +30,6 @@ describe("issue repository using Knex", () => {
     };
     const project = {
       id: projectId,
-      owner_id: accountId,
       name: "my project",
       description: "my project's description",
     };

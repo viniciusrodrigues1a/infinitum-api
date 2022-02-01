@@ -49,7 +49,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         begins_at: new Date().toISOString(),
@@ -67,7 +66,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
       };
@@ -86,7 +84,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: false,
@@ -120,7 +117,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: false,
@@ -162,7 +158,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: false,
@@ -182,7 +177,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: false,
@@ -203,7 +197,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -241,7 +234,6 @@ describe("project repository using Knex", () => {
       };
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -294,7 +286,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -341,7 +332,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -380,7 +370,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -436,7 +425,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -490,7 +478,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -511,7 +498,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -545,7 +531,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -579,7 +564,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -622,7 +606,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -658,7 +641,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: true,
@@ -676,7 +658,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         archived: false,
@@ -694,7 +675,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
       };
@@ -715,7 +695,6 @@ describe("project repository using Knex", () => {
       const yesterday = new Date(now - 86400 * 1000);
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         begins_at: yesterday,
@@ -733,7 +712,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
       };
@@ -752,7 +730,6 @@ describe("project repository using Knex", () => {
       const tomorrow = new Date(now + 86400 * 1000);
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
         begins_at: tomorrow,
@@ -772,7 +749,6 @@ describe("project repository using Knex", () => {
       const { sut } = makeSut();
       const project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
       };
@@ -808,7 +784,6 @@ describe("project repository using Knex", () => {
     beforeEach(async () => {
       project = {
         id: "project-id-0",
-        owner_id: accountId,
         name: "My project",
         description: "My project's description",
       };
@@ -1008,7 +983,6 @@ describe("project repository using Knex", () => {
       const projectId = "project-id-0";
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
       });
@@ -1032,7 +1006,6 @@ describe("project repository using Knex", () => {
       const yesterday = new Date(nowMs - 86400 * 1000);
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
         begins_at: yesterday,
@@ -1060,7 +1033,6 @@ describe("project repository using Knex", () => {
       const yesterday = new Date(nowMs - 86400 * 1000);
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
         finishes_at: yesterday,
@@ -1087,7 +1059,6 @@ describe("project repository using Knex", () => {
       const oldProjectDescription = "my project's description";
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: oldProjectDescription,
       });
@@ -1116,7 +1087,6 @@ describe("project repository using Knex", () => {
       const projectId = "project-id-0";
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
       });
@@ -1145,7 +1115,6 @@ describe("project repository using Knex", () => {
       const projectId = "project-id-0";
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
       });
@@ -1182,7 +1151,6 @@ describe("project repository using Knex", () => {
       const projectId = "project-id-0";
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
       });
@@ -1211,7 +1179,6 @@ describe("project repository using Knex", () => {
       const projectId = "project-id-0";
       await connection("project").insert({
         id: projectId,
-        owner_id: accountId,
         name: "my project",
         description: "my project's description",
       });

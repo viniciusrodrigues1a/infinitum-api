@@ -357,9 +357,6 @@ describe("/invitations/ endpoint", () => {
         .first();
       await connection("account").insert(newAccount); // create new account
       // make new account owner of already existent project
-      await connection("project")
-        .update({ owner_id: newAccount.id })
-        .where({ id: projectId });
       await connection("account_project_project_role").insert({
         project_role_id: ownerRoleId,
         account_id: newAccount.id,

@@ -559,7 +559,6 @@ export class KnexProjectRepository
       await connection.transaction(async (trx) => {
         await trx("project").insert({
           id: projectId,
-          owner_id: ownerId,
           name,
           description,
           begins_at: beginsAt,
