@@ -282,3 +282,5 @@ export class ControllerValidationFactory {
     return validations;
   }
 }
+
+export const controllerValidationFactory = new ControllerValidationFactory();

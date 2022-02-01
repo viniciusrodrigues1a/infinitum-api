@@ -19,3 +19,4 @@ export * from "./IUpdateParticipantRoleInProjectRepository";
 export * from "./IFindProjectNameByProjectIdRepository";
 export * from "./IFindOneAccountEmailByInvitationTokenRepository";
 export * from "./IFindStartDateByProjectIdRepository";
+export * from "./IKickParticipantFromProjectRepository";

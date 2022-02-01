@@ -34,24 +34,28 @@ import {
 } from "@modules/issue/presentation/controllers";
 import UpdateIssueGroupFinalStatusController from "@modules/project/presentation/controllers/UpdateIssueGroupFinalStatusController";
 import { IControllerFactory } from "./IControllerFactory";
-import { ControllerValidationFactory } from "../validation";
+import {
+  ControllerValidationFactory,
+  controllerValidationFactory,
+} from "../validation";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
+  private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+  private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
+  private validationFactory: ControllerValidationFactory =
+    controllerValidationFactory;
+
   makeUpdateIssueGroupColorController(): UpdateIssueGroupColorController {
     return new UpdateIssueGroupColorController(
-      this.repositoryFactory.makeProjectRepository()
+      this.repositoryFactory.makeUpdateIssueGroupColorRepository()
     );
   }
 
   makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController {
     return new UpdateIssueGroupFinalStatusController(
-      this.repositoryFactory.makeProjectRepository()
+      this.repositoryFactory.makeUpdateIssueGroupFinalStatusRepository()
     );
   }
-  private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
-  private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
-  private validationFactory: ControllerValidationFactory =
-    new ControllerValidationFactory();
 
   makeMoveIssueToAnotherIssueGroupController(
     language: ILanguage
@@ -65,25 +69,26 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   }
 
   makeFindProjectImageDataURLController(): FindProjectImageDataURLController {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    return new FindProjectImageDataURLController(projectRepository);
+    return new FindProjectImageDataURLController(
+      this.repositoryFactory.makeFindProjectImageBufferRepository()
+    );
   }
 
   makeUpdateProjectImageController(): UpdateProjectImageController {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    return new UpdateProjectImageController(projectRepository);
+    return new UpdateProjectImageController(
+      this.repositoryFactory.makeUpdateProjectImageRepository()
+    );
   }
 
   makeOverviewMetricsController(
     language: ILanguage
   ): OverviewMetricsController {
-    const issueRepository = this.repositoryFactory.makeIssueRepository();
     return new OverviewMetricsController(
-      issueRepository,
-      issueRepository,
-      issueRepository,
-      issueRepository,
-      issueRepository,
+      this.repositoryFactory.makeReportExpiredIssuesMetricsRepository(),
+      this.repositoryFactory.makeReportIssuesForTodayMetricsRepository(),
+      this.repositoryFactory.makeReportAllIssuesMetricsRepository(),
+      this.repositoryFactory.makeReportIssuesWeeklyOverviewMetricsRepository(),
+      this.repositoryFactory.makeReportIssuesMonthlyOverviewMetricsRepository(),
       language
     );
   }
@@ -192,7 +197,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
     return new CreateProjectController(
       this.useCaseFactory.makeCreateProjectUseCase(language),
       this.useCaseFactory.makeCreateIssueGroupForProjectUseCase(language),
-      this.repositoryFactory.makeProjectRepository(),
+      this.repositoryFactory.makeUpdateIssueGroupColorRepository(),
       this.validationFactory.makeCreateProjectControllerValidation(language),
       language
     );

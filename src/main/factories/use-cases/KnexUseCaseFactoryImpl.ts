@@ -33,17 +33,15 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeMoveIssueToAnotherIssueGroupUseCase(
     language: ILanguage
   ): MoveIssueToAnotherIssueGroupUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    const issueRepository = this.repositoryFactory.makeIssueRepository();
     return new MoveIssueToAnotherIssueGroupUseCase(
-      issueRepository,
-      issueRepository,
-      issueRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      issueRepository,
-      issueRepository,
+      this.repositoryFactory.makeMoveIssueToAnotherIssueGroupRepository(),
+      this.repositoryFactory.makeDoesIssueExistRepository(),
+      this.repositoryFactory.makeDoesIssueGroupExistRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueGroupIdRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueIdRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      this.repositoryFactory.makeShouldIssueGroupUpdateIssuesToCompletedRepository(),
+      this.repositoryFactory.makeUpdateIssueRepository(),
       language,
       language,
       language,
@@ -55,12 +53,11 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeUpdateParticipantRoleInProjectUseCase(
     language: ILanguage
   ): UpdateParticipantRoleInProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
     return new UpdateParticipantRoleInProjectUseCase(
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeUpdateParticipantRoleInProjectRepository(),
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
@@ -72,14 +69,12 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   }
 
   makeRevokeInvitationUseCase(language: ILanguage): RevokeInvitationUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    const accountRepository = this.repositoryFactory.makeAccountRepository();
     return new RevokeInvitationUseCase(
-      projectRepository,
-      projectRepository,
-      accountRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeRevokeInvitationRepository(),
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesAccountExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
@@ -91,12 +86,11 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeKickParticipantFromProjectUseCase(
     language: ILanguage
   ): KickParticipantFromProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
     return new KickParticipantFromProjectUseCase(
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeKickParticipantFromProjectRepository(),
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       NodemailerSendKickedOutOfProjectEmailServiceFactory.make(),
       language,
       language,
@@ -110,24 +104,21 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeAcceptInvitationToProjectUseCase(
     language: ILanguage
   ): AcceptInvitationToProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
     return new AcceptInvitationToProjectUseCase(
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeAcceptInvitationTokenRepository(),
+      this.repositoryFactory.makeIsInvitationTokenValidRepository(),
+      this.repositoryFactory.makeFindOneAccountEmailByInvitationTokenRepository(),
       language
     );
   }
 
   makeUpdateIssueUseCase(language: ILanguage): UpdateIssueUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    const issueRepository = this.repositoryFactory.makeIssueRepository();
     return new UpdateIssueUseCase(
-      issueRepository,
-      issueRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeUpdateIssueRepository(),
+      this.repositoryFactory.makeFindOneIssueRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueIdRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
@@ -139,17 +130,15 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeInviteAccountToProjectUseCase(
     language: ILanguage
   ): InviteAccountToProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    const accountRepository = this.repositoryFactory.makeAccountRepository();
     return new InviteAccountToProjectUseCase(
-      projectRepository,
+      this.repositoryFactory.makeCreateInvitationTokenRepository(),
       NodemailerSendInvitationToProjectEmailServiceFactory.make(),
-      projectRepository,
-      accountRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesAccountExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeHasAccountBeenInvitedToProjectRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      this.repositoryFactory.makeFindProjectNameByProjectIdRepository(),
       language,
       language,
       language,
@@ -162,14 +151,12 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   }
 
   makeDeleteIssueUseCase(language: ILanguage): DeleteIssueUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    const issueRepository = this.repositoryFactory.makeIssueRepository();
     return new DeleteIssueUseCase(
-      issueRepository,
-      issueRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeDeleteIssueRepository(),
+      this.repositoryFactory.makeDoesIssueExistRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueIdRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
@@ -179,16 +166,14 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   }
 
   makeCreateIssueUseCase(language: ILanguage): CreateIssueUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    const issueRepository = this.repositoryFactory.makeIssueRepository();
     return new CreateIssueUseCase(
-      issueRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeCreateIssueRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueGroupIdRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeHasProjectBegunRepository(),
+      this.repositoryFactory.makeFindStartDateByProjectIdRepository(),
+      this.repositoryFactory.makeIsProjectArchivedRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
@@ -201,12 +186,11 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   makeCreateIssueGroupForProjectUseCase(
     language: ILanguage
   ): CreateIssueGroupForProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
     return new CreateIssueGroupForProjectUseCase(
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      this.repositoryFactory.makeCreateIssueGroupForProjectRepository(),
       language,
       language,
       language,
@@ -215,17 +199,17 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   }
 
   makeListProjectsOwnedByAccountUseCase(): ListProjectsOwnedByAccountUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
-    return new ListProjectsOwnedByAccountUseCase(projectRepository);
+    return new ListProjectsOwnedByAccountUseCase(
+      this.repositoryFactory.makeListProjectsOwnedByAccountRepository()
+    );
   }
 
   makeUpdateProjectUseCase(language: ILanguage): UpdateProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
     return new UpdateProjectUseCase(
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeUpdateProjectRepository(),
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
@@ -236,12 +220,11 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   }
 
   makeDeleteProjectUseCase(language: ILanguage): DeleteProjectUseCase {
-    const projectRepository = this.repositoryFactory.makeProjectRepository();
     return new DeleteProjectUseCase(
-      projectRepository,
-      projectRepository,
-      projectRepository,
-      projectRepository,
+      this.repositoryFactory.makeDeleteProjectRepository(),
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
       language,
       language,
       language,
