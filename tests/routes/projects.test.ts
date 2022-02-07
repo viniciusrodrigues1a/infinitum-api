@@ -730,6 +730,46 @@ describe("/projects/ endpoint", () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.error.message).toBe(expectedBodyMessage);
       });
+
+      it("should return 400 if name is an empty string", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .put(`/projects/${projectId}`)
+          .set(givenAuthHeader)
+          .send({ name: "", description: "New description" });
+
+        const expectedBodyMessage = new InvalidParamError(
+          defaultLanguage.getNameParamMessage(),
+          defaultLanguage
+        ).message;
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
+
+      it("should return 400 if description is an empty string", async () => {
+        expect.assertions(2);
+
+        const givenAuthHeader = {
+          authorization: `Bearer ${authorizationToken}`,
+        };
+
+        const response = await api
+          .put(`/projects/${projectId}`)
+          .set(givenAuthHeader)
+          .send({ name: "New name", description: "" });
+
+        const expectedBodyMessage = new InvalidParamError(
+          defaultLanguage.getDescriptionParamMessage(),
+          defaultLanguage
+        ).message;
+        expect(response.statusCode).toBe(400);
+        expect(response.body.error.message).toBe(expectedBodyMessage);
+      });
     });
 
     describe("method GET /", () => {

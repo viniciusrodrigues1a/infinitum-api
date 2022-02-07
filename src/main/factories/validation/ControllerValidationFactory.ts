@@ -237,10 +237,6 @@ export class ControllerValidationFactory {
     return new ValidationComposite(validations);
   }
 
-  private makeAllRequired(fields: Field[], language: ILanguage): IValidation[] {
-    return this._makeAllValidation(fields, language, FieldIsRequiredValidation);
-  }
-
   makeRegisterControllerValidation(language: ILanguage): ValidationComposite {
     const requiredAndStringFields = [
       { accessor: "name", i18n: language.getNameParamMessage() },
@@ -254,6 +250,10 @@ export class ControllerValidationFactory {
     const validations = [...required, ...string];
 
     return new ValidationComposite(validations);
+  }
+
+  private makeAllRequired(fields: Field[], language: ILanguage): IValidation[] {
+    return this._makeAllValidation(fields, language, FieldIsRequiredValidation);
   }
 
   private makeAllString(fields: Field[], language: ILanguage): IValidation[] {

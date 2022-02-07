@@ -10,6 +10,10 @@ export class FieldIsStringValidation implements IValidation {
   ) {}
 
   validate(input: any): Error | void {
+    if (input[this.accessor] === "") {
+      return new InvalidParamError(this.fieldNameI18N, this.language);
+    }
+
     if (input[this.accessor] && typeof input[this.accessor] !== "string") {
       return new InvalidParamError(this.fieldNameI18N, this.language);
     }
