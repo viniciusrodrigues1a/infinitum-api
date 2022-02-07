@@ -68,15 +68,6 @@ export class InviteAccountToProjectUseCase {
       throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
     }
 
-    const doesAccountBeingInvitedExists =
-      await this.doesAccountExistRepository.doesAccountExist(accountEmail);
-    if (!doesAccountBeingInvitedExists) {
-      throw new AccountNotFoundError(
-        accountEmail,
-        this.accountNotFoundErrorLanguage
-      );
-    }
-
     const doesAccountInvitingParticipatesInProject =
       await this.doesParticipantExistRepository.doesParticipantExist({
         projectId,
@@ -89,6 +80,30 @@ export class InviteAccountToProjectUseCase {
       );
     }
 
+    const accountInvitingRoleName =
+      await this.findParticipantRoleInProjectRepository.findParticipantRole({
+        accountEmail: accountEmailMakingRequest,
+        projectId,
+      });
+    const accountInvitingRole = new Role(
+      accountInvitingRoleName,
+      this.invalidRoleNameErrorLanguage
+    );
+    if (!accountInvitingRole.can("INVITE_ACCOUNT_TO_PROJECT")) {
+      throw new RoleInsufficientPermissionError(
+        accountInvitingRoleName,
+        this.roleInsufficientPermissionErrorLanguage
+      );
+    }
+
+    const doesAccountBeingInvitedExists =
+      await this.doesAccountExistRepository.doesAccountExist(accountEmail);
+    if (!doesAccountBeingInvitedExists) {
+      throw new AccountNotFoundError(
+        accountEmail,
+        this.accountNotFoundErrorLanguage
+      );
+    }
     const doesAccountBeingInvitedParticipatesInProject =
       await this.doesParticipantExistRepository.doesParticipantExist({
         projectId,
@@ -109,22 +124,6 @@ export class InviteAccountToProjectUseCase {
       throw new AccountHasAlreadyBeenInvitedError(
         accountEmail,
         this.accountHasAlreadyBeenInvitedErrorLanguage
-      );
-    }
-
-    const accountInvitingRoleName =
-      await this.findParticipantRoleInProjectRepository.findParticipantRole({
-        accountEmail: accountEmailMakingRequest,
-        projectId,
-      });
-    const accountInvitingRole = new Role(
-      accountInvitingRoleName,
-      this.invalidRoleNameErrorLanguage
-    );
-    if (!accountInvitingRole.can("INVITE_ACCOUNT_TO_PROJECT")) {
-      throw new RoleInsufficientPermissionError(
-        accountInvitingRoleName,
-        this.roleInsufficientPermissionErrorLanguage
       );
     }
 
