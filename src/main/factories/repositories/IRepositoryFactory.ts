@@ -2,7 +2,7 @@ import {
   ILoginRepository,
   IRegisterRepository,
 } from "@modules/account/presentation/interfaces/repositories";
-import { ILanguage } from "@modules/account/presentation/languages";
+import { ILanguage } from "@shared/presentation/languages";
 import {
   IFindOneAccountRepository,
   IDoesAccountExistRepository,

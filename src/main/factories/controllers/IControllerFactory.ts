@@ -1,7 +1,7 @@
 import { FindOneAccountController } from "@modules/account/presentation/controllers/FindOneAccountController";
 import { LoginController } from "@modules/account/presentation/controllers/LoginController";
 import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
-import { ILanguage } from "@modules/account/presentation/languages";
+import { ILanguage } from "@shared/presentation/languages";
 import {
   CreateIssueController,
   DeleteIssueController,

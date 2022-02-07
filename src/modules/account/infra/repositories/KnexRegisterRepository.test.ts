@@ -1,5 +1,5 @@
 import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
-import { ILanguage } from "@modules/account/presentation/languages";
+import { ILanguage } from "@shared/presentation/languages";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { connection, configuration } from "@shared/infra/database/connection";

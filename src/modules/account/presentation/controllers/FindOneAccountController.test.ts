@@ -1,8 +1,8 @@
 import { AccountNotFoundError } from "@modules/account/use-cases/errors/AccountNotFoundError";
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { ILanguage } from "@shared/presentation/languages";
 import { mock } from "jest-mock-extended";
-import { ILanguage } from "../languages";
 import { FindOneAccountController } from "./FindOneAccountController";
 
 const languageMock = mock<ILanguage>();

@@ -1,5 +1,5 @@
 import { IInvalidEmailErrorLanguage } from "@modules/account/entities/interfaces/languages";
-import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
+import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages";
 import {
   IAccountNotFoundErrorLanguage,
   IEmailAlreadyInUseErrorLanguage,

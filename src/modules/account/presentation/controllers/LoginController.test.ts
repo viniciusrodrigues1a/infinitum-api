@@ -1,9 +1,9 @@
 import { InvalidCredentialsError } from "@modules/account/infra/repositories/errors/InvalidCredentialsError";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { ILanguage } from "@shared/presentation/languages";
 import { IValidation } from "@shared/presentation/validation";
 import { mock } from "jest-mock-extended";
 import { ILoginRepository } from "../interfaces/repositories";
-import { ILanguage } from "../languages";
 import { LoginController } from "./LoginController";
 
 const languageMock = mock<ILanguage>();

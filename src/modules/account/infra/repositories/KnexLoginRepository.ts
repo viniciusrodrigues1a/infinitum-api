@@ -1,6 +1,6 @@
 import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
 import { ILoginRepository } from "@modules/account/presentation/interfaces/repositories";
-import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
+import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
 import { jwtToken } from "../authentication";
 import { pbkdf2 } from "../cryptography";

@@ -1,4 +1,4 @@
-import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
+import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages";
 
 export class InvalidCredentialsError extends Error {
   constructor(language: IInvalidCredentialsErrorLanguage) {

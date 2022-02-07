@@ -1,4 +1,4 @@
-import { ILanguage } from "@modules/account/presentation/languages";
+import { ILanguage } from "@shared/presentation/languages";
 
 import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccountUseCase";
 import {

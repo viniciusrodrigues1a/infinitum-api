@@ -1,4 +1,4 @@
-import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages/IInvalidCredentialsErrorLanguage";
+import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
 import { mock } from "jest-mock-extended";
 import { jwtToken } from "../authentication";

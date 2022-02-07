@@ -3,8 +3,8 @@ import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { IValidation } from "@shared/presentation/validation";
 import { mock } from "jest-mock-extended";
+import { ILanguage } from "@shared/presentation/languages";
 import { IRegisterRepository } from "../interfaces/repositories";
-import { ILanguage } from "../languages";
 import {
   RegisterController,
   RegisterControllerRequest,

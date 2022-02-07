@@ -1,6 +1,8 @@
-import { ILanguage } from "@shared/presentation/languages/ILanguage";
-import { PTBRLanguage } from "@shared/presentation/languages/ptBR";
-import { ENUSLanguage } from "@shared/presentation/languages/enUS";
+import {
+  ENUSLanguage,
+  ILanguage,
+  PTBRLanguage,
+} from "@shared/presentation/languages";
 import {
   ENUSAuthorizationMiddlewareLanguage,
   PTBRAuthorizationMiddlewareLanguage,
