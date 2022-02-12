@@ -51,9 +51,15 @@ class KnexControllerFactoryImpl implements IControllerFactory {
     );
   }
 
-  makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController {
+  makeUpdateIssueGroupFinalStatusController(
+    language: ILanguage
+  ): UpdateIssueGroupFinalStatusController {
     return new UpdateIssueGroupFinalStatusController(
-      this.repositoryFactory.makeUpdateIssueGroupFinalStatusRepository()
+      this.repositoryFactory.makeUpdateIssueGroupFinalStatusRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueGroupIdRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      language,
+      language
     );
   }
 

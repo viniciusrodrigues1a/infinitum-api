@@ -57,6 +57,8 @@ export interface IControllerFactory {
   makeMoveIssueToAnotherIssueGroupController(
     language: ILanguage
   ): MoveIssueToAnotherIssueGroupController;
-  makeUpdateIssueGroupFinalStatusController(): UpdateIssueGroupFinalStatusController;
+  makeUpdateIssueGroupFinalStatusController(
+    language: ILanguage
+  ): UpdateIssueGroupFinalStatusController;
   makeUpdateIssueGroupColorController(): UpdateIssueGroupColorController;
 }
