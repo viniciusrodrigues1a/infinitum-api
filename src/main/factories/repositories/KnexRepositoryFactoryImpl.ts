@@ -3,7 +3,6 @@ import {
   KnexLoginRepository,
   KnexRegisterRepository,
 } from "@modules/account/infra/repositories";
-import { KnexUpdateAccountRepository } from "@modules/account/infra/repositories/KnexUpdateAccountRepository";
 import {
   ILoginRepository,
   IRegisterRepository,
@@ -67,7 +66,7 @@ import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   makeUpdateAccountRepository(): IUpdateAccountRepository {
-    return new KnexUpdateAccountRepository();
+    return this.makeAccountRepository();
   }
 
   makeUpdateIssueGroupColorRepository(): IUpdateIssueGroupColorRepository {
