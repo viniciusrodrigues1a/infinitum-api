@@ -51,6 +51,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   makeUpdateAccountController(language: ILanguage): UpdateAccountController {
     return new UpdateAccountController(
       this.repositoryFactory.makeUpdateAccountRepository(),
+      this.repositoryFactory.makeUpdateAccountImageRepository(),
       this.repositoryFactory.makeDoesAccountExistRepository(),
       language
     );

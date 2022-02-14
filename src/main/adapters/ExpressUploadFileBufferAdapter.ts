@@ -6,7 +6,9 @@ export function ExpressUploadFileBufferAdapter(): (
   next: NextFunction
 ) => Promise<void> {
   return async (request: Request, response: Response, next: NextFunction) => {
-    request.fileBuffer = request.file!.buffer;
+    if (request.file) {
+      request.fileBuffer = request.file.buffer;
+    }
 
     next();
   };

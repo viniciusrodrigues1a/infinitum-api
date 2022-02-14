@@ -6,6 +6,7 @@ import {
 import {
   ILoginRepository,
   IRegisterRepository,
+  IUpdateAccountImageRepository,
   IUpdateAccountRepository,
 } from "@modules/account/presentation/interfaces/repositories";
 import {
@@ -65,6 +66,10 @@ import { ILanguage } from "@shared/presentation/languages";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeUpdateAccountImageRepository(): IUpdateAccountImageRepository {
+    return this.makeAccountRepository();
+  }
+
   makeUpdateAccountRepository(): IUpdateAccountRepository {
     return this.makeAccountRepository();
   }

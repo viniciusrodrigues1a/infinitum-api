@@ -9,17 +9,22 @@ import {
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
 import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
-import { IUpdateAccountRepository } from "../interfaces/repositories";
+import {
+  IUpdateAccountImageRepository,
+  IUpdateAccountRepository,
+} from "../interfaces/repositories";
 
 export type UpdateAccountControllerRequest = AccountMakingRequestDTO & {
   name?: string;
   email?: string;
   password?: string;
+  fileBuffer?: Buffer;
 };
 
 export class UpdateAccountController implements IController {
   constructor(
     private readonly updateAccountRepository: IUpdateAccountRepository,
+    private readonly updateAccountImageRepository: IUpdateAccountImageRepository,
     private readonly doesAccountExistRepository: IDoesAccountExistRepository,
     private readonly emailAlreadyInUseErrorLanguage: IEmailAlreadyInUseErrorLanguage
   ) {}
@@ -29,6 +34,7 @@ export class UpdateAccountController implements IController {
     name,
     email,
     password,
+    fileBuffer,
   }: UpdateAccountControllerRequest): Promise<HttpResponse> {
     try {
       if (email) {
@@ -41,6 +47,13 @@ export class UpdateAccountController implements IController {
             this.emailAlreadyInUseErrorLanguage
           );
         }
+      }
+
+      if (fileBuffer) {
+        await this.updateAccountImageRepository.updateAccountImage({
+          email: accountEmailMakingRequest,
+          fileBuffer,
+        });
       }
 
       this.updateAccountRepository.updateAccount({
