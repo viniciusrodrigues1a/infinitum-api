@@ -3,6 +3,7 @@ import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccount
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { ILanguage } from "@shared/presentation/languages";
 import { mock } from "jest-mock-extended";
+import { IFindAccountImageDataURLRepository } from "../interfaces/repositories";
 import { FindOneAccountController } from "./FindOneAccountController";
 
 const languageMock = mock<ILanguage>();
@@ -12,23 +13,45 @@ languageMock.getAccountNotFoundErrorMessage.mockReturnValueOnce(
 
 function makeSut() {
   const findOneAccountUseCaseMock = mock<FindOneAccountUseCase>();
-  const sut = new FindOneAccountController(findOneAccountUseCaseMock);
+  const findAccountImageDataURLRepositoryMock =
+    mock<IFindAccountImageDataURLRepository>();
+  const sut = new FindOneAccountController(
+    findOneAccountUseCaseMock,
+    findAccountImageDataURLRepositoryMock
+  );
 
-  return { sut, findOneAccountUseCaseMock };
+  return {
+    sut,
+    findOneAccountUseCaseMock,
+    findAccountImageDataURLRepositoryMock,
+  };
 }
 
 describe("findOneAccount controller", () => {
   it("should return HttpStatusCodes.ok", async () => {
     expect.assertions(2);
 
-    const { sut, findOneAccountUseCaseMock } = makeSut();
+    const {
+      sut,
+      findOneAccountUseCaseMock,
+      findAccountImageDataURLRepositoryMock,
+    } = makeSut();
     const existentAccount = { name: "Jorge", email: "jorge@email.com" };
     findOneAccountUseCaseMock.findOne.mockResolvedValueOnce(existentAccount);
+    const dataURL =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+    findAccountImageDataURLRepositoryMock.findAccountImageDataURL.mockResolvedValueOnce(
+      dataURL
+    );
 
     const response = await sut.handleRequest({ email: existentAccount.email });
 
     expect(response.statusCode).toBe(HttpStatusCodes.ok);
-    expect(response.body.email).toBe(existentAccount.email);
+    expect(response.body).toStrictEqual({
+      name: existentAccount.name,
+      email: existentAccount.email,
+      image: dataURL,
+    });
   });
 
   it("should return HttpStatusCodes.notFound", async () => {
