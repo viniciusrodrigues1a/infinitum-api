@@ -5,7 +5,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
-import { IFindProjectImageBufferRepository } from "../interfaces/repositories";
+import { IFindProjectImageDataURLRepository } from "../interfaces/repositories";
 
 export type FindProjectImageDataURLControllerRequest = {
   projectId: string;
@@ -13,27 +13,20 @@ export type FindProjectImageDataURLControllerRequest = {
 
 export class FindProjectImageDataURLController implements IController {
   constructor(
-    private readonly findProjectImageBufferRepository: IFindProjectImageBufferRepository
+    private readonly findProjectImageDataURLRepository: IFindProjectImageDataURLRepository
   ) {}
 
   async handleRequest({
     projectId,
   }: FindProjectImageDataURLControllerRequest): Promise<HttpResponse> {
     try {
-      const buffer =
-        await this.findProjectImageBufferRepository.findProjectImageBuffer(
+      const dataURL =
+        await this.findProjectImageDataURLRepository.findProjectImageDataURL(
           projectId
         );
 
-      if (!buffer)
+      if (!dataURL)
         return notFoundResponse(new Error("Image could not be found."));
-
-      const base64String = buffer!.toString("base64");
-
-      const mimeType =
-        FindProjectImageDataURLController.findMimeType(base64String);
-      const dataURLPrefix = `data:${mimeType};base64,`;
-      const dataURL = dataURLPrefix + base64String;
 
       return okResponse({ dataURL });
     } catch (err) {

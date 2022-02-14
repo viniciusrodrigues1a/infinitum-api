@@ -6,7 +6,7 @@ import {
   Role,
 } from "@modules/project/entities/value-objects";
 import {
-  IFindProjectImageBufferRepository,
+  IFindProjectImageDataURLRepository,
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
@@ -45,9 +45,10 @@ import {
   IFindProjectNameByProjectIdRepository,
   IFindOneAccountEmailByInvitationTokenRepository,
   IFindStartDateByProjectIdRepository,
+  IKickParticipantFromProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
-import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
 import { connection } from "@shared/infra/database/connection";
+import { getDataURLFromImageBuffer } from "@shared/infra/repositories/helpers";
 import {
   DoesParticipantExistRepositoryDTO,
   FindParticipantRoleInProjectRepositoryDTO,
@@ -75,7 +76,7 @@ export class KnexProjectRepository
     IRevokeInvitationRepository,
     IUpdateParticipantRoleInProjectRepository,
     IUpdateProjectImageRepository,
-    IFindProjectImageBufferRepository,
+    IFindProjectImageDataURLRepository,
     IUpdateIssueGroupFinalStatusRepository,
     IFindProjectNameByProjectIdRepository,
     IFindOneAccountEmailByInvitationTokenRepository,
@@ -136,17 +137,17 @@ export class KnexProjectRepository
       .where({ id: issueGroupId });
   }
 
-  async findProjectImageBuffer(projectId: string): Promise<Buffer | undefined> {
-    const project = await connection("project")
+  async findProjectImageDataURL(
+    projectId: string
+  ): Promise<string | undefined> {
+    const { image: buffer } = await connection("project")
       .select("image")
       .where({ id: projectId })
       .first();
 
-    if (!project.image) return undefined;
+    if (!buffer) return undefined;
 
-    const buffer = Buffer.from(project.image, "base64");
-
-    return buffer;
+    return getDataURLFromImageBuffer(buffer);
   }
 
   async updateProjectImage({

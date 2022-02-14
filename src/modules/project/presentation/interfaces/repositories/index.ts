@@ -1,4 +1,4 @@
 export * from "./IUpdateProjectImageRepository";
-export * from "./IFindProjectImageBufferRepository";
+export * from "./IFindProjectImageDataURLRepository";
 export * from "./IUpdateIssueGroupFinalStatusRepository";
 export * from "./IUpdateIssueGroupColorRepository";

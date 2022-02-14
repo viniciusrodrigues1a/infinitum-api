@@ -15,8 +15,8 @@ import {
   IFindOneAccountRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
+import { getDataURLFromImageBuffer } from "@shared/infra/repositories/helpers";
 import { pbkdf2 } from "../cryptography";
-import { findMimeType } from "./helpers";
 
 export class KnexAccountRepository
   implements
@@ -35,13 +35,7 @@ export class KnexAccountRepository
 
     if (!buffer) return undefined;
 
-    const base64String = buffer.toString("base64");
-
-    const mimeType = findMimeType(base64String);
-    const dataURLPrefix = `data:${mimeType};base64,`;
-    const dataURL = dataURLPrefix + base64String;
-
-    return dataURL;
+    return getDataURLFromImageBuffer(buffer);
   }
 
   async listLanguages(): Promise<Language[]> {

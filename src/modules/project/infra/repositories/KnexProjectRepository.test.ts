@@ -170,7 +170,7 @@ describe("project repository using Knex", () => {
     });
   });
 
-  describe("findProjectImageBuffer", () => {
+  describe("findProjectImageDataURL", () => {
     it("should return the image column of given project id", async () => {
       expect.assertions(1);
 
@@ -184,9 +184,12 @@ describe("project repository using Knex", () => {
       };
       await connection("project").insert(project);
 
-      const imageBuffer = await sut.findProjectImageBuffer(project.id);
+      const dataURL = await sut.findProjectImageDataURL(project.id);
 
-      expect(imageBuffer).toStrictEqual(project.image);
+      const expectedDataURL = `data:image/*;base64,${project.image.toString(
+        "base64"
+      )}`;
+      expect(dataURL).toBe(expectedDataURL);
     });
   });
 
