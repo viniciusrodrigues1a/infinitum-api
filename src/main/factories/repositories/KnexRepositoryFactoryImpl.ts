@@ -1,40 +1,41 @@
 import {
+  KnexAccountRepository,
   KnexLoginRepository,
   KnexRegisterRepository,
-  KnexAccountRepository,
 } from "@modules/account/infra/repositories";
+import { KnexUpdateAccountRepository } from "@modules/account/infra/repositories/KnexUpdateAccountRepository";
 import {
   ILoginRepository,
   IRegisterRepository,
+  IUpdateAccountRepository,
 } from "@modules/account/presentation/interfaces/repositories";
-import { ILanguage } from "@shared/presentation/languages";
 import {
   IDoesAccountExistRepository,
   IFindOneAccountRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
 import { KnexIssueRepository } from "@modules/issue/infra/repositories";
 import {
-  IReportIssuesWeeklyOverviewMetricsRepository,
-  IReportIssuesMonthlyOverviewMetricsRepository,
-  IReportExpiredIssuesMetricsRepository,
   IReportAllIssuesMetricsRepository,
+  IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
+  IReportIssuesMonthlyOverviewMetricsRepository,
+  IReportIssuesWeeklyOverviewMetricsRepository,
 } from "@modules/issue/presentation/interfaces/repositories";
 import {
-  IMoveIssueToAnotherIssueGroupRepository,
+  ICreateIssueRepository,
+  IDeleteIssueRepository,
   IDoesIssueExistRepository,
   IDoesIssueGroupExistRepository,
+  IFindOneIssueRepository,
+  IMoveIssueToAnotherIssueGroupRepository,
   IShouldIssueGroupUpdateIssuesToCompletedRepository,
   IUpdateIssueRepository,
-  IFindOneIssueRepository,
-  IDeleteIssueRepository,
-  ICreateIssueRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
-import { KnexProjectRepository } from "@modules/project/infra/repositories/KnexProjectRepository";
+import { KnexProjectRepository } from "@modules/project/infra/repositories";
 import {
+  IFindProjectImageBufferRepository,
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
-  IFindProjectImageBufferRepository,
   IUpdateProjectImageRepository,
 } from "@modules/project/presentation/interfaces/repositories";
 import {
@@ -55,15 +56,20 @@ import {
   IHasProjectBegunRepository,
   IIsInvitationTokenValidRepository,
   IIsProjectArchivedRepository,
+  IKickParticipantFromProjectRepository,
   IListProjectsOwnedByAccountRepository,
   IRevokeInvitationRepository,
   IUpdateParticipantRoleInProjectRepository,
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
-import { IKickParticipantFromProjectRepository } from "@modules/project/use-cases/interfaces/repositories/IKickParticipantFromProjectRepository";
+import { ILanguage } from "@shared/presentation/languages";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeUpdateAccountRepository(): IUpdateAccountRepository {
+    return new KnexUpdateAccountRepository();
+  }
+
   makeUpdateIssueGroupColorRepository(): IUpdateIssueGroupColorRepository {
     return this.makeProjectRepository();
   }

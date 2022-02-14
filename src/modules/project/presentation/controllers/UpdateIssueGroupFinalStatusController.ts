@@ -20,9 +20,7 @@ export type UpdateIssueGroupControllerRequest = AccountMakingRequestDTO & {
   newIsFinal: boolean;
 };
 
-export default class UpdateIssueGroupFinalStatusController
-  implements IController
-{
+export class UpdateIssueGroupFinalStatusController implements IController {
   constructor(
     private readonly updateIssueGroupFinalStatusRepository: IUpdateIssueGroupFinalStatusRepository,
     private readonly findProjectIdByIssueGroupIdRepository: IFindProjectIdByIssueGroupIdRepository,

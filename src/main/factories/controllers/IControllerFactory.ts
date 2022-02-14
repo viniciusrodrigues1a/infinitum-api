@@ -1,7 +1,9 @@
-import { FindOneAccountController } from "@modules/account/presentation/controllers/FindOneAccountController";
-import { LoginController } from "@modules/account/presentation/controllers/LoginController";
-import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
-import { ILanguage } from "@shared/presentation/languages";
+import {
+  FindOneAccountController,
+  LoginController,
+  RegisterController,
+  UpdateAccountController,
+} from "@modules/account/presentation/controllers";
 import {
   CreateIssueController,
   DeleteIssueController,
@@ -11,23 +13,25 @@ import {
 } from "@modules/issue/presentation/controllers";
 import {
   AcceptInvitationToProjectController,
+  CreateIssueGroupForProjectController,
   CreateProjectController,
   DeleteProjectController,
   FindProjectImageDataURLController,
+  InviteAccountToProjectController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
   UpdateIssueGroupColorController,
+  UpdateIssueGroupFinalStatusController,
   UpdateParticipantRoleInProjectController,
   UpdateProjectController,
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
-import { CreateIssueGroupForProjectController } from "@modules/project/presentation/controllers/CreateIssueGroupForProjectController";
-import { InviteAccountToProjectController } from "@modules/project/presentation/controllers/InviteAccountToProjectController";
-import UpdateIssueGroupFinalStatusController from "@modules/project/presentation/controllers/UpdateIssueGroupFinalStatusController";
+import { ILanguage } from "@shared/presentation/languages";
 
 export interface IControllerFactory {
   makeRegisterController(language: ILanguage): RegisterController;
   makeLoginController(language: ILanguage): LoginController;
+  makeUpdateAccountController(language: ILanguage): UpdateAccountController;
   makeFindOneAccountController(language: ILanguage): FindOneAccountController;
   makeCreateProjectController(language: ILanguage): CreateProjectController;
   makeDeleteProjectController(language: ILanguage): DeleteProjectController;

@@ -1,6 +1,7 @@
 import {
   ILoginRepository,
   IRegisterRepository,
+  IUpdateAccountRepository,
 } from "@modules/account/presentation/interfaces/repositories";
 import { ILanguage } from "@shared/presentation/languages";
 import {
@@ -58,6 +59,7 @@ import {
 export interface IRepositoryFactory {
   makeRegisterRepository(language: ILanguage): IRegisterRepository;
   makeLoginRepository(language: ILanguage): ILoginRepository;
+  makeUpdateAccountRepository(): IUpdateAccountRepository;
   makeDoesAccountExistRepository(): IDoesAccountExistRepository;
   makeFindOneAccountRepository(): IFindOneAccountRepository;
   makeCreateProjectRepository(): ICreateProjectRepository;

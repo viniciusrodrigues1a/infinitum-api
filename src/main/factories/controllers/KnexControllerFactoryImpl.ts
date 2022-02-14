@@ -1,7 +1,24 @@
-import { FindOneAccountController } from "@modules/account/presentation/controllers/FindOneAccountController";
-import { LoginController } from "@modules/account/presentation/controllers/LoginController";
-import { RegisterController } from "@modules/account/presentation/controllers/RegisterController";
-import { ILanguage } from "@shared/presentation/languages";
+import {
+  IRepositoryFactory,
+  knexRepositoryFactoryImpl,
+} from "@main/factories/repositories";
+import {
+  IUseCaseFactory,
+  knexUseCaseFactoryImpl,
+} from "@main/factories/use-cases";
+import {
+  FindOneAccountController,
+  LoginController,
+  RegisterController,
+  UpdateAccountController,
+} from "@modules/account/presentation/controllers";
+import {
+  CreateIssueController,
+  DeleteIssueController,
+  MoveIssueToAnotherIssueGroupController,
+  OverviewMetricsController,
+  UpdateIssueController,
+} from "@modules/issue/presentation/controllers";
 import {
   AcceptInvitationToProjectController,
   CreateIssueGroupForProjectController,
@@ -13,37 +30,31 @@ import {
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
   UpdateIssueGroupColorController,
+  UpdateIssueGroupFinalStatusController,
   UpdateParticipantRoleInProjectController,
   UpdateProjectController,
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
-import {
-  IRepositoryFactory,
-  knexRepositoryFactoryImpl,
-} from "@main/factories/repositories";
-import {
-  IUseCaseFactory,
-  knexUseCaseFactoryImpl,
-} from "@main/factories/use-cases";
-import {
-  CreateIssueController,
-  DeleteIssueController,
-  MoveIssueToAnotherIssueGroupController,
-  OverviewMetricsController,
-  UpdateIssueController,
-} from "@modules/issue/presentation/controllers";
-import UpdateIssueGroupFinalStatusController from "@modules/project/presentation/controllers/UpdateIssueGroupFinalStatusController";
-import { IControllerFactory } from "./IControllerFactory";
+import { ILanguage } from "@shared/presentation/languages";
 import {
   ControllerValidationFactory,
   controllerValidationFactory,
 } from "../validation";
+import { IControllerFactory } from "./IControllerFactory";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeUpdateAccountController(language: ILanguage): UpdateAccountController {
+    return new UpdateAccountController(
+      this.repositoryFactory.makeUpdateAccountRepository(),
+      this.repositoryFactory.makeDoesAccountExistRepository(),
+      language
+    );
+  }
 
   makeUpdateIssueGroupColorController(): UpdateIssueGroupColorController {
     return new UpdateIssueGroupColorController(
