@@ -4,6 +4,7 @@ import {
   KnexRegisterRepository,
 } from "@modules/account/infra/repositories";
 import {
+  IListLanguagesRepository,
   ILoginRepository,
   IRegisterRepository,
   IUpdateAccountImageRepository,
@@ -66,6 +67,10 @@ import { ILanguage } from "@shared/presentation/languages";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeListLanguagesRepository(): IListLanguagesRepository {
+    return this.makeAccountRepository();
+  }
+
   makeUpdateAccountImageRepository(): IUpdateAccountImageRepository {
     return this.makeAccountRepository();
   }

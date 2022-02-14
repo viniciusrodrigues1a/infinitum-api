@@ -8,6 +8,7 @@ import {
 } from "@main/factories/use-cases";
 import {
   FindOneAccountController,
+  ListLanguagesController,
   LoginController,
   RegisterController,
   UpdateAccountController,
@@ -47,6 +48,12 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeListLanguagesController(): ListLanguagesController {
+    return new ListLanguagesController(
+      this.repositoryFactory.makeListLanguagesRepository()
+    );
+  }
 
   makeUpdateAccountController(language: ILanguage): UpdateAccountController {
     return new UpdateAccountController(

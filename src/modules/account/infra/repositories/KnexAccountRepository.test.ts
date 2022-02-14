@@ -26,6 +26,28 @@ describe("account repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("listLanguages method", () => {
+    it("should list all rows in the table language", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const storedLanguage = {
+        id: "lang-id-0",
+        iso_code: "co-DE",
+        display_name: "Some language",
+      };
+      await connection("language").insert(storedLanguage);
+
+      const languages = await sut.listLanguages();
+
+      expect(languages).toContainEqual({
+        id: storedLanguage.id,
+        isoCode: storedLanguage.iso_code,
+        displayName: storedLanguage.display_name,
+      });
+    });
+  });
+
   describe("updateAccountImage method", () => {
     it("should update column image in the account table with given file", async () => {
       expect.assertions(1);

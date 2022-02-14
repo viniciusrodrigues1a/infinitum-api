@@ -1,5 +1,6 @@
 import {
   FindOneAccountController,
+  ListLanguagesController,
   LoginController,
   RegisterController,
   UpdateAccountController,
@@ -32,6 +33,7 @@ export interface IControllerFactory {
   makeRegisterController(language: ILanguage): RegisterController;
   makeLoginController(language: ILanguage): LoginController;
   makeUpdateAccountController(language: ILanguage): UpdateAccountController;
+  makeListLanguagesController(): ListLanguagesController;
   makeFindOneAccountController(language: ILanguage): FindOneAccountController;
   makeCreateProjectController(language: ILanguage): CreateProjectController;
   makeDeleteProjectController(language: ILanguage): DeleteProjectController;

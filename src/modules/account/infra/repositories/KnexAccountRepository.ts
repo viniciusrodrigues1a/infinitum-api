@@ -4,8 +4,10 @@ import {
   UpdateAccountRepositoryDTO,
 } from "@modules/account/presentation/DTOs";
 import {
+  IListLanguagesRepository,
   IUpdateAccountImageRepository,
   IUpdateAccountRepository,
+  Language,
 } from "@modules/account/presentation/interfaces/repositories";
 import {
   IDoesAccountExistRepository,
@@ -19,8 +21,19 @@ export class KnexAccountRepository
     IDoesAccountExistRepository,
     IFindOneAccountRepository,
     IUpdateAccountRepository,
-    IUpdateAccountImageRepository
+    IUpdateAccountImageRepository,
+    IListLanguagesRepository
 {
+  async listLanguages(): Promise<Language[]> {
+    const languages = await connection("language").select("*");
+
+    return languages.map((l) => ({
+      id: l.id,
+      isoCode: l.iso_code,
+      displayName: l.display_name,
+    }));
+  }
+
   async updateAccountImage({
     email,
     fileBuffer,

@@ -1,4 +1,5 @@
 import {
+  IListLanguagesRepository,
   ILoginRepository,
   IRegisterRepository,
   IUpdateAccountImageRepository,
@@ -62,6 +63,7 @@ export interface IRepositoryFactory {
   makeLoginRepository(language: ILanguage): ILoginRepository;
   makeUpdateAccountRepository(): IUpdateAccountRepository;
   makeUpdateAccountImageRepository(): IUpdateAccountImageRepository;
+  makeListLanguagesRepository(): IListLanguagesRepository;
   makeDoesAccountExistRepository(): IDoesAccountExistRepository;
   makeFindOneAccountRepository(): IFindOneAccountRepository;
   makeCreateProjectRepository(): ICreateProjectRepository;
