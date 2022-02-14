@@ -1,6 +1,7 @@
 import { jwtToken } from "@modules/account/infra/authentication";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { configuration, connection } from "@shared/infra/database/connection";
+import path from "path";
 import { api, defaultLanguage } from "../helpers";
 
 describe("/accounts/ endpoint", () => {
@@ -75,6 +76,65 @@ describe("/accounts/ endpoint", () => {
           email: givenRequest.email,
         })
       );
+    });
+
+    it("should return 204 and update an account's image", async () => {
+      expect.assertions(2);
+
+      const account = {
+        name: "jorge",
+        email: "jorge@email.com",
+        password: "jorgepa55",
+      };
+      await api.post("/auth/register/").send(account);
+      const authorizationToken = jwtToken.sign({ email: account.email });
+      const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
+
+      const response = await api
+        .patch("/accounts/")
+        .set(givenAuthHeader)
+        .attach("file", path.resolve(__dirname, "cat.jpg"));
+
+      const updatedAccount = await connection("account")
+        .where({ email: account.email })
+        .select("*")
+        .first();
+      expect(response.statusCode).toBe(204);
+      expect(updatedAccount.image).not.toBeNull();
+    });
+
+    it("should return 204 and update an account's language", async () => {
+      expect.assertions(2);
+
+      const account = {
+        name: "jorge",
+        email: "jorge@email.com",
+        password: "jorgepa55",
+      };
+      await api.post("/auth/register/").send(account);
+      const authorizationToken = jwtToken.sign({ email: account.email });
+      const givenAuthHeader = { authorization: `Bearer ${authorizationToken}` };
+      const { id: languageId } = await connection("language")
+        .where({ iso_code: "es-ES" })
+        .select("*")
+        .first();
+
+      const response = await api
+        .patch("/accounts/")
+        .set(givenAuthHeader)
+        .field("languageId", languageId);
+
+      await new Promise((resolve) => {
+        // by some reason the query below runs before the db update, so wait 100ms
+        setTimeout(resolve, 100);
+      });
+
+      const updatedAccount = await connection("account")
+        .where({ email: account.email })
+        .select("*")
+        .first();
+      expect(response.statusCode).toBe(204);
+      expect(updatedAccount.language_id).toBe(languageId);
     });
 
     it("should return 204 and update an account's password", async () => {

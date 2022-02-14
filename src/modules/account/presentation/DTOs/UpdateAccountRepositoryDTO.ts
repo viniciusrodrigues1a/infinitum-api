@@ -3,4 +3,5 @@ export type UpdateAccountRepositoryDTO = {
   newName?: string;
   newEmail?: string;
   newPassword?: string;
+  newLanguageId?: string;
 };

@@ -33,13 +33,18 @@ export class KnexAccountRepository
     newName,
     newEmail,
     newPassword,
+    newLanguageId,
   }: UpdateAccountRepositoryDTO): Promise<void> {
     const { id } = await connection("account")
       .select("*")
       .where({ email })
       .first();
 
-    let updatedFields: any = { name: newName, email: newEmail };
+    let updatedFields: any = {
+      name: newName,
+      email: newEmail,
+      language_id: newLanguageId,
+    };
 
     if (newPassword) {
       const { hash, salt, iterations } = pbkdf2.hash(newPassword);
@@ -51,7 +56,13 @@ export class KnexAccountRepository
       };
     }
 
-    await connection("account").where({ id }).update(updatedFields);
+    try {
+      await connection("account").where({ id }).update(updatedFields);
+    } catch (err) {
+      if (err.message.includes("Empty .update() call detected!")) return;
+
+      throw err;
+    }
   }
 
   async findOneAccount(email: string): Promise<Account | undefined> {

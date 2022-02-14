@@ -18,6 +18,7 @@ export type UpdateAccountControllerRequest = AccountMakingRequestDTO & {
   name?: string;
   email?: string;
   password?: string;
+  languageId?: string;
   fileBuffer?: Buffer;
 };
 
@@ -34,6 +35,7 @@ export class UpdateAccountController implements IController {
     name,
     email,
     password,
+    languageId,
     fileBuffer,
   }: UpdateAccountControllerRequest): Promise<HttpResponse> {
     try {
@@ -61,6 +63,7 @@ export class UpdateAccountController implements IController {
         newName: name,
         newEmail: email,
         newPassword: password,
+        newLanguageId: languageId,
       });
 
       return noContentResponse();

@@ -65,6 +65,7 @@ describe("account repository using Knex", () => {
         newName: "julio",
         newEmail: "julio@email.com",
         newPassword: "newpa55",
+        newLanguageId: "language-id-0",
       };
       const storedAccount = {
         id: "account-id-0",
@@ -93,6 +94,7 @@ describe("account repository using Knex", () => {
         expect.objectContaining({
           name: givenRequest.newName,
           email: givenRequest.newEmail,
+          language_id: givenRequest.newLanguageId,
           password_hash: hash,
           salt,
           iterations,
