@@ -1,6 +1,12 @@
 import { Account } from "@modules/account/entities/Account";
-import { UpdateAccountRepositoryDTO } from "@modules/account/presentation/DTOs";
-import { IUpdateAccountRepository } from "@modules/account/presentation/interfaces/repositories";
+import {
+  UpdateAccountImageRepositoryDTO,
+  UpdateAccountRepositoryDTO,
+} from "@modules/account/presentation/DTOs";
+import {
+  IUpdateAccountImageRepository,
+  IUpdateAccountRepository,
+} from "@modules/account/presentation/interfaces/repositories";
 import {
   IDoesAccountExistRepository,
   IFindOneAccountRepository,
@@ -12,8 +18,16 @@ export class KnexAccountRepository
   implements
     IDoesAccountExistRepository,
     IFindOneAccountRepository,
-    IUpdateAccountRepository
+    IUpdateAccountRepository,
+    IUpdateAccountImageRepository
 {
+  async updateAccountImage({
+    email,
+    fileBuffer,
+  }: UpdateAccountImageRepositoryDTO): Promise<void> {
+    await connection("account").update({ image: fileBuffer }).where({ email });
+  }
+
   async updateAccount({
     email,
     newName,

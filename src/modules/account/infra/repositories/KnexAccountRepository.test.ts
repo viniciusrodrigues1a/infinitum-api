@@ -1,6 +1,9 @@
 import crypto from "crypto";
 import { configuration, connection } from "@shared/infra/database/connection";
-import { UpdateAccountRepositoryDTO } from "@modules/account/presentation/DTOs";
+import {
+  UpdateAccountImageRepositoryDTO,
+  UpdateAccountRepositoryDTO,
+} from "@modules/account/presentation/DTOs";
 import { KnexAccountRepository } from "./KnexAccountRepository";
 import { pbkdf2 } from "../cryptography";
 
@@ -21,6 +24,35 @@ describe("account repository using Knex", () => {
 
   afterAll(async () => {
     await connection.destroy();
+  });
+
+  describe("updateAccountImage method", () => {
+    it("should update column image in the account table with given file", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const storedAccount = {
+        id: "account-id-0",
+        name: "Jorge",
+        email: "jorge@email.com",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      await connection("account").insert(storedAccount);
+      const givenRequest: UpdateAccountImageRepositoryDTO = {
+        email: storedAccount.email,
+        fileBuffer: Buffer.from("image content"),
+      };
+
+      await sut.updateAccountImage(givenRequest);
+
+      const updatedAccount = await connection("account")
+        .select("*")
+        .where({ id: storedAccount.id })
+        .first();
+      expect(updatedAccount.image).toStrictEqual(givenRequest.fileBuffer);
+    });
   });
 
   describe("updateAccount method", () => {
