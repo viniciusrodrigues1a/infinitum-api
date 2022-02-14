@@ -230,7 +230,8 @@ class KnexControllerFactoryImpl implements IControllerFactory {
 
   makeFindOneAccountController(language: ILanguage): FindOneAccountController {
     return new FindOneAccountController(
-      this.useCaseFactory.makeFindOneAccountUseCase(language)
+      this.useCaseFactory.makeFindOneAccountUseCase(language),
+      this.repositoryFactory.makeFindAccountImageDataURLRepository()
     );
   }
 

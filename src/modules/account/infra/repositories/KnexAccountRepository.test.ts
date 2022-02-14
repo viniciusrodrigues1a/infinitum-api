@@ -26,6 +26,50 @@ describe("account repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findAccountImageDataURL method", () => {
+    it("should return the dataURL of an account", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const storedAccount = {
+        id: "account-id-0",
+        name: "Jorge",
+        email: "jorge@email.com",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+        image:
+          "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+      };
+      await connection("account").insert(storedAccount);
+
+      const dataURL = await sut.findAccountImageDataURL(storedAccount.email);
+
+      const expectedDataURL =
+        "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==";
+      expect(dataURL).toBe(expectedDataURL);
+    });
+
+    it("should return the undefined", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const storedAccount = {
+        id: "account-id-0",
+        name: "Jorge",
+        email: "jorge@email.com",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      await connection("account").insert(storedAccount);
+
+      const dataURL = await sut.findAccountImageDataURL(storedAccount.email);
+
+      expect(dataURL).toBeUndefined();
+    });
+  });
+
   describe("listLanguages method", () => {
     it("should list all rows in the table language", async () => {
       expect.assertions(1);

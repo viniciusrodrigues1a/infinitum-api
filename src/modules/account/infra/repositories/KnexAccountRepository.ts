@@ -4,6 +4,7 @@ import {
   UpdateAccountRepositoryDTO,
 } from "@modules/account/presentation/DTOs";
 import {
+  IFindAccountImageDataURLRepository,
   IListLanguagesRepository,
   IUpdateAccountImageRepository,
   IUpdateAccountRepository,
@@ -15,6 +16,7 @@ import {
 } from "@modules/account/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import { pbkdf2 } from "../cryptography";
+import { findMimeType } from "./helpers";
 
 export class KnexAccountRepository
   implements
@@ -22,8 +24,26 @@ export class KnexAccountRepository
     IFindOneAccountRepository,
     IUpdateAccountRepository,
     IUpdateAccountImageRepository,
-    IListLanguagesRepository
+    IListLanguagesRepository,
+    IFindAccountImageDataURLRepository
 {
+  async findAccountImageDataURL(email: string): Promise<string | undefined> {
+    const { image: buffer } = await connection("account")
+      .where({ email })
+      .select("image")
+      .first();
+
+    if (!buffer) return undefined;
+
+    const base64String = buffer.toString("base64");
+
+    const mimeType = findMimeType(base64String);
+    const dataURLPrefix = `data:${mimeType};base64,`;
+    const dataURL = dataURLPrefix + base64String;
+
+    return dataURL;
+  }
+
   async listLanguages(): Promise<Language[]> {
     const languages = await connection("language").select("*");
 

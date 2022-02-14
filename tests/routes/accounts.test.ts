@@ -21,15 +21,29 @@ describe("/accounts/ endpoint", () => {
     it("should return 200", async () => {
       expect.assertions(2);
 
-      const queryEmail = "jorge@email.com";
-      await api
-        .post("/auth/register/")
-        .send({ name: "jorge", email: queryEmail, password: "jorgepa55" });
+      const givenAccount = {
+        name: "jorge",
+        email: "jorge@email.com",
+      };
+      await api.post("/auth/register/").send({
+        name: givenAccount.name,
+        email: givenAccount.email,
+        password: "jorgepa55",
+      });
+      await connection("account").where({ email: givenAccount.email }).update({
+        image:
+          "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+      });
 
-      const response = await api.get(`/accounts/?email=${queryEmail}`);
+      const response = await api.get(`/accounts/?email=${givenAccount.email}`);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body.email).toBe(queryEmail);
+      expect(response.body).toStrictEqual({
+        name: givenAccount.name,
+        email: givenAccount.email,
+        image:
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+      });
     });
 
     it("should return 404", async () => {
