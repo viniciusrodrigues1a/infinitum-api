@@ -26,6 +26,28 @@ describe("account repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findAccountLanguage method", () => {
+    it("should return the language id of an account", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const storedAccount = {
+        id: "account-id-0",
+        name: "Jorge",
+        email: "jorge@email.com",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+        language_id: "language-id-0",
+      };
+      await connection("account").insert(storedAccount);
+
+      const languageId = await sut.findAccountLanguage(storedAccount.email);
+
+      expect(languageId).toBe(storedAccount.language_id);
+    });
+  });
+
   describe("findAccountImageDataURL method", () => {
     it("should return the dataURL of an account", async () => {
       expect.assertions(1);

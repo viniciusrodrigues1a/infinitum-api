@@ -95,7 +95,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
 
   makeFindProjectImageDataURLController(): FindProjectImageDataURLController {
     return new FindProjectImageDataURLController(
-      this.repositoryFactory.makeFindProjectImageBufferRepository()
+      this.repositoryFactory.makeFindProjectImageDataURLRepository()
     );
   }
 
@@ -231,7 +231,8 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   makeFindOneAccountController(language: ILanguage): FindOneAccountController {
     return new FindOneAccountController(
       this.useCaseFactory.makeFindOneAccountUseCase(language),
-      this.repositoryFactory.makeFindAccountImageDataURLRepository()
+      this.repositoryFactory.makeFindAccountImageDataURLRepository(),
+      this.repositoryFactory.makeFindAccountLanguageIdRepository()
     );
   }
 

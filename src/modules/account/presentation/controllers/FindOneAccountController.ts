@@ -7,7 +7,10 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
-import { IFindAccountImageDataURLRepository } from "../interfaces/repositories";
+import {
+  IFindAccountImageDataURLRepository,
+  IFindAccountLanguageIdRepository,
+} from "../interfaces/repositories";
 
 type FindOneAccountControllerRequest = {
   email: string;
@@ -16,7 +19,8 @@ type FindOneAccountControllerRequest = {
 export class FindOneAccountController implements IController {
   constructor(
     private readonly findOneAccountUseCase: FindOneAccountUseCase,
-    private readonly findAccountImageDataURLRepository: IFindAccountImageDataURLRepository
+    private readonly findAccountImageDataURLRepository: IFindAccountImageDataURLRepository,
+    private readonly findAccountLanguageIdRepository: IFindAccountLanguageIdRepository
   ) {}
 
   async handleRequest({
@@ -28,10 +32,13 @@ export class FindOneAccountController implements IController {
         await this.findAccountImageDataURLRepository.findAccountImageDataURL(
           email
         );
+      const languageId =
+        await this.findAccountLanguageIdRepository.findAccountLanguage(email);
 
       return okResponse({
         name: account.name,
         email: account.email,
+        languageId,
         image: imageDataURL,
       });
     } catch (err) {

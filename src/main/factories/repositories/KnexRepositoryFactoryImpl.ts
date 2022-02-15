@@ -5,6 +5,7 @@ import {
 } from "@modules/account/infra/repositories";
 import {
   IFindAccountImageDataURLRepository,
+  IFindAccountLanguageIdRepository,
   IListLanguagesRepository,
   ILoginRepository,
   IRegisterRepository,
@@ -35,7 +36,7 @@ import {
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { KnexProjectRepository } from "@modules/project/infra/repositories";
 import {
-  IFindProjectImageBufferRepository,
+  IFindProjectImageDataURLRepository,
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
@@ -68,6 +69,10 @@ import { ILanguage } from "@shared/presentation/languages";
 import { IRepositoryFactory } from "./IRepositoryFactory";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  makeFindAccountLanguageIdRepository(): IFindAccountLanguageIdRepository {
+    return this.makeAccountRepository();
+  }
+
   makeFindAccountImageDataURLRepository(): IFindAccountImageDataURLRepository {
     return this.makeAccountRepository();
   }
@@ -92,7 +97,7 @@ class KnexRepositoryFactoryImpl implements IRepositoryFactory {
     return this.makeProjectRepository();
   }
 
-  makeFindProjectImageBufferRepository(): IFindProjectImageBufferRepository {
+  makeFindProjectImageDataURLRepository(): IFindProjectImageDataURLRepository {
     return this.makeProjectRepository();
   }
 

@@ -5,6 +5,7 @@ import {
 } from "@modules/account/presentation/DTOs";
 import {
   IFindAccountImageDataURLRepository,
+  IFindAccountLanguageIdRepository,
   IListLanguagesRepository,
   IUpdateAccountImageRepository,
   IUpdateAccountRepository,
@@ -25,8 +26,18 @@ export class KnexAccountRepository
     IUpdateAccountRepository,
     IUpdateAccountImageRepository,
     IListLanguagesRepository,
-    IFindAccountImageDataURLRepository
+    IFindAccountImageDataURLRepository,
+    IFindAccountLanguageIdRepository
 {
+  async findAccountLanguage(email: string): Promise<string | null> {
+    const { language_id: languageId } = await connection("account")
+      .select("language_id")
+      .where({ email })
+      .first();
+
+    return languageId;
+  }
+
   async findAccountImageDataURL(email: string): Promise<string | undefined> {
     const { image: buffer } = await connection("account")
       .where({ email })

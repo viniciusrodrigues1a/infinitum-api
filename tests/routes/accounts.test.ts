@@ -38,12 +38,14 @@ describe("/accounts/ endpoint", () => {
       const response = await api.get(`/accounts/?email=${givenAccount.email}`);
 
       expect(response.statusCode).toBe(200);
-      expect(response.body).toStrictEqual({
-        name: givenAccount.name,
-        email: givenAccount.email,
-        image:
-          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
-      });
+      expect(response.body).toMatchObject(
+        expect.objectContaining({
+          name: givenAccount.name,
+          email: givenAccount.email,
+          image:
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==",
+        })
+      );
     });
 
     it("should return 404", async () => {

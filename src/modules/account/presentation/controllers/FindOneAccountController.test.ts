@@ -3,7 +3,10 @@ import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccount
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { ILanguage } from "@shared/presentation/languages";
 import { mock } from "jest-mock-extended";
-import { IFindAccountImageDataURLRepository } from "../interfaces/repositories";
+import {
+  IFindAccountImageDataURLRepository,
+  IFindAccountLanguageIdRepository,
+} from "../interfaces/repositories";
 import { FindOneAccountController } from "./FindOneAccountController";
 
 const languageMock = mock<ILanguage>();
@@ -15,15 +18,19 @@ function makeSut() {
   const findOneAccountUseCaseMock = mock<FindOneAccountUseCase>();
   const findAccountImageDataURLRepositoryMock =
     mock<IFindAccountImageDataURLRepository>();
+  const findAccountLanguageIdRepositoryMock =
+    mock<IFindAccountLanguageIdRepository>();
   const sut = new FindOneAccountController(
     findOneAccountUseCaseMock,
-    findAccountImageDataURLRepositoryMock
+    findAccountImageDataURLRepositoryMock,
+    findAccountLanguageIdRepositoryMock
   );
 
   return {
     sut,
     findOneAccountUseCaseMock,
     findAccountImageDataURLRepositoryMock,
+    findAccountLanguageIdRepositoryMock,
   };
 }
 
@@ -35,6 +42,7 @@ describe("findOneAccount controller", () => {
       sut,
       findOneAccountUseCaseMock,
       findAccountImageDataURLRepositoryMock,
+      findAccountLanguageIdRepositoryMock,
     } = makeSut();
     const existentAccount = { name: "Jorge", email: "jorge@email.com" };
     findOneAccountUseCaseMock.findOne.mockResolvedValueOnce(existentAccount);
@@ -43,6 +51,10 @@ describe("findOneAccount controller", () => {
     findAccountImageDataURLRepositoryMock.findAccountImageDataURL.mockResolvedValueOnce(
       dataURL
     );
+    const languageId = "language-id-0";
+    findAccountLanguageIdRepositoryMock.findAccountLanguage.mockResolvedValueOnce(
+      languageId
+    );
 
     const response = await sut.handleRequest({ email: existentAccount.email });
 
@@ -50,6 +62,7 @@ describe("findOneAccount controller", () => {
     expect(response.body).toStrictEqual({
       name: existentAccount.name,
       email: existentAccount.email,
+      languageId,
       image: dataURL,
     });
   });

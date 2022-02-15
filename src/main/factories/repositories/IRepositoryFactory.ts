@@ -1,5 +1,6 @@
 import {
   IFindAccountImageDataURLRepository,
+  IFindAccountLanguageIdRepository,
   IListLanguagesRepository,
   ILoginRepository,
   IRegisterRepository,
@@ -29,7 +30,7 @@ import {
   IUpdateIssueRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
 import {
-  IFindProjectImageBufferRepository,
+  IFindProjectImageDataURLRepository,
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
@@ -66,6 +67,7 @@ export interface IRepositoryFactory {
   makeUpdateAccountImageRepository(): IUpdateAccountImageRepository;
   makeListLanguagesRepository(): IListLanguagesRepository;
   makeFindAccountImageDataURLRepository(): IFindAccountImageDataURLRepository;
+  makeFindAccountLanguageIdRepository(): IFindAccountLanguageIdRepository;
   makeDoesAccountExistRepository(): IDoesAccountExistRepository;
   makeFindOneAccountRepository(): IFindOneAccountRepository;
   makeCreateProjectRepository(): ICreateProjectRepository;
@@ -100,7 +102,7 @@ export interface IRepositoryFactory {
   makeDeleteProjectRepository(): IDeleteProjectRepository;
   makeUpdateIssueGroupColorRepository(): IUpdateIssueGroupColorRepository;
   makeUpdateIssueGroupFinalStatusRepository(): IUpdateIssueGroupFinalStatusRepository;
-  makeFindProjectImageBufferRepository(): IFindProjectImageBufferRepository;
+  makeFindProjectImageDataURLRepository(): IFindProjectImageDataURLRepository;
   makeUpdateProjectImageRepository(): IUpdateProjectImageRepository;
   makeReportIssuesWeeklyOverviewMetricsRepository(): IReportIssuesWeeklyOverviewMetricsRepository;
   makeReportIssuesMonthlyOverviewMetricsRepository(): IReportIssuesMonthlyOverviewMetricsRepository;
