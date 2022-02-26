@@ -18,6 +18,9 @@ import {
 import {
   ICompletedIssueGroupTitleLanguage,
   IInProgressIssueGroupTitleLanguage,
+  IInvitationTemplateLanguage,
+  IKickedTemplateLanguage,
+  IRoleUpdatedTemplateLanguage,
   ITodoIssueGroupTitleLanguage,
 } from "@modules/project/presentation/interfaces/languages";
 import {
@@ -77,4 +80,7 @@ export interface ILanguage
     ICannotKickYourselfErrorLanguage,
     ITodoIssueGroupTitleLanguage,
     IInProgressIssueGroupTitleLanguage,
-    ICompletedIssueGroupTitleLanguage {}
+    ICompletedIssueGroupTitleLanguage,
+    IInvitationTemplateLanguage,
+    IKickedTemplateLanguage,
+    IRoleUpdatedTemplateLanguage {}

@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
-import { Server } from "http";
+import { Server as HTTPServer, createServer } from "http";
+import { Server as SocketServer } from "socket.io";
 import express from "express";
 import cors from "cors";
 import {
@@ -15,9 +16,20 @@ import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
 
 dotenv.config();
 
-export class ExpressServer {
+type ConnectedUser = {
+  email: string;
+  socketId: string;
+};
+
+export class Server {
   app = express();
-  server: Server | null = null;
+  httpServer: HTTPServer = createServer(this.app);
+  socketServer: SocketServer = new SocketServer(this.httpServer, {
+    cors: {
+      origin: "*",
+    },
+  });
+  connectedUsers: ConnectedUser[] = [];
 
   constructor() {
     this.useMiddlewares();
@@ -43,17 +55,49 @@ export class ExpressServer {
   }
 
   public start(): void {
+    this.startExpressServer();
+    this.startSocketServer();
+  }
+
+  private startExpressServer(): void {
     const port = process.env.PORT;
-    this.server = this.app.listen(port, () =>
+    this.httpServer.listen(port, () =>
       /* eslint-disable-next-line no-console  */
       console.log(`Server running on port ${port}`)
     );
   }
 
+  private startSocketServer(): void {
+    this.socketServer.on("connection", (socket) => {
+      socket.on("newUser", (email) => {
+        this.addNewUser(email, socket.id);
+      });
+
+      socket.on("disconnect", () => {
+        this.removeUser(socket.id);
+      });
+    });
+  }
+
+  private addNewUser(email: string, socketId: string): void {
+    if (this.getUser(email)) return;
+    this.connectedUsers.push({ email, socketId });
+  }
+
+  private removeUser(socketId: string): void {
+    this.connectedUsers = this.connectedUsers.filter(
+      (u) => u.socketId !== socketId
+    );
+  }
+
+  public getUser(email: string): ConnectedUser | undefined {
+    return this.connectedUsers.find((u) => u.email === email);
+  }
+
   public close(): void {
-    if (!this.server) {
-      throw new Error("Can't close server because it is not running");
-    }
-    this.server.close();
+    this.socketServer.close();
+    this.httpServer.close();
   }
 }
+
+export const server = new Server();

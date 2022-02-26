@@ -16,7 +16,6 @@ export * from "./IIsInvitationTokenValidRepository";
 export * from "./IAcceptInvitationTokenRepository";
 export * from "./IRevokeInvitationRepository";
 export * from "./IUpdateParticipantRoleInProjectRepository";
-export * from "./IFindProjectNameByProjectIdRepository";
 export * from "./IFindOneAccountEmailByInvitationTokenRepository";
 export * from "./IFindStartDateByProjectIdRepository";
 export * from "./IKickParticipantFromProjectRepository";

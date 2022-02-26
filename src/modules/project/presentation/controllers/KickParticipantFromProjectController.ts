@@ -13,17 +13,21 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
+import { IKickedTemplateLanguage } from "../interfaces/languages";
 
 export class KickParticipantFromProjectController implements IController {
   constructor(
     private readonly kickParticipantFromProjectUseCase: KickParticipantFromProjectUseCase,
-    private readonly validation: IValidation
+    private readonly validation: IValidation,
+    private readonly notificationService: INotificationService,
+    private readonly kickedTemplateLanguage: IKickedTemplateLanguage
   ) {}
 
   async handleRequest(
@@ -36,6 +40,11 @@ export class KickParticipantFromProjectController implements IController {
       }
 
       await this.kickParticipantFromProjectUseCase.kick(request);
+
+      await this.notificationService.notify(request.accountEmail, {
+        projectId: request.projectId,
+        kickedTemplateLanguage: this.kickedTemplateLanguage,
+      });
 
       return noContentResponse();
     } catch (err) {

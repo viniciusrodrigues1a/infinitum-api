@@ -12,6 +12,7 @@ import {
   ICannotUpdateYourOwnRoleErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
@@ -24,6 +25,8 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
+import { IRoleUpdatedTemplateLanguage } from "../interfaces/languages";
+import { IFindProjectNameByProjectIdRepository } from "../interfaces/repositories";
 import { UpdateParticipantRoleInProjectController } from "./UpdateParticipantRoleInProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -43,12 +46,22 @@ function makeSut() {
   const updateParticipantRoleInProjectUseCaseMock =
     mock<UpdateParticipantRoleInProjectUseCase>();
   const validationMock = mock<IValidation>();
+  const notificationServiceMock = mock<INotificationService>();
+  const roleUpdatedTemplateLanguageMock = mock<IRoleUpdatedTemplateLanguage>();
   const sut = new UpdateParticipantRoleInProjectController(
     updateParticipantRoleInProjectUseCaseMock,
-    validationMock
+    validationMock,
+    notificationServiceMock,
+    roleUpdatedTemplateLanguageMock
   );
 
-  return { sut, updateParticipantRoleInProjectUseCaseMock, validationMock };
+  return {
+    sut,
+    notificationServiceMock,
+    roleUpdatedTemplateLanguageMock,
+    updateParticipantRoleInProjectUseCaseMock,
+    validationMock,
+  };
 }
 
 describe("updateParticipantRoleInProject controller", () => {
@@ -88,6 +101,31 @@ describe("updateParticipantRoleInProject controller", () => {
     expect(
       updateParticipantRoleInProjectUseCaseMock.updateParticipantRole
     ).toHaveBeenNthCalledWith(1, givenRequest);
+  });
+
+  it("should call notificationServiceMock", async () => {
+    expect.assertions(1);
+
+    const { sut, notificationServiceMock, roleUpdatedTemplateLanguageMock } =
+      makeSut();
+    const givenRequest = {
+      roleName: "member",
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(
+      1,
+      givenRequest.accountEmail,
+      {
+        projectId: givenRequest.projectId,
+        roleName: givenRequest.roleName,
+        roleUpdatedTemplateLanguage: roleUpdatedTemplateLanguageMock,
+      }
+    );
   });
 
   it("should return HttpStatusCodes.notFound if ProjectNotFoundError is thrown", async () => {

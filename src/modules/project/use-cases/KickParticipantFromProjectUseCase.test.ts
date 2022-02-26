@@ -16,7 +16,6 @@ import {
   IFindParticipantRoleInProjectRepository,
 } from "./interfaces/repositories";
 import { IKickParticipantFromProjectRepository } from "./interfaces/repositories/IKickParticipantFromProjectRepository";
-import { ISendKickedOutOfProjectEmailService } from "./interfaces/services/ISendKickedOutOfProjectEmailService";
 import { KickParticipantFromProjectUseCase } from "./KickParticipantFromProjectUseCase";
 import { IInvalidRoleNameErrorLanguage } from "../entities/interfaces/languages";
 import {
@@ -36,8 +35,6 @@ function makeSut() {
     mock<IDoesParticipantExistRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
-  const sendKickedOutOfProjectEmailServiceMock =
-    mock<ISendKickedOutOfProjectEmailService>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
   const cannotKickYourselfErrorLanguageMock =
@@ -56,7 +53,6 @@ function makeSut() {
     doesProjectExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
-    sendKickedOutOfProjectEmailServiceMock,
     projectNotFoundErrorLanguageMock,
     cannotKickYourselfErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
@@ -71,7 +67,6 @@ function makeSut() {
     doesProjectExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
-    sendKickedOutOfProjectEmailServiceMock,
     notParticipantInProjectErrorLanguageMock,
   };
 }
@@ -95,13 +90,12 @@ describe("kickParticipantFromProject use-case", () => {
     jest.resetAllMocks();
   });
 
-  it("should call IKickParticipantFromProjectRepository and ISendKickedOutOfProjectEmailService implementations", async () => {
-    expect.assertions(2);
+  it("should call IKickParticipantFromProjectRepository implementation", async () => {
+    expect.assertions(1);
 
     const {
       sut,
       kickParticipantFromProjectRepositoryMock,
-      sendKickedOutOfProjectEmailServiceMock,
       doesProjectExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
@@ -122,9 +116,6 @@ describe("kickParticipantFromProject use-case", () => {
 
     expect(
       kickParticipantFromProjectRepositoryMock.kickParticipant
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      sendKickedOutOfProjectEmailServiceMock.sendKickedOutOfProjectEmail
     ).toHaveBeenCalledTimes(1);
   });
 

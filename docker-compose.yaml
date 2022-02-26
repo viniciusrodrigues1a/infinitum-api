@@ -12,6 +12,15 @@ services:
       - POSTGRES_PORT
       - POSTGRES_DB
 
+  mongodb:
+    image: mongo:latest
+    restart: on-failure
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+    ports:
+      - "27017:27017"
+
   app:
     build: ./docker/app
     restart: always
@@ -21,9 +30,11 @@ services:
       - .:/usr/app
     links:
       - "postgres:postgreshost"
+      - "mongodb:mongohost"
       - "redis-queue:redishost"
-    depends_on: 
+    depends_on:
       - postgres
+      - mongodb
       - redis-queue
 
   queue:
@@ -34,13 +45,11 @@ services:
     links:
       - "postgres:postgreshost"
       - "redis-queue:redishost"
-    depends_on: 
+    depends_on:
       - postgres
       - redis-queue
 
-
   redis-queue:
     image: "redis:alpine"
-
     ports:
       - "6379:6379"

@@ -31,10 +31,8 @@ import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
-  IFindProjectNameByProjectIdRepository,
   IHasAccountBeenInvitedToProjectRepository,
 } from "./interfaces/repositories";
-import { ISendInvitationToProjectEmailService } from "./interfaces/services";
 import { InviteAccountToProjectUseCase } from "./InviteAccountToProjectUseCase";
 
 jest.mock("../entities/value-objects/Role");
@@ -43,8 +41,6 @@ jest.mock("../entities/Invitation");
 function makeSut() {
   const createInvitationTokenRepositoryMock =
     mock<ICreateInvitationTokenRepository>();
-  const sendInvitationToProjectEmailServiceMock =
-    mock<ISendInvitationToProjectEmailService>();
   const doesProjectExistRepositoryMock = mock<IDoesProjectExistRepository>();
   const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
   const doesParticipantExistRepositoryMock =
@@ -53,8 +49,6 @@ function makeSut() {
     mock<IHasAccountBeenInvitedToProjectRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
-  const findProjectNameByProjectIdRepositoryMock =
-    mock<IFindProjectNameByProjectIdRepository>();
   const invalidRoleNameErrorLanguageMock =
     mock<IInvalidRoleNameErrorLanguage>();
   const ownerCantBeUsedAsARoleForAnInvitationErrorLanguageMock =
@@ -74,13 +68,11 @@ function makeSut() {
 
   const sut = new InviteAccountToProjectUseCase(
     createInvitationTokenRepositoryMock,
-    sendInvitationToProjectEmailServiceMock,
     doesProjectExistRepositoryMock,
     doesAccountExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasAccountBeenInvitedToProjectRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
-    findProjectNameByProjectIdRepositoryMock,
     invalidRoleNameErrorLanguageMock,
     ownerCantBeUsedAsARoleForAnInvitationErrorLanguageMock,
     projectNotFoundErrorLanguageMock,
@@ -94,13 +86,11 @@ function makeSut() {
   return {
     sut,
     createInvitationTokenRepositoryMock,
-    sendInvitationToProjectEmailServiceMock,
     doesProjectExistRepositoryMock,
     doesAccountExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     hasAccountBeenInvitedToProjectRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
-    findProjectNameByProjectIdRepositoryMock,
   };
 }
 
@@ -124,13 +114,12 @@ describe("inviteAccountToProject use-case", () => {
     jest.resetAllMocks();
   });
 
-  it("should call createInvitationTokenRepository, sendInvitationToProjectEmailService and instantiate the entity Invitation", async () => {
-    expect.assertions(3);
+  it("should call createInvitationTokenRepository and instantiate the entity Invitation", async () => {
+    expect.assertions(2);
 
     const {
       sut,
       createInvitationTokenRepositoryMock,
-      sendInvitationToProjectEmailServiceMock,
       doesProjectExistRepositoryMock,
       doesAccountExistRepositoryMock,
       doesParticipantExistRepositoryMock,
@@ -168,9 +157,6 @@ describe("inviteAccountToProject use-case", () => {
 
     expect(
       createInvitationTokenRepositoryMock.createInvitationToken
-    ).toHaveBeenCalledTimes(1);
-    expect(
-      sendInvitationToProjectEmailServiceMock.sendInvitationEmail
     ).toHaveBeenCalledTimes(1);
     expect(Invitation).toHaveBeenCalledTimes(1);
   });

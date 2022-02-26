@@ -8,6 +8,7 @@ import {
   ICannotKickYourselfErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
@@ -20,6 +21,8 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
+import { IKickedTemplateLanguage } from "../interfaces/languages";
+import { IFindProjectNameByProjectIdRepository } from "../interfaces/repositories";
 import { KickParticipantFromProjectController } from "./KickParticipantFromProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -35,13 +38,23 @@ const roleInsufficientPermissionErrorLanguageMock =
 function makeSut() {
   const kickParticipantFromProjectUseCaseMock =
     mock<KickParticipantFromProjectUseCase>();
+  const notificationServiceMock = mock<INotificationService>();
+  const kickedTemplateLanguageMock = mock<IKickedTemplateLanguage>();
   const validationMock = mock<IValidation>();
   const sut = new KickParticipantFromProjectController(
     kickParticipantFromProjectUseCaseMock,
-    validationMock
+    validationMock,
+    notificationServiceMock,
+    kickedTemplateLanguageMock
   );
 
-  return { sut, kickParticipantFromProjectUseCaseMock, validationMock };
+  return {
+    sut,
+    kickParticipantFromProjectUseCaseMock,
+    validationMock,
+    notificationServiceMock,
+    kickedTemplateLanguageMock,
+  };
 }
 
 describe("kickParticipantFromProject controller", () => {
@@ -79,6 +92,29 @@ describe("kickParticipantFromProject controller", () => {
     expect(kickParticipantFromProjectUseCaseMock.kick).toHaveBeenNthCalledWith(
       1,
       givenRequest
+    );
+  });
+
+  it("should call notificationService", async () => {
+    expect.assertions(1);
+
+    const { sut, notificationServiceMock, kickedTemplateLanguageMock } =
+      makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(
+      1,
+      givenRequest.accountEmail,
+      {
+        projectId: givenRequest.projectId,
+        kickedTemplateLanguage: kickedTemplateLanguageMock,
+      }
     );
   });
 

@@ -6,10 +6,7 @@ const configuration =
   (process.env.NODE_ENV && (knexfile as any)[process.env.NODE_ENV]) ||
   knexfile.development;
 
-if (
-  typeof configuration.connection === "object" &&
-  "host" in configuration.connection
-) {
+if (process.env.DOCKER_RUNNING === "1") {
   configuration.connection.host = "postgreshost"; // docker-compose hostname
 }
 

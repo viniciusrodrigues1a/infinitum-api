@@ -7,11 +7,14 @@ import { IEmailAlreadyInUseErrorLanguage } from "@modules/account/use-cases/inte
 import { IRegisterRepository } from "@modules/account/presentation/interfaces/repositories";
 import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
+import { NotificationSettings } from "@shared/infra/mongodb/models";
+import { ICreateNotificationSettingsRepository } from "@shared/infra/notifications/interfaces";
 import { pbkdf2 } from "../cryptography";
 
 export class KnexRegisterRepository implements IRegisterRepository {
   constructor(
     private readonly doesAccountExistRepository: IDoesAccountExistRepository,
+    private readonly createNotificationSettingsRepository: ICreateNotificationSettingsRepository,
     private readonly invalidEmailErrorLanguage: IInvalidEmailErrorLanguage,
     private readonly emailAlreadyInUseErrorLanguage: IEmailAlreadyInUseErrorLanguage
   ) {}
@@ -44,5 +47,15 @@ export class KnexRegisterRepository implements IRegisterRepository {
       salt,
       iterations,
     });
+
+    const notificationSettings: NotificationSettings = {
+      user_id: uuid,
+      invitation: { push: true, email: true },
+      kicked: { push: true, email: true },
+      roleUpdated: { push: true, email: false },
+    };
+    await this.createNotificationSettingsRepository.createNotificationSettings(
+      notificationSettings
+    );
   }
 }

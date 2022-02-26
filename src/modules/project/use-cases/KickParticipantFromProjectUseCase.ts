@@ -25,7 +25,6 @@ import {
   IFindParticipantRoleInProjectRepository,
 } from "./interfaces/repositories";
 import { IKickParticipantFromProjectRepository } from "./interfaces/repositories/IKickParticipantFromProjectRepository";
-import { ISendKickedOutOfProjectEmailService } from "./interfaces/services/ISendKickedOutOfProjectEmailService";
 
 export class KickParticipantFromProjectUseCase {
   constructor(
@@ -33,7 +32,6 @@ export class KickParticipantFromProjectUseCase {
     private readonly doesProjectExistRepository: IDoesProjectExistRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
-    private readonly sendKickedOutOfProjectEmailService: ISendKickedOutOfProjectEmailService,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly cannotKickYourselfErrorLanguage: ICannotKickYourselfErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
@@ -108,11 +106,6 @@ export class KickParticipantFromProjectUseCase {
     await this.kickParticipantFromProjectRepository.kickParticipant({
       projectId,
       accountEmail,
-    });
-
-    await this.sendKickedOutOfProjectEmailService.sendKickedOutOfProjectEmail({
-      email: accountEmail,
-      projectName: "project name", // TODO
     });
   }
 }

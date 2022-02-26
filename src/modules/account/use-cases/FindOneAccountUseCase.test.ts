@@ -28,7 +28,10 @@ describe("findOneAccount use-case", () => {
     expect.assertions(1);
 
     const { sut, findOneAccountRepositoryMock } = makeSut();
-    const existentAccount = { name: "Jorge", email: "jorge@email.com" };
+    const existentAccount = {
+      name: "Jorge",
+      email: "jorge@email.com",
+    };
     findOneAccountRepositoryMock.findOneAccount.mockResolvedValueOnce(
       existentAccount
     );

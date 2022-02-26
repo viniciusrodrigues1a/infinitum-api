@@ -7,6 +7,7 @@ import {
 } from "@modules/project/entities/value-objects";
 import {
   IFindProjectImageDataURLRepository,
+  IFindProjectNameByProjectIdRepository,
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
@@ -42,7 +43,6 @@ import {
   IAcceptInvitationTokenRepository,
   IRevokeInvitationRepository,
   IUpdateParticipantRoleInProjectRepository,
-  IFindProjectNameByProjectIdRepository,
   IFindOneAccountEmailByInvitationTokenRepository,
   IFindStartDateByProjectIdRepository,
   IKickParticipantFromProjectRepository,

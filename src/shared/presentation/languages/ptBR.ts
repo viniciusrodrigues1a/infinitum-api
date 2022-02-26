@@ -4,6 +4,38 @@ import { ILanguage } from "./ILanguage";
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getRoleUpdatedText(projectName: string, roleName: string): string {
+    return `Sua função no projeto ${projectName} foi atualizada para ${roleName}`;
+  }
+
+  getRoleUpdatedEmailSubject(): string {
+    throw new Error("Method not implemented.");
+  }
+
+  getKickedEmailSubject(): string {
+    return "Infinitum - Aviso de expulsão de projeto";
+  }
+
+  getKickedText(projectName: string): string {
+    return `Você foi removido do projeto ${projectName} e portanto não pode mais acessá-lo na plataforma.`;
+  }
+
+  getInvitationEmailSubject(): string {
+    return "Infinitum - Convite para participar de projeto";
+  }
+
+  getInvitationText(projectName: string): string {
+    return `Você foi convidado a participar do projeto: ${projectName}`;
+  }
+
+  getAcceptInvitationButtonText(): string {
+    return "Aceitar convite";
+  }
+
+  getDeclineInvitationButtonText(): string {
+    return "Recusar convite";
+  }
+
   getTodoIssueGroupTitle(): string {
     return "A fazer";
   }

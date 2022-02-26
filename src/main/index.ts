@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import { connection } from "@shared/infra/database/connection";
-import { ExpressServer } from "@main/server";
+import { server } from "@main/server";
+import { mongoHelper } from "@shared/infra/mongodb/connection";
 import Queue from "@shared/infra/queue/Queue";
 
 enum ExitStatus {
@@ -13,25 +14,34 @@ function exitWithError(error: Error) {
   process.exit(ExitStatus.Failure);
 }
 
-function handleSignal(sig: string, closeOpenHandles: () => void) {
+function handleSignal(sig: string, closeOpenHandles: () => Promise<void>) {
   return process.on(sig, async () => {
     try {
       console.log("Gracefully shutting down...");
-      closeOpenHandles();
-      await Queue.close();
-      await connection.destroy();
+      await closeOpenHandles();
     } catch (err) {
       exitWithError(err);
     }
   });
 }
 
-try {
-  const server = new ExpressServer();
+async function start() {
+  await mongoHelper.connect();
   server.start();
+}
+
+try {
+  start();
 
   const exitSignals: NodeJS.Signals[] = ["SIGINT", "SIGTERM", "SIGQUIT"];
-  exitSignals.map((sig) => handleSignal(sig, () => server.close()));
+  exitSignals.map((sig) =>
+    handleSignal(sig, async () => {
+      server.close();
+      mongoHelper.destroy();
+      await connection.destroy();
+      await Queue.close();
+    })
+  );
 } catch (err) {
   exitWithError(err);
 }

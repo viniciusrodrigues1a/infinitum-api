@@ -12,6 +12,7 @@ import {
   IAccountHasAlreadyBeenInvitedErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
@@ -24,6 +25,8 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
+import { IInvitationTemplateLanguage } from "../interfaces/languages";
+import { IFindProjectNameByProjectIdRepository } from "../interfaces/repositories";
 import { InviteAccountToProjectController } from "./InviteAccountToProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -43,12 +46,22 @@ function makeSut() {
   const inviteAccountToProjectUseCaseMock =
     mock<InviteAccountToProjectUseCase>();
   const validationMock = mock<IValidation>();
+  const notificationServiceMock = mock<INotificationService>();
+  const invitationTemplateLanguageMock = mock<IInvitationTemplateLanguage>();
   const sut = new InviteAccountToProjectController(
     inviteAccountToProjectUseCaseMock,
-    validationMock
+    validationMock,
+    notificationServiceMock,
+    invitationTemplateLanguageMock
   );
 
-  return { sut, inviteAccountToProjectUseCaseMock, validationMock };
+  return {
+    sut,
+    inviteAccountToProjectUseCaseMock,
+    validationMock,
+    notificationServiceMock,
+    invitationTemplateLanguageMock,
+  };
 }
 
 describe("invitAccountToProject controller", () => {
@@ -59,7 +72,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -79,7 +91,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -93,6 +104,37 @@ describe("invitAccountToProject controller", () => {
     );
   });
 
+  it("should call notificationService", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      notificationServiceMock,
+      inviteAccountToProjectUseCaseMock,
+      invitationTemplateLanguageMock,
+    } = makeSut();
+    const givenRequest = {
+      roleName: "member",
+      projectId: "project-id-0",
+      accountEmail: "garcia@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    const token = "invitation-token-0";
+    inviteAccountToProjectUseCaseMock.invite.mockResolvedValueOnce(token);
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(
+      1,
+      givenRequest.accountEmail,
+      {
+        token,
+        projectId: givenRequest.projectId,
+        invitationTemplateLanguage: invitationTemplateLanguageMock,
+      }
+    );
+  });
+
   it("should return HttpStatusCode.badRequest if NotParticipantInProjectError is thrown", async () => {
     expect.assertions(2);
 
@@ -100,7 +142,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -124,7 +165,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -150,7 +190,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -174,7 +213,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -199,7 +237,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -220,7 +257,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -244,7 +280,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -268,7 +303,6 @@ describe("invitAccountToProject controller", () => {
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
-      projectName: "my project",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
     };

@@ -38,6 +38,11 @@ import {
 } from "@modules/project/presentation/controllers";
 import { ILanguage } from "@shared/presentation/languages";
 import {
+  makeInvitationToProjectNotificationServiceComposite,
+  makeKickedOutOfProjectNotificationServiceComposite,
+} from "../notifications";
+import { makeRoleUpdatedNotificationServiceComposite } from "../notifications/RoleUpdatedNotificationServiceCompositeFactory";
+import {
   ControllerValidationFactory,
   controllerValidationFactory,
 } from "../validation";
@@ -125,7 +130,9 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       this.useCaseFactory.makeUpdateParticipantRoleInProjectUseCase(language),
       this.validationFactory.makeUpdateParticipantRoleInProjectControllerValidation(
         language
-      )
+      ),
+      makeRoleUpdatedNotificationServiceComposite(),
+      language
     );
   }
 
@@ -145,7 +152,9 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       this.useCaseFactory.makeKickParticipantFromProjectUseCase(language),
       this.validationFactory.makeKickParticipantFromProjectControllerValidation(
         language
-      )
+      ),
+      makeKickedOutOfProjectNotificationServiceComposite(),
+      language
     );
   }
 
@@ -171,7 +180,9 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       this.useCaseFactory.makeInviteAccountToProjectUseCase(language),
       this.validationFactory.makeInviteAccountToProjectControllerValidation(
         language
-      )
+      ),
+      makeInvitationToProjectNotificationServiceComposite(),
+      language
     );
   }
 

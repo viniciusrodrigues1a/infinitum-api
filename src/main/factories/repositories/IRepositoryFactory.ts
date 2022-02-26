@@ -34,6 +34,7 @@ import {
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
+  IFindProjectNameByProjectIdRepository,
 } from "@modules/project/presentation/interfaces/repositories";
 import {
   IAcceptInvitationTokenRepository,
@@ -47,7 +48,6 @@ import {
   IFindParticipantRoleInProjectRepository,
   IFindProjectIdByIssueGroupIdRepository,
   IFindProjectIdByIssueIdRepository,
-  IFindProjectNameByProjectIdRepository,
   IFindStartDateByProjectIdRepository,
   IHasAccountBeenInvitedToProjectRepository,
   IHasProjectBegunRepository,
@@ -59,6 +59,7 @@ import {
   IUpdateParticipantRoleInProjectRepository,
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
+import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
 
 export interface IRepositoryFactory {
   makeRegisterRepository(language: ILanguage): IRegisterRepository;
@@ -109,4 +110,5 @@ export interface IRepositoryFactory {
   makeReportExpiredIssuesMetricsRepository(): IReportExpiredIssuesMetricsRepository;
   makeReportAllIssuesMetricsRepository(): IReportAllIssuesMetricsRepository;
   makeReportIssuesForTodayMetricsRepository(): IReportIssuesForTodayMetricsRepository;
+  makeFindOneAccountIdByEmailRepository(): IFindOneAccountIdByEmailRepository;
 }

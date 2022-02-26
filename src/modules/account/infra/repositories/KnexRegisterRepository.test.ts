@@ -1,23 +1,32 @@
+import { mock } from "jest-mock-extended";
 import { RegisterRepositoryDTO } from "@modules/account/presentation/DTOs";
 import { ILanguage } from "@shared/presentation/languages";
 import { EmailAlreadyInUseError } from "@modules/account/use-cases/errors";
 import { IDoesAccountExistRepository } from "@modules/account/use-cases/interfaces/repositories";
 import { connection, configuration } from "@shared/infra/database/connection";
-import { mock } from "jest-mock-extended";
+import { ICreateNotificationSettingsRepository } from "@shared/infra/notifications/interfaces";
 import { KnexRegisterRepository } from "./KnexRegisterRepository";
 
 function makeSut() {
   const doesAccountExistRepositoryMock = mock<IDoesAccountExistRepository>();
+  const createNotificationSettingsRepositoryMock =
+    mock<ICreateNotificationSettingsRepository>();
   const languageMock = mock<ILanguage>();
   languageMock.getInvalidEmailErrorMessage.mockReturnValue("Error");
   languageMock.getEmailAlreadyInUseErrorMessage.mockReturnValue("Error");
   const sut = new KnexRegisterRepository(
     doesAccountExistRepositoryMock,
+    createNotificationSettingsRepositoryMock,
     languageMock,
     languageMock
   );
 
-  return { sut, doesAccountExistRepositoryMock, languageMock };
+  return {
+    sut,
+    createNotificationSettingsRepositoryMock,
+    doesAccountExistRepositoryMock,
+    languageMock,
+  };
 }
 
 describe("createAccount repository using Knex", () => {

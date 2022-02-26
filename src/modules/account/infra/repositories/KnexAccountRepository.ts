@@ -16,6 +16,7 @@ import {
   IFindOneAccountRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
+import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
 import { getDataURLFromImageBuffer } from "@shared/infra/repositories/helpers";
 import { pbkdf2 } from "../cryptography";
 
@@ -27,8 +28,20 @@ export class KnexAccountRepository
     IUpdateAccountImageRepository,
     IListLanguagesRepository,
     IFindAccountImageDataURLRepository,
-    IFindAccountLanguageIdRepository
+    IFindAccountLanguageIdRepository,
+    IFindOneAccountIdByEmailRepository
 {
+  async findOneAccountIdByEmail(email: string): Promise<string | undefined> {
+    const account = await connection("account")
+      .select("id")
+      .where({ email })
+      .first();
+
+    if (!account) return undefined;
+
+    return account.id;
+  }
+
   async findAccountLanguage(email: string): Promise<string | null> {
     const { language_id: languageId } = await connection("account")
       .select("language_id")

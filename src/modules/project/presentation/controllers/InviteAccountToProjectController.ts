@@ -15,12 +15,14 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
+import { IInvitationTemplateLanguage } from "../interfaces/languages";
 
 export type InviteAccountToProjectControllerRequest =
   InviteAccountToProjectUseCaseDTO;
@@ -28,7 +30,9 @@ export type InviteAccountToProjectControllerRequest =
 export class InviteAccountToProjectController implements IController {
   constructor(
     private readonly inviteAccountToProjectUseCase: InviteAccountToProjectUseCase,
-    private readonly validation: IValidation
+    private readonly validation: IValidation,
+    private readonly notificationService: INotificationService,
+    private readonly invitationTemplateLanguage: IInvitationTemplateLanguage
   ) {}
 
   async handleRequest(
@@ -40,7 +44,13 @@ export class InviteAccountToProjectController implements IController {
         return badRequestResponse(validationError);
       }
 
-      await this.inviteAccountToProjectUseCase.invite(request);
+      const token = await this.inviteAccountToProjectUseCase.invite(request);
+
+      await this.notificationService.notify(request.accountEmail, {
+        token,
+        projectId: request.projectId,
+        invitationTemplateLanguage: this.invitationTemplateLanguage,
+      });
 
       return noContentResponse();
     } catch (err) {

@@ -1,8 +1,9 @@
+import {
+  SendInvitationEmailJob,
+  SendKickedEmailJob,
+} from "@modules/project/infra/jobs";
 import Bull, { Job } from "bull";
-import { IQueue } from "./IQueue";
-import { IJob } from "./jobs";
-import InvitationEmailJob from "./jobs/InvitationEmailJob";
-import KickedOutOfProjectEmailJob from "./jobs/KickedOutOfProjectEmailJob";
+import { IJob, IQueue } from "./interfaces";
 
 type QueueEntry = {
   bull: Bull.Queue;
@@ -10,14 +11,17 @@ type QueueEntry = {
 };
 
 class Queue implements IQueue {
-  private jobs: IJob[] = [InvitationEmailJob, KickedOutOfProjectEmailJob];
-  queues: { [key: string]: QueueEntry } = {};
-
   constructor() {
     this.queues = {};
 
     this.init();
   }
+
+  public jobs: IJob[] = [
+    new SendInvitationEmailJob(),
+    new SendKickedEmailJob(),
+  ];
+  queues: { [key: string]: QueueEntry } = {};
 
   public add(queueKey: string, jobData: any): void {
     this.queues[queueKey].bull.add(jobData);

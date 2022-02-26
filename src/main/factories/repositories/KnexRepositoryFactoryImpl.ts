@@ -37,6 +37,7 @@ import {
 import { KnexProjectRepository } from "@modules/project/infra/repositories";
 import {
   IFindProjectImageDataURLRepository,
+  IFindProjectNameByProjectIdRepository,
   IUpdateIssueGroupColorRepository,
   IUpdateIssueGroupFinalStatusRepository,
   IUpdateProjectImageRepository,
@@ -53,7 +54,6 @@ import {
   IFindParticipantRoleInProjectRepository,
   IFindProjectIdByIssueGroupIdRepository,
   IFindProjectIdByIssueIdRepository,
-  IFindProjectNameByProjectIdRepository,
   IFindStartDateByProjectIdRepository,
   IHasAccountBeenInvitedToProjectRepository,
   IHasProjectBegunRepository,
@@ -65,10 +65,20 @@ import {
   IUpdateParticipantRoleInProjectRepository,
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
+import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
 import { ILanguage } from "@shared/presentation/languages";
+import { INotificationRepositoryFactory } from "./INotificationRepositoryFactory";
 import { IRepositoryFactory } from "./IRepositoryFactory";
+import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationRepositoryFactoryImpl";
 
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
+  private notificationRepository: INotificationRepositoryFactory =
+    mongoDBNotificationRepositoryFactoryImpl;
+
+  makeFindOneAccountIdByEmailRepository(): IFindOneAccountIdByEmailRepository {
+    return this.makeAccountRepository();
+  }
+
   makeFindAccountLanguageIdRepository(): IFindAccountLanguageIdRepository {
     return this.makeAccountRepository();
   }
@@ -263,6 +273,7 @@ class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   makeRegisterRepository(language: ILanguage): IRegisterRepository {
     return new KnexRegisterRepository(
       this.makeDoesAccountExistRepository(),
+      this.notificationRepository.makeCreateNotificationSettingsRepository(),
       language,
       language
     );

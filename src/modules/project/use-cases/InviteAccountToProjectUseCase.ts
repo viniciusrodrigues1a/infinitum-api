@@ -16,7 +16,7 @@ import {
   IInvalidRoleNameErrorLanguage,
   IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
 } from "../entities/interfaces/languages";
-import { Role } from "../entities/value-objects";
+import { InvitationToken, Role } from "../entities/value-objects";
 import { InviteAccountToProjectUseCaseDTO } from "./DTOs";
 import {
   AccountAlreadyParticipatesInProjectError,
@@ -31,21 +31,17 @@ import {
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
   IFindParticipantRoleInProjectRepository,
-  IFindProjectNameByProjectIdRepository,
   IHasAccountBeenInvitedToProjectRepository,
 } from "./interfaces/repositories";
-import { ISendInvitationToProjectEmailService } from "./interfaces/services";
 
 export class InviteAccountToProjectUseCase {
   constructor(
     private readonly createInvitationTokenRepository: ICreateInvitationTokenRepository,
-    private readonly sendInvitationToProjectEmailService: ISendInvitationToProjectEmailService,
     private readonly doesProjectExistRepository: IDoesProjectExistRepository,
     private readonly doesAccountExistRepository: IDoesAccountExistRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly hasAccountBeenInvitedToProjectRepository: IHasAccountBeenInvitedToProjectRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
-    private readonly findProjectNameByProjectIdRepository: IFindProjectNameByProjectIdRepository,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly ownerCantBeUsedAsARoleForAnInvitationErrorLanguage: IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
@@ -61,7 +57,7 @@ export class InviteAccountToProjectUseCase {
     accountEmail,
     roleName,
     accountEmailMakingRequest,
-  }: InviteAccountToProjectUseCaseDTO): Promise<void> {
+  }: InviteAccountToProjectUseCaseDTO): Promise<InvitationToken> {
     const doesProjectExist =
       await this.doesProjectExistRepository.doesProjectExist(projectId);
     if (!doesProjectExist) {
@@ -137,21 +133,13 @@ export class InviteAccountToProjectUseCase {
       this.ownerCantBeUsedAsARoleForAnInvitationErrorLanguage
     );
 
-    const projectName =
-      await this.findProjectNameByProjectIdRepository.findProjectNameByProjectId(
-        projectId
-      );
-
     await this.createInvitationTokenRepository.createInvitationToken({
       accountEmail,
       projectId,
       roleName,
       token: invitation.token,
     });
-    await this.sendInvitationToProjectEmailService.sendInvitationEmail({
-      token: invitation.token,
-      projectName,
-      email: accountEmail,
-    });
+
+    return invitation.token;
   }
 }

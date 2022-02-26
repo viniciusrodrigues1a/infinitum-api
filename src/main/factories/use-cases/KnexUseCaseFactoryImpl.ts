@@ -24,8 +24,6 @@ import {
 import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase";
 import { AcceptInvitationToProjectUseCase } from "@modules/project/use-cases/AcceptInvitationToProjectUseCase";
 import { IUseCaseFactory } from "./IUseCaseFactory";
-import NodemailerSendInvitationToProjectEmailServiceFactory from "../services/NodemailerSendInvitationToProjectEmailServiceFactory";
-import NodemailerSendKickedOutOfProjectEmailServiceFactory from "../services/NodemailerSendKickedOutOfProjectEmailServiceFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
@@ -91,7 +89,6 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
       this.repositoryFactory.makeDoesProjectExistRepository(),
       this.repositoryFactory.makeDoesParticipantExistRepository(),
       this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
-      NodemailerSendKickedOutOfProjectEmailServiceFactory.make(),
       language,
       language,
       language,
@@ -132,13 +129,11 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   ): InviteAccountToProjectUseCase {
     return new InviteAccountToProjectUseCase(
       this.repositoryFactory.makeCreateInvitationTokenRepository(),
-      NodemailerSendInvitationToProjectEmailServiceFactory.make(),
       this.repositoryFactory.makeDoesProjectExistRepository(),
       this.repositoryFactory.makeDoesAccountExistRepository(),
       this.repositoryFactory.makeDoesParticipantExistRepository(),
       this.repositoryFactory.makeHasAccountBeenInvitedToProjectRepository(),
       this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
-      this.repositoryFactory.makeFindProjectNameByProjectIdRepository(),
       language,
       language,
       language,

@@ -4,6 +4,38 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getRoleUpdatedText(projectName: string, roleName: string): string {
+    return `Your role in project ${projectName} has been updated to ${roleName}`;
+  }
+
+  getRoleUpdatedEmailSubject(): string {
+    throw new Error("Method not implemented.");
+  }
+
+  getKickedEmailSubject(): string {
+    return "Infinitum - Project expulsion notice";
+  }
+
+  getKickedText(projectName: string): string {
+    return `You have been removed from the project ${projectName} and won't be able to acess it on the platform anymore.`;
+  }
+
+  getInvitationEmailSubject(): string {
+    return "Infinitum - Invitation to project";
+  }
+
+  getInvitationText(projectName: string): string {
+    return `You have been invited to participate in the project: ${projectName}`;
+  }
+
+  getAcceptInvitationButtonText(): string {
+    return "Accept invitation";
+  }
+
+  getDeclineInvitationButtonText(): string {
+    return "Decline invitation";
+  }
+
   getTodoIssueGroupTitle(): string {
     return "Todo";
   }

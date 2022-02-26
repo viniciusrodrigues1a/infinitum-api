@@ -3,4 +3,4 @@ WORKDIR /usr/app
 COPY . .
 RUN yarn
 EXPOSE 3333
-CMD ["yarn", "run:dev"]
+ENTRYPOINT ["./docker/app/entrypoint.sh"]

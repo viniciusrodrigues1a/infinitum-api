@@ -15,17 +15,21 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
+import { IRoleUpdatedTemplateLanguage } from "../interfaces/languages";
 
 export class UpdateParticipantRoleInProjectController implements IController {
   constructor(
     private readonly updateParticipantRoleInProjectUseCase: UpdateParticipantRoleInProjectUseCase,
-    private readonly validation: IValidation
+    private readonly validation: IValidation,
+    private readonly notificationService: INotificationService,
+    private readonly roleUpdatedTemplateLanguage: IRoleUpdatedTemplateLanguage
   ) {}
 
   async handleRequest(
@@ -40,6 +44,12 @@ export class UpdateParticipantRoleInProjectController implements IController {
       await this.updateParticipantRoleInProjectUseCase.updateParticipantRole(
         request
       );
+
+      await this.notificationService.notify(request.accountEmail, {
+        projectId: request.projectId,
+        roleName: request.roleName,
+        roleUpdatedTemplateLanguage: this.roleUpdatedTemplateLanguage,
+      });
 
       return noContentResponse();
     } catch (err) {
