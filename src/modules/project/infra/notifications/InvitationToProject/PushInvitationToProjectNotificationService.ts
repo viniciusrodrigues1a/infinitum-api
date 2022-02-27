@@ -29,8 +29,8 @@ export class PushInvitationToProjectNotificationService
     const shouldNotify =
       await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
         email,
-        "roleUpdated",
-        "email"
+        "invitation",
+        "push"
       );
     if (!shouldNotify) return;
 
