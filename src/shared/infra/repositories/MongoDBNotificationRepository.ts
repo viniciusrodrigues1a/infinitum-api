@@ -50,6 +50,11 @@ export class MongoDBNotificationRepository
   }
 
   async createNotification(notification: Notification): Promise<void> {
-    await mongoHelper.getCollection("notifications").insertOne(notification);
+    const n = notification;
+    if (!n.read) {
+      n.read = false;
+    }
+
+    await mongoHelper.getCollection("notifications").insertOne(n);
   }
 }
