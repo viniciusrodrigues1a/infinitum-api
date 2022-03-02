@@ -38,7 +38,10 @@ import {
   UpdateProjectController,
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
-import { MarkNotificationAsReadController } from "@shared/presentation/controllers";
+import {
+  MarkAllNotificationsAsReadController,
+  MarkNotificationAsReadController,
+} from "@shared/presentation/controllers";
 import { ILanguage } from "@shared/presentation/languages";
 import {
   makeInvitationToProjectNotificationServiceComposite,
@@ -58,6 +61,12 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeMarkAllNotificationsAsReadController(): MarkAllNotificationsAsReadController {
+    return new MarkAllNotificationsAsReadController(
+      this.notificationRepositoryFactory.makeMarkAllAsReadNotificationRepository()
+    );
+  }
 
   makeMarkNotificationAsReadController(
     language: ILanguage

@@ -6,6 +6,7 @@ import {
 import {
   IDoesNotificationBelongToAccountEmailRepository,
   IFindOneNotificationRepository,
+  IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
 } from "@shared/presentation/interfaces/repositories";
 import { MongoDBNotificationRepository } from "@shared/infra/repositories";
@@ -14,6 +15,10 @@ import { INotificationRepositoryFactory } from "./INotificationRepositoryFactory
 class MongoDBNotificationRepositoryFactoryImpl
   implements INotificationRepositoryFactory
 {
+  makeMarkAllAsReadNotificationRepository(): IMarkAllAsReadNotificationRepository {
+    return this.makeNotificationRepository();
+  }
+
   makeDoesNotificationBelongToAccountEmail(): IDoesNotificationBelongToAccountEmailRepository {
     return this.makeNotificationRepository();
   }

@@ -6,6 +6,7 @@ import {
 import {
   IDoesNotificationBelongToAccountEmailRepository,
   IFindOneNotificationRepository,
+  IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
 } from "@shared/presentation/interfaces/repositories";
 
@@ -16,4 +17,5 @@ export interface INotificationRepositoryFactory {
   makeMarkAsReadNotificationRepository(): IMarkAsReadNotificationRepository;
   makeFindOneNotificationRepository(): IFindOneNotificationRepository;
   makeDoesNotificationBelongToAccountEmail(): IDoesNotificationBelongToAccountEmailRepository;
+  makeMarkAllAsReadNotificationRepository(): IMarkAllAsReadNotificationRepository;
 }

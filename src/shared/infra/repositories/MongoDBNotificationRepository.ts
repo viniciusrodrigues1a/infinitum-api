@@ -2,6 +2,7 @@ import { ObjectId } from "mongodb";
 import {
   IDoesNotificationBelongToAccountEmailRepository,
   IFindOneNotificationRepository,
+  IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
 } from "@shared/presentation/interfaces/repositories";
 import { connection } from "../database/connection";
@@ -20,8 +21,21 @@ export class MongoDBNotificationRepository
     IShouldAccountReceiveNotificationRepository,
     IMarkAsReadNotificationRepository,
     IFindOneNotificationRepository,
-    IDoesNotificationBelongToAccountEmailRepository
+    IDoesNotificationBelongToAccountEmailRepository,
+    IMarkAllAsReadNotificationRepository
 {
+  async markAllAsRead(email: string): Promise<void> {
+    const account = await connection("account")
+      .select("id")
+      .where({ email })
+      .first();
+    if (!account) return;
+
+    await mongoHelper
+      .getCollection("notifications")
+      .updateMany({ user_id: account.id }, { $set: { read: true } });
+  }
+
   async doesNotificationBelongToAccountEmail(
     notificationId: string,
     email: string

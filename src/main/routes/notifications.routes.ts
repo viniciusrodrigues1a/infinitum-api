@@ -20,3 +20,10 @@ notificationsRoutes.patch(
     knexControllerFactoryImpl.makeMarkNotificationAsReadController(language)
   )
 );
+
+notificationsRoutes.patch(
+  "/",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeMarkAllNotificationsAsReadController()
+  )
+);

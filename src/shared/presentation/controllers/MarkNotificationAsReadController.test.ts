@@ -130,4 +130,42 @@ describe("mark notification as read controller", () => {
 
     expect(response.statusCode).toBe(HttpStatusCodes.unauthorized);
   });
+
+  it("should return HttpStatusCodes.serverError if unhandled error is thrown", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      markAsReadNotificationRepositoryMock,
+      findOneNotificationRepositoryMock,
+      doesNotificationBelongToAccountEmailRepositoryMock,
+    } = makeSut();
+    const givenRequest = {
+      accountEmailMakingRequest: "jorge@email.com",
+      notificationId: "notification-id-0",
+    };
+    const notification: Notification = {
+      user_id: "user-id-0",
+      type: "INVITATION",
+      message: "msg",
+      metadata: {},
+      read: false,
+      id: givenRequest.notificationId,
+    };
+    findOneNotificationRepositoryMock.findOneNotification.mockResolvedValueOnce(
+      notification
+    );
+    doesNotificationBelongToAccountEmailRepositoryMock.doesNotificationBelongToAccountEmail.mockResolvedValueOnce(
+      true
+    );
+    markAsReadNotificationRepositoryMock.markAsRead.mockImplementationOnce(
+      () => {
+        throw new Error("unhandled error thrown");
+      }
+    );
+
+    const response = await sut.handleRequest(givenRequest);
+
+    expect(response.statusCode).toBe(HttpStatusCodes.serverError);
+  });
 });
