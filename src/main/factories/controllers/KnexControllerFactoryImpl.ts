@@ -65,7 +65,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
     return new MarkNotificationAsReadController(
       this.notificationRepositoryFactory.makeMarkAsReadNotificationRepository(),
       this.notificationRepositoryFactory.makeFindOneNotificationRepository(),
-      this.repositoryFactory.makeFindOneAccountIdByEmailRepository(),
+      this.notificationRepositoryFactory.makeDoesNotificationBelongToAccountEmail(),
       language,
       language
     );

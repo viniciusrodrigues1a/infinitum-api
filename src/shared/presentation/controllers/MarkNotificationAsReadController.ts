@@ -1,8 +1,3 @@
-import {
-  IFindOneAccountIdByEmailRepository,
-  IFindOneNotificationRepository,
-  IMarkAsReadNotificationRepository,
-} from "@shared/infra/notifications/interfaces";
 import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
 import { NotificationNotFoundError } from "../errors";
 import { NotificationDoesntBelongToYouError } from "../errors/NotificationDoesntBelongToYou";
@@ -16,6 +11,11 @@ import { HttpResponse } from "../http/HttpResponse";
 import { IController } from "../interfaces/controllers";
 import { INotificationNotFoundErrorLanguage } from "../interfaces/languages";
 import { INotificationDoesntBelongToYouErrorLanguage } from "../interfaces/languages/INotificationDoesntBelongToYouErrorLanguage";
+import {
+  IDoesNotificationBelongToAccountEmailRepository,
+  IFindOneNotificationRepository,
+  IMarkAsReadNotificationRepository,
+} from "../interfaces/repositories";
 
 type MarkNotificationAsReadControllerRequest = AccountMakingRequestDTO & {
   notificationId: string;
@@ -25,7 +25,7 @@ export class MarkNotificationAsReadController implements IController {
   constructor(
     private readonly markAsReadNotificationRepository: IMarkAsReadNotificationRepository,
     private readonly findOneNotificationRepository: IFindOneNotificationRepository,
-    private readonly findOneAccountIdByEmailRepository: IFindOneAccountIdByEmailRepository,
+    private readonly doesNotificationBelongToAccountEmailRepository: IDoesNotificationBelongToAccountEmailRepository,
     private readonly notificationNotFoundErrorLanguage: INotificationNotFoundErrorLanguage,
     private readonly notificationDoesntBelongToYouErrorLanguage: INotificationDoesntBelongToYouErrorLanguage
   ) {}
@@ -35,11 +35,6 @@ export class MarkNotificationAsReadController implements IController {
     notificationId,
   }: MarkNotificationAsReadControllerRequest): Promise<HttpResponse> {
     try {
-      const accountId =
-        await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
-          accountEmailMakingRequest
-        );
-
       const notification =
         await this.findOneNotificationRepository.findOneNotification(
           notificationId
@@ -49,7 +44,12 @@ export class MarkNotificationAsReadController implements IController {
           new NotificationNotFoundError(this.notificationNotFoundErrorLanguage)
         );
 
-      if (notification.user_id !== accountId) {
+      const doesNotificationBelongToAccount =
+        await this.doesNotificationBelongToAccountEmailRepository.doesNotificationBelongToAccountEmail(
+          notificationId,
+          accountEmailMakingRequest
+        );
+      if (!doesNotificationBelongToAccount) {
         return unauthorizedResponse(
           new NotificationDoesntBelongToYouError(
             this.notificationDoesntBelongToYouErrorLanguage

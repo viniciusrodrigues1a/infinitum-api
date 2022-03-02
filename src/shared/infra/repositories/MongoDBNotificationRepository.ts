@@ -1,12 +1,15 @@
 import { ObjectId } from "mongodb";
+import {
+  IDoesNotificationBelongToAccountEmailRepository,
+  IFindOneNotificationRepository,
+  IMarkAsReadNotificationRepository,
+} from "@shared/presentation/interfaces/repositories";
 import { connection } from "../database/connection";
 import { mongoHelper } from "../mongodb/connection";
 import { Notification, NotificationSettings } from "../mongodb/models";
 import {
   ICreateNotificationRepository,
   ICreateNotificationSettingsRepository,
-  IFindOneNotificationRepository,
-  IMarkAsReadNotificationRepository,
   IShouldAccountReceiveNotificationRepository,
 } from "../notifications/interfaces";
 
@@ -16,8 +19,25 @@ export class MongoDBNotificationRepository
     ICreateNotificationSettingsRepository,
     IShouldAccountReceiveNotificationRepository,
     IMarkAsReadNotificationRepository,
-    IFindOneNotificationRepository
+    IFindOneNotificationRepository,
+    IDoesNotificationBelongToAccountEmailRepository
 {
+  async doesNotificationBelongToAccountEmail(
+    notificationId: string,
+    email: string
+  ): Promise<boolean> {
+    const notification = await this.findOneNotification(notificationId);
+    if (!notification) return false;
+
+    const account = await connection("account")
+      .select("id")
+      .where({ email })
+      .first();
+    if (!account) return false;
+
+    return notification.user_id === account.id;
+  }
+
   async findOneNotification(
     notificationId: string
   ): Promise<Notification | undefined> {

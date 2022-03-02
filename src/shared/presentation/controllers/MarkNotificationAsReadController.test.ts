@@ -1,13 +1,13 @@
 import { Notification } from "@shared/infra/mongodb/models";
-import {
-  IFindOneAccountIdByEmailRepository,
-  IFindOneNotificationRepository,
-  IMarkAsReadNotificationRepository,
-} from "@shared/infra/notifications/interfaces";
 import { mock } from "jest-mock-extended";
 import { HttpStatusCodes } from "../http/HttpStatusCodes";
 import { INotificationNotFoundErrorLanguage } from "../interfaces/languages";
 import { INotificationDoesntBelongToYouErrorLanguage } from "../interfaces/languages/INotificationDoesntBelongToYouErrorLanguage";
+import {
+  IDoesNotificationBelongToAccountEmailRepository,
+  IFindOneNotificationRepository,
+  IMarkAsReadNotificationRepository,
+} from "../interfaces/repositories";
 import { MarkNotificationAsReadController } from "./MarkNotificationAsReadController";
 
 function makeSut() {
@@ -15,8 +15,8 @@ function makeSut() {
     mock<IMarkAsReadNotificationRepository>();
   const findOneNotificationRepositoryMock =
     mock<IFindOneNotificationRepository>();
-  const findOneAccountIdByEmailRepositoryMock =
-    mock<IFindOneAccountIdByEmailRepository>();
+  const doesNotificationBelongToAccountEmailRepositoryMock =
+    mock<IDoesNotificationBelongToAccountEmailRepository>();
   const notificationNotFoundErrorLanguageMock =
     mock<INotificationNotFoundErrorLanguage>();
   const notificationDoesntBelongToYouErrorLanguageMock =
@@ -25,7 +25,7 @@ function makeSut() {
   const sut = new MarkNotificationAsReadController(
     markAsReadNotificationRepositoryMock,
     findOneNotificationRepositoryMock,
-    findOneAccountIdByEmailRepositoryMock,
+    doesNotificationBelongToAccountEmailRepositoryMock,
     notificationNotFoundErrorLanguageMock,
     notificationDoesntBelongToYouErrorLanguageMock
   );
@@ -34,7 +34,7 @@ function makeSut() {
     sut,
     markAsReadNotificationRepositoryMock,
     findOneNotificationRepositoryMock,
-    findOneAccountIdByEmailRepositoryMock,
+    doesNotificationBelongToAccountEmailRepositoryMock,
   };
 }
 
@@ -45,19 +45,15 @@ describe("mark notification as read controller", () => {
     const {
       sut,
       markAsReadNotificationRepositoryMock,
-      findOneAccountIdByEmailRepositoryMock,
+      doesNotificationBelongToAccountEmailRepositoryMock,
       findOneNotificationRepositoryMock,
     } = makeSut();
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       notificationId: "notification-id-0",
     };
-    const accountId = "user-id-0";
-    findOneAccountIdByEmailRepositoryMock.findOneAccountIdByEmail.mockResolvedValueOnce(
-      accountId
-    );
     const notification: Notification = {
-      user_id: accountId,
+      user_id: "user-id-0",
       type: "INVITATION",
       message: "msg",
       metadata: {},
@@ -66,6 +62,9 @@ describe("mark notification as read controller", () => {
     };
     findOneNotificationRepositoryMock.findOneNotification.mockResolvedValueOnce(
       notification
+    );
+    doesNotificationBelongToAccountEmailRepositoryMock.doesNotificationBelongToAccountEmail.mockResolvedValueOnce(
+      true
     );
 
     const response = await sut.handleRequest(givenRequest);
@@ -81,18 +80,18 @@ describe("mark notification as read controller", () => {
 
     const {
       sut,
-      findOneAccountIdByEmailRepositoryMock,
+      doesNotificationBelongToAccountEmailRepositoryMock,
       findOneNotificationRepositoryMock,
     } = makeSut();
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       notificationId: "notification-id-0",
     };
-    findOneAccountIdByEmailRepositoryMock.findOneAccountIdByEmail(
-      "account-id-0"
-    );
     findOneNotificationRepositoryMock.findOneNotification.mockResolvedValueOnce(
       undefined
+    );
+    doesNotificationBelongToAccountEmailRepositoryMock.doesNotificationBelongToAccountEmail.mockResolvedValueOnce(
+      true
     );
 
     const response = await sut.handleRequest(givenRequest);
@@ -105,16 +104,13 @@ describe("mark notification as read controller", () => {
 
     const {
       sut,
-      findOneAccountIdByEmailRepositoryMock,
+      doesNotificationBelongToAccountEmailRepositoryMock,
       findOneNotificationRepositoryMock,
     } = makeSut();
     const givenRequest = {
       accountEmailMakingRequest: "jorge@email.com",
       notificationId: "notification-id-0",
     };
-    findOneAccountIdByEmailRepositoryMock.findOneAccountIdByEmail.mockResolvedValueOnce(
-      "user-id-0"
-    );
     const notification: Notification = {
       user_id: "user-id-0912383120",
       type: "INVITATION",
@@ -125,6 +121,9 @@ describe("mark notification as read controller", () => {
     };
     findOneNotificationRepositoryMock.findOneNotification.mockResolvedValueOnce(
       notification
+    );
+    doesNotificationBelongToAccountEmailRepositoryMock.doesNotificationBelongToAccountEmail.mockResolvedValueOnce(
+      false
     );
 
     const response = await sut.handleRequest(givenRequest);
