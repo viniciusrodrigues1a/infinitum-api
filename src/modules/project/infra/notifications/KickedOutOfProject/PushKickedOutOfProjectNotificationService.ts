@@ -49,7 +49,7 @@ export class PushKickedOutOfProjectNotificationService
     const type = "KICKED";
     const message = lang.getKickedText(projectName);
 
-    await this.createNotificationRepository.createNotification({
+    const id = await this.createNotificationRepository.createNotification({
       user_id: accountId,
       message,
       type,
@@ -57,6 +57,7 @@ export class PushKickedOutOfProjectNotificationService
     });
 
     this.socketServerEmitter.emitToUser(email, "newNotification", {
+      id,
       message,
       type,
       metadata: {},

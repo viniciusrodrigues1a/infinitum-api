@@ -50,7 +50,7 @@ export class PushRoleUpdatedNotificationService
     const type = "ROLE_UPDATED";
     const message = lang.getRoleUpdatedText(projectName, roleName);
 
-    await this.createNotificationRepository.createNotification({
+    const id = await this.createNotificationRepository.createNotification({
       user_id: accountId,
       message,
       type,
@@ -58,6 +58,7 @@ export class PushRoleUpdatedNotificationService
     });
 
     this.socketServerEmitter.emitToUser(email, "newNotification", {
+      id,
       message,
       type,
       metadata: {},

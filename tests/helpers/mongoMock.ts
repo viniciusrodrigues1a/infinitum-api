@@ -8,6 +8,7 @@ export const mongoMock = {
         return {
           insertOne() {},
           findOne() {},
+          updateOne() {},
         };
       },
     };

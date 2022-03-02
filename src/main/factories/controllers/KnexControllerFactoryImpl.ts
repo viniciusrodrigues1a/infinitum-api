@@ -1,6 +1,8 @@
 import {
+  INotificationRepositoryFactory,
   IRepositoryFactory,
   knexRepositoryFactoryImpl,
+  mongoDBNotificationRepositoryFactoryImpl,
 } from "@main/factories/repositories";
 import {
   IUseCaseFactory,
@@ -36,6 +38,7 @@ import {
   UpdateProjectController,
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
+import { MarkNotificationAsReadController } from "@shared/presentation/controllers";
 import { ILanguage } from "@shared/presentation/languages";
 import {
   makeInvitationToProjectNotificationServiceComposite,
@@ -50,9 +53,23 @@ import { IControllerFactory } from "./IControllerFactory";
 
 class KnexControllerFactoryImpl implements IControllerFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+  private notificationRepositoryFactory: INotificationRepositoryFactory =
+    mongoDBNotificationRepositoryFactoryImpl;
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeMarkNotificationAsReadController(
+    language: ILanguage
+  ): MarkNotificationAsReadController {
+    return new MarkNotificationAsReadController(
+      this.notificationRepositoryFactory.makeMarkAsReadNotificationRepository(),
+      this.notificationRepositoryFactory.makeFindOneNotificationRepository(),
+      this.repositoryFactory.makeFindOneAccountIdByEmailRepository(),
+      language,
+      language
+    );
+  }
 
   makeListLanguagesController(): ListLanguagesController {
     return new ListLanguagesController(

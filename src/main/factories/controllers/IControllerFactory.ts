@@ -27,6 +27,7 @@ import {
   UpdateProjectController,
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
+import { MarkNotificationAsReadController } from "@shared/presentation/controllers";
 import { ILanguage } from "@shared/presentation/languages";
 
 export interface IControllerFactory {
@@ -67,4 +68,7 @@ export interface IControllerFactory {
     language: ILanguage
   ): UpdateIssueGroupFinalStatusController;
   makeUpdateIssueGroupColorController(): UpdateIssueGroupColorController;
+  makeMarkNotificationAsReadController(
+    language: ILanguage
+  ): MarkNotificationAsReadController;
 }

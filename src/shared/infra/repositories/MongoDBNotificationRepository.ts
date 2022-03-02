@@ -1,9 +1,12 @@
+import { ObjectId } from "mongodb";
 import { connection } from "../database/connection";
 import { mongoHelper } from "../mongodb/connection";
 import { Notification, NotificationSettings } from "../mongodb/models";
 import {
   ICreateNotificationRepository,
   ICreateNotificationSettingsRepository,
+  IFindOneNotificationRepository,
+  IMarkAsReadNotificationRepository,
   IShouldAccountReceiveNotificationRepository,
 } from "../notifications/interfaces";
 
@@ -11,8 +14,31 @@ export class MongoDBNotificationRepository
   implements
     ICreateNotificationRepository,
     ICreateNotificationSettingsRepository,
-    IShouldAccountReceiveNotificationRepository
+    IShouldAccountReceiveNotificationRepository,
+    IMarkAsReadNotificationRepository,
+    IFindOneNotificationRepository
 {
+  async findOneNotification(
+    notificationId: string
+  ): Promise<Notification | undefined> {
+    const id = new ObjectId(notificationId);
+
+    const notification = await mongoHelper
+      .getCollection("notifications")
+      .findOne({ _id: id });
+
+    if (!notification) return undefined;
+    return notification as unknown as Notification;
+  }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    const id = new ObjectId(notificationId);
+
+    await mongoHelper
+      .getCollection("notifications")
+      .updateOne({ _id: id }, { $set: { read: true } });
+  }
+
   async shouldAccountReceiveNotification(
     email: string,
     notificationKey: string,
@@ -49,12 +75,16 @@ export class MongoDBNotificationRepository
       .insertOne(notificationSettings);
   }
 
-  async createNotification(notification: Notification): Promise<void> {
+  async createNotification(notification: Notification): Promise<string> {
     const n = notification;
     if (!n.read) {
       n.read = false;
     }
 
-    await mongoHelper.getCollection("notifications").insertOne(n);
+    const insertedNotification = await mongoHelper
+      .getCollection("notifications")
+      .insertOne(n);
+
+    return insertedNotification.insertedId.toString();
   }
 }

@@ -10,6 +10,7 @@ import {
   issueGroupsRoutes,
   issuesRoutes,
   languagesRoutes,
+  notificationsRoutes,
   projectsRoutes,
 } from "@main/routes";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
@@ -52,6 +53,7 @@ export class Server {
     this.app.use("/issues", issuesRoutes);
     this.app.use("/invitations", invitationsRoutes);
     this.app.use("/languages", languagesRoutes);
+    this.app.use("/notifications", notificationsRoutes);
   }
 
   public start(): void {

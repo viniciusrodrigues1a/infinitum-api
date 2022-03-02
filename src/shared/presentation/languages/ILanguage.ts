@@ -45,8 +45,10 @@ import {
   IInvalidParamErrorLanguage,
   IMissingParamsErrorLanguage,
   INoParamProvidedErrorLanguage,
+  INotificationNotFoundErrorLanguage,
   IParamsLanguage,
 } from "../interfaces/languages";
+import { INotificationDoesntBelongToYouErrorLanguage } from "../interfaces/languages/INotificationDoesntBelongToYouErrorLanguage";
 
 export interface ILanguage
   extends IInvalidEmailErrorLanguage,
@@ -83,4 +85,6 @@ export interface ILanguage
     ICompletedIssueGroupTitleLanguage,
     IInvitationTemplateLanguage,
     IKickedTemplateLanguage,
-    IRoleUpdatedTemplateLanguage {}
+    IRoleUpdatedTemplateLanguage,
+    INotificationNotFoundErrorLanguage,
+    INotificationDoesntBelongToYouErrorLanguage {}

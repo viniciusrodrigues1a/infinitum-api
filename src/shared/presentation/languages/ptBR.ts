@@ -4,6 +4,14 @@ import { ILanguage } from "./ILanguage";
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getNotificationNotFoundErrorMessage(): string {
+    return "Notificação não encontrada";
+  }
+
+  getNotificationDoesntBelongToYouErrorMessage(): string {
+    return "Notificação não pertence à você";
+  }
+
   getRoleUpdatedText(projectName: string, roleName: string): string {
     return `Sua função no projeto ${projectName} foi atualizada para ${roleName}`;
   }

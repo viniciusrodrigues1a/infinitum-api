@@ -54,7 +54,7 @@ export class PushInvitationToProjectNotificationService
       declineInvitationLink: `http://localhost:3000/revoke/${token}`,
     };
 
-    await this.createNotificationRepository.createNotification({
+    const id = await this.createNotificationRepository.createNotification({
       user_id: accountId,
       message,
       type,
@@ -62,6 +62,7 @@ export class PushInvitationToProjectNotificationService
     });
 
     this.socketServerEmitter.emitToUser(email, "newNotification", {
+      id,
       message,
       type,
       metadata,

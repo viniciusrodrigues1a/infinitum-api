@@ -4,6 +4,14 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getNotificationNotFoundErrorMessage(): string {
+    return "Notification not found";
+  }
+
+  getNotificationDoesntBelongToYouErrorMessage(): string {
+    return "Notification doesn't belong to you";
+  }
+
   getRoleUpdatedText(projectName: string, roleName: string): string {
     return `Your role in project ${projectName} has been updated to ${roleName}`;
   }
