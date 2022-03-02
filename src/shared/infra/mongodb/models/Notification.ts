@@ -5,4 +5,5 @@ export type Notification = {
   type: "INVITATION" | "KICKED" | "ROLE_UPDATED";
   metadata: Record<any, any>;
   id?: string;
+  createdAt?: number;
 };

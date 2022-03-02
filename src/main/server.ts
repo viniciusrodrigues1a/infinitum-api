@@ -14,6 +14,7 @@ import {
   projectsRoutes,
 } from "@main/routes";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
+import { mongoDBNotificationRepositoryFactoryImpl } from "./factories/repositories";
 
 dotenv.config();
 
@@ -71,8 +72,14 @@ export class Server {
 
   private startSocketServer(): void {
     this.socketServer.on("connection", (socket) => {
-      socket.on("newUser", (email) => {
+      socket.on("newUser", async (email) => {
         this.addNewUser(email, socket.id);
+
+        const notifications = await mongoDBNotificationRepositoryFactoryImpl
+          .makeFindAllNotificationsRepository()
+          .findAllNotifications(email);
+
+        socket.emit("loadNotifications", notifications);
       });
 
       socket.on("disconnect", () => {

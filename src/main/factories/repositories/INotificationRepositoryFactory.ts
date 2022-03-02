@@ -1,6 +1,7 @@
 import {
   ICreateNotificationRepository,
   ICreateNotificationSettingsRepository,
+  IFindAllNotificationsRepository,
   IShouldAccountReceiveNotificationRepository,
 } from "@shared/infra/notifications/interfaces";
 import {
@@ -18,4 +19,5 @@ export interface INotificationRepositoryFactory {
   makeFindOneNotificationRepository(): IFindOneNotificationRepository;
   makeDoesNotificationBelongToAccountEmail(): IDoesNotificationBelongToAccountEmailRepository;
   makeMarkAllAsReadNotificationRepository(): IMarkAllAsReadNotificationRepository;
+  makeFindAllNotificationsRepository(): IFindAllNotificationsRepository;
 }

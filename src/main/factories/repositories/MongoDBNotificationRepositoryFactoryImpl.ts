@@ -1,6 +1,7 @@
 import {
   ICreateNotificationRepository,
   ICreateNotificationSettingsRepository,
+  IFindAllNotificationsRepository,
   IShouldAccountReceiveNotificationRepository,
 } from "@shared/infra/notifications/interfaces";
 import {
@@ -15,6 +16,10 @@ import { INotificationRepositoryFactory } from "./INotificationRepositoryFactory
 class MongoDBNotificationRepositoryFactoryImpl
   implements INotificationRepositoryFactory
 {
+  makeFindAllNotificationsRepository(): IFindAllNotificationsRepository {
+    return this.makeNotificationRepository();
+  }
+
   makeMarkAllAsReadNotificationRepository(): IMarkAllAsReadNotificationRepository {
     return this.makeNotificationRepository();
   }

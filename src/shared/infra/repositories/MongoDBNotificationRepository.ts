@@ -11,6 +11,7 @@ import { Notification, NotificationSettings } from "../mongodb/models";
 import {
   ICreateNotificationRepository,
   ICreateNotificationSettingsRepository,
+  IFindAllNotificationsRepository,
   IShouldAccountReceiveNotificationRepository,
 } from "../notifications/interfaces";
 
@@ -22,8 +23,25 @@ export class MongoDBNotificationRepository
     IMarkAsReadNotificationRepository,
     IFindOneNotificationRepository,
     IDoesNotificationBelongToAccountEmailRepository,
-    IMarkAllAsReadNotificationRepository
+    IMarkAllAsReadNotificationRepository,
+    IFindAllNotificationsRepository
 {
+  async findAllNotifications(email: string): Promise<Notification[]> {
+    const account = await connection("account")
+      .select("id")
+      .where({ email })
+      .first();
+    if (!account) return [];
+
+    const notifications = await mongoHelper
+      .getCollection("notifications")
+      .find({ user_id: account.id })
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    return notifications as unknown as Notification[];
+  }
+
   async markAllAsRead(email: string): Promise<void> {
     const account = await connection("account")
       .select("id")
@@ -111,6 +129,7 @@ export class MongoDBNotificationRepository
 
   async createNotification(notification: Notification): Promise<string> {
     const n = notification;
+    n.createdAt = new Date().getTime();
     if (!n.read) {
       n.read = false;
     }
