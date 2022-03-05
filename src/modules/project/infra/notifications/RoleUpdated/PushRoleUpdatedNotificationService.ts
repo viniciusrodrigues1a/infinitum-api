@@ -7,6 +7,7 @@ import {
   IShouldAccountReceiveNotificationRepository,
   ISocketServerEmitter,
 } from "@shared/infra/notifications/interfaces";
+import { Notification } from "@shared/infra/mongodb/models";
 
 type Payload = {
   projectId: string;
@@ -50,18 +51,22 @@ export class PushRoleUpdatedNotificationService
     const type = "ROLE_UPDATED";
     const message = lang.getRoleUpdatedText(projectName, roleName);
 
+    const createdAt = new Date().getTime();
+    const notification = {
+      message,
+      type: type as Notification["type"],
+      metadata: {},
+      createdAt,
+    };
+
     const id = await this.createNotificationRepository.createNotification({
       user_id: accountId,
-      message,
-      type,
-      metadata: {},
+      ...notification,
     });
 
     this.socketServerEmitter.emitToUser(email, "newNotification", {
-      id,
-      message,
-      type,
-      metadata: {},
+      _id: id,
+      ...notification,
     });
   }
 }

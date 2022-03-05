@@ -129,10 +129,8 @@ export class MongoDBNotificationRepository
 
   async createNotification(notification: Notification): Promise<string> {
     const n = notification;
-    n.createdAt = new Date().getTime();
-    if (!n.read) {
-      n.read = false;
-    }
+    if (!n.createdAt) n.createdAt = new Date().getTime();
+    if (!n.read) n.read = false;
 
     const insertedNotification = await mongoHelper
       .getCollection("notifications")

@@ -7,6 +7,7 @@ import {
   IShouldAccountReceiveNotificationRepository,
   ISocketServerEmitter,
 } from "@shared/infra/notifications/interfaces";
+import { Notification } from "@shared/infra/mongodb/models";
 
 type Payload = {
   token: string;
@@ -50,22 +51,26 @@ export class PushInvitationToProjectNotificationService
     const type = "INVITATION";
     const message = lang.getInvitationText(projectName);
     const metadata = {
-      acceptInvitationLink: `http://localhost:3000/invitation/${token}`,
-      declineInvitationLink: `http://localhost:3000/revoke/${token}`,
+      acceptInvitationLink: `/invitation/${token}`,
+      declineInvitationLink: `/revoke/${token}`,
+    };
+
+    const createdAt = new Date().getTime();
+    const notification = {
+      message,
+      type: type as Notification["type"],
+      metadata,
+      createdAt,
     };
 
     const id = await this.createNotificationRepository.createNotification({
       user_id: accountId,
-      message,
-      type,
-      metadata,
+      ...notification,
     });
 
     this.socketServerEmitter.emitToUser(email, "newNotification", {
-      id,
-      message,
-      type,
-      metadata,
+      _id: id,
+      ...notification,
     });
   }
 }

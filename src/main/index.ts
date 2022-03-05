@@ -15,9 +15,19 @@ function exitWithError(error: Error) {
 }
 
 function handleSignal(sig: string, closeOpenHandles: () => Promise<void>) {
+  const forcedTimeout = 10 * 1000; // 10 secs
+
   return process.on(sig, async () => {
     try {
       console.log("Gracefully shutting down...");
+
+      setTimeout(() => {
+        console.log(
+          "Couldn't close open handles in time, forcefully shutting down..."
+        );
+        process.exit();
+      }, forcedTimeout);
+
       await closeOpenHandles();
     } catch (err) {
       exitWithError(err);
