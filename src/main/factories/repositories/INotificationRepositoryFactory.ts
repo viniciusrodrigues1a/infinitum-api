@@ -7,6 +7,7 @@ import {
 import {
   IDoesNotificationBelongToAccountEmailRepository,
   IFindOneNotificationRepository,
+  IFindOneNotificationSettingsRepository,
   IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
   IUpdateNotificationSettingsRepository,
@@ -22,4 +23,5 @@ export interface INotificationRepositoryFactory {
   makeMarkAllAsReadNotificationRepository(): IMarkAllAsReadNotificationRepository;
   makeFindAllNotificationsRepository(): IFindAllNotificationsRepository;
   makeUpdateNotificationSettingsRepository(): IUpdateNotificationSettingsRepository;
+  makeFindOneNotificationSettingsRepository(): IFindOneNotificationSettingsRepository;
 }

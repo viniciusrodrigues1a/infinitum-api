@@ -14,9 +14,18 @@ notificationSettingsRoutes.use(
   )
 );
 
+notificationSettingsRoutes.get(
+  "/",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeFindOneNotificationSettingsController(
+      language
+    )
+  )
+);
+
 notificationSettingsRoutes.put(
   "/",
   ExpressControllerAdapter(() =>
-    knexControllerFactoryImpl.makeUpdateNotificationSettingsRepository()
+    knexControllerFactoryImpl.makeUpdateNotificationSettingsController()
   )
 );

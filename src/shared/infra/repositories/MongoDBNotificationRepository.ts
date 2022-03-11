@@ -2,11 +2,15 @@ import { ObjectId } from "mongodb";
 import {
   IDoesNotificationBelongToAccountEmailRepository,
   IFindOneNotificationRepository,
+  IFindOneNotificationSettingsRepository,
   IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
   IUpdateNotificationSettingsRepository,
 } from "@shared/presentation/interfaces/repositories";
-import { UpdateNotificationSettingsRepositoryDTO } from "@shared/presentation/interfaces/DTOs";
+import {
+  NotificationSettingsDTO,
+  UpdateNotificationSettingsRepositoryDTO,
+} from "@shared/presentation/interfaces/DTOs";
 import { connection } from "../database/connection";
 import { mongoHelper } from "../mongodb/connection";
 import { Notification, NotificationSettings } from "../mongodb/models";
@@ -27,8 +31,25 @@ export class MongoDBNotificationRepository
     IDoesNotificationBelongToAccountEmailRepository,
     IMarkAllAsReadNotificationRepository,
     IFindAllNotificationsRepository,
-    IUpdateNotificationSettingsRepository
+    IUpdateNotificationSettingsRepository,
+    IFindOneNotificationSettingsRepository
 {
+  async findOneNotificationsSetting(
+    email: string
+  ): Promise<NotificationSettingsDTO | undefined> {
+    const account = await connection("account")
+      .select("id")
+      .where({ email })
+      .first();
+    if (!account) return undefined;
+
+    const notificationSettings = await mongoHelper
+      .getCollection("notificationSettings")
+      .findOne({ user_id: account.id });
+
+    return notificationSettings as unknown as NotificationSettingsDTO;
+  }
+
   async updateNotificationSettings({
     settings,
     email,

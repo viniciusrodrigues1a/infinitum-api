@@ -28,6 +28,7 @@ import {
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
 import {
+  FindOneNotificationSettingsController,
   MarkAllNotificationsAsReadController,
   MarkNotificationAsReadController,
   UpdateNotificationSettingsController,
@@ -76,5 +77,8 @@ export interface IControllerFactory {
     language: ILanguage
   ): MarkNotificationAsReadController;
   makeMarkAllNotificationsAsReadController(): MarkAllNotificationsAsReadController;
-  makeUpdateNotificationSettingsRepository(): UpdateNotificationSettingsController;
+  makeUpdateNotificationSettingsController(): UpdateNotificationSettingsController;
+  makeFindOneNotificationSettingsController(
+    language: ILanguage
+  ): FindOneNotificationSettingsController;
 }

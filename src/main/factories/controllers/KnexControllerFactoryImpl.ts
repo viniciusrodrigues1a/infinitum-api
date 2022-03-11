@@ -39,6 +39,7 @@ import {
   UpdateProjectImageController,
 } from "@modules/project/presentation/controllers";
 import {
+  FindOneNotificationSettingsController,
   MarkAllNotificationsAsReadController,
   MarkNotificationAsReadController,
   UpdateNotificationSettingsController,
@@ -63,7 +64,16 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
 
-  makeUpdateNotificationSettingsRepository(): UpdateNotificationSettingsController {
+  makeFindOneNotificationSettingsController(
+    language: ILanguage
+  ): FindOneNotificationSettingsController {
+    return new FindOneNotificationSettingsController(
+      this.notificationRepositoryFactory.makeFindOneNotificationSettingsRepository(),
+      language
+    );
+  }
+
+  makeUpdateNotificationSettingsController(): UpdateNotificationSettingsController {
     return new UpdateNotificationSettingsController(
       this.notificationRepositoryFactory.makeUpdateNotificationSettingsRepository()
     );

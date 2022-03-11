@@ -7,6 +7,7 @@ import {
 import {
   IDoesNotificationBelongToAccountEmailRepository,
   IFindOneNotificationRepository,
+  IFindOneNotificationSettingsRepository,
   IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
   IUpdateNotificationSettingsRepository,
@@ -17,6 +18,10 @@ import { INotificationRepositoryFactory } from "./INotificationRepositoryFactory
 class MongoDBNotificationRepositoryFactoryImpl
   implements INotificationRepositoryFactory
 {
+  makeFindOneNotificationSettingsRepository(): IFindOneNotificationSettingsRepository {
+    return this.makeNotificationRepository();
+  }
+
   makeUpdateNotificationSettingsRepository(): IUpdateNotificationSettingsRepository {
     return this.makeNotificationRepository();
   }
