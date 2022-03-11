@@ -62,7 +62,16 @@ export class MongoDBNotificationRepository
 
     await mongoHelper
       .getCollection("notificationSettings")
-      .updateOne({ user_id: account.id }, { $set: settings });
+      .updateOne(
+        { user_id: account.id },
+        {
+          $set: {
+            invitation: settings.invitation,
+            kicked: settings.kicked,
+            roleUpdated: settings.roleUpdated,
+          },
+        }
+      );
   }
 
   async findAllNotifications(email: string): Promise<Notification[]> {
