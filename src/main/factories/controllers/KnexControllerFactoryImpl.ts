@@ -41,6 +41,7 @@ import {
 import {
   MarkAllNotificationsAsReadController,
   MarkNotificationAsReadController,
+  UpdateNotificationSettingsController,
 } from "@shared/presentation/controllers";
 import { ILanguage } from "@shared/presentation/languages";
 import {
@@ -61,6 +62,12 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeUpdateNotificationSettingsRepository(): UpdateNotificationSettingsController {
+    return new UpdateNotificationSettingsController(
+      this.notificationRepositoryFactory.makeUpdateNotificationSettingsRepository()
+    );
+  }
 
   makeMarkAllNotificationsAsReadController(): MarkAllNotificationsAsReadController {
     return new MarkAllNotificationsAsReadController(

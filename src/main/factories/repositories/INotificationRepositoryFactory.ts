@@ -9,6 +9,7 @@ import {
   IFindOneNotificationRepository,
   IMarkAllAsReadNotificationRepository,
   IMarkAsReadNotificationRepository,
+  IUpdateNotificationSettingsRepository,
 } from "@shared/presentation/interfaces/repositories";
 
 export interface INotificationRepositoryFactory {
@@ -20,4 +21,5 @@ export interface INotificationRepositoryFactory {
   makeDoesNotificationBelongToAccountEmail(): IDoesNotificationBelongToAccountEmailRepository;
   makeMarkAllAsReadNotificationRepository(): IMarkAllAsReadNotificationRepository;
   makeFindAllNotificationsRepository(): IFindAllNotificationsRepository;
+  makeUpdateNotificationSettingsRepository(): IUpdateNotificationSettingsRepository;
 }

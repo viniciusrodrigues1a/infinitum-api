@@ -30,6 +30,7 @@ import {
 import {
   MarkAllNotificationsAsReadController,
   MarkNotificationAsReadController,
+  UpdateNotificationSettingsController,
 } from "@shared/presentation/controllers";
 import { ILanguage } from "@shared/presentation/languages";
 
@@ -75,4 +76,5 @@ export interface IControllerFactory {
     language: ILanguage
   ): MarkNotificationAsReadController;
   makeMarkAllNotificationsAsReadController(): MarkAllNotificationsAsReadController;
+  makeUpdateNotificationSettingsRepository(): UpdateNotificationSettingsController;
 }

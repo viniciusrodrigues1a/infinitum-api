@@ -10,6 +10,7 @@ import {
   issueGroupsRoutes,
   issuesRoutes,
   languagesRoutes,
+  notificationSettingsRoutes,
   notificationsRoutes,
   projectsRoutes,
 } from "@main/routes";
@@ -55,6 +56,7 @@ export class Server {
     this.app.use("/invitations", invitationsRoutes);
     this.app.use("/languages", languagesRoutes);
     this.app.use("/notifications", notificationsRoutes);
+    this.app.use("/notificationSettings", notificationSettingsRoutes);
   }
 
   public start(): void {

@@ -6,3 +6,4 @@ export * from "./issues.routes";
 export * from "./invitations.routes";
 export * from "./languages.routes";
 export * from "./notifications.routes";
+export * from "./notificationSettings.routes";
