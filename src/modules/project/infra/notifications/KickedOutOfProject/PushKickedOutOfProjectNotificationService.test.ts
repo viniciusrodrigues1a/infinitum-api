@@ -124,29 +124,12 @@ describe("kicked out of project push notification", () => {
     findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
       "my project"
     );
-    const message = "mocked msg";
-    kickedTemplateLanguageMock.getKickedText.mockReturnValueOnce(message);
 
     await sut.notify(givenEmail, givenRequest);
 
-    const type = "KICKED";
     expect(
       createNotificationRepositoryMock.createNotification
-    ).toHaveBeenNthCalledWith(1, {
-      user_id: accountId,
-      message,
-      type,
-      metadata: {},
-    });
-    expect(socketServerEmitterMock.emitToUser).toHaveBeenNthCalledWith(
-      1,
-      givenEmail,
-      "newNotification",
-      {
-        message,
-        type,
-        metadata: {},
-      }
-    );
+    ).toHaveBeenCalledTimes(1);
+    expect(socketServerEmitterMock.emitToUser).toHaveBeenCalledTimes(1);
   });
 });

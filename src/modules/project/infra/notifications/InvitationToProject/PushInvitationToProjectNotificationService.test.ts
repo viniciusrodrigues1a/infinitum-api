@@ -127,35 +127,12 @@ describe("invitation to project push notification", () => {
     findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
       "my project"
     );
-    const message = "mocked msg";
-    invitationTemplateLanguageMock.getInvitationText.mockReturnValueOnce(
-      message
-    );
 
     await sut.notify(givenEmail, givenRequest);
 
-    const type = "INVITATION";
-    const metadata = {
-      acceptInvitationLink: `http://localhost:3000/invitation/${givenRequest.token}`,
-      declineInvitationLink: `http://localhost:3000/revoke/${givenRequest.token}`,
-    };
     expect(
       createNotificationRepositoryMock.createNotification
-    ).toHaveBeenNthCalledWith(1, {
-      user_id: accountId,
-      message,
-      type,
-      metadata,
-    });
-    expect(socketServerEmitterMock.emitToUser).toHaveBeenNthCalledWith(
-      1,
-      givenEmail,
-      "newNotification",
-      {
-        message,
-        type,
-        metadata,
-      }
-    );
+    ).toHaveBeenCalledTimes(1);
+    expect(socketServerEmitterMock.emitToUser).toHaveBeenCalledTimes(1);
   });
 });
