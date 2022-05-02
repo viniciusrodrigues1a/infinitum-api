@@ -31,7 +31,7 @@ export class PushRoleUpdatedNotificationService
       await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
         email,
         "roleUpdated",
-        "email"
+        "push"
       );
     if (!shouldNotify) return;
 
