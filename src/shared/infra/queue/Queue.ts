@@ -1,6 +1,7 @@
 import {
   SendInvitationEmailJob,
   SendKickedEmailJob,
+  SendRoleUpdatedEmailJob,
 } from "@modules/project/infra/jobs";
 import Bull, { Job } from "bull";
 import { IJob, IQueue } from "./interfaces";
@@ -20,6 +21,7 @@ class Queue implements IQueue {
   public jobs: IJob[] = [
     new SendInvitationEmailJob(),
     new SendKickedEmailJob(),
+    new SendRoleUpdatedEmailJob(),
   ];
   queues: { [key: string]: QueueEntry } = {};
 

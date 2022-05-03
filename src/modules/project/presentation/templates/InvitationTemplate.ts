@@ -1,6 +1,7 @@
-import { renderHTML } from "@shared/infra/queue/utils";
-import { fileToBase64DataURL } from "@shared/presentation/templates/utils";
 import path from "path";
+
+import { InvitationViewModel } from "./views/invitationViewModel";
+import { renderBaseTemplate } from "./_baseTemplate";
 
 type InvitationTemplateParseRequest = {
   invitationText: string;
@@ -16,37 +17,20 @@ export class InvitationTemplate {
     declineInvitationButtonText,
     token,
   }: InvitationTemplateParseRequest): string {
-    const iconImgSrc = fileToBase64DataURL(
-      path.resolve(__dirname, "assets", "invitationIcon.png")
-    );
-    const logoImgSrc = fileToBase64DataURL(
-      path.resolve(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "shared",
-        "presentation",
-        "templates",
-        "assets",
-        "logo.png"
-      )
-    );
+    const viewPath = path.resolve(__dirname, "views", "invitationView.ejs");
+    const viewModel = {
+      invitationText,
+      acceptInvitationButtonText,
+      declineInvitationButtonText,
+      token,
+    };
+    const iconPath = path.resolve(__dirname, "assets", "invitationIcon.png");
 
-    const html = renderHTML(
-      path.resolve(__dirname, "views", "invitation.ejs"),
-      {
-        invitationText,
-        acceptInvitationButtonText,
-        declineInvitationButtonText,
-        token,
-        iconImgSrc,
-        logoImgSrc,
-      }
+    const html = renderBaseTemplate<InvitationViewModel>(
+      viewPath,
+      viewModel,
+      iconPath
     );
-
-    if (!html) throw new Error("Error trying to parse template");
 
     return html;
   }

@@ -1,7 +1,6 @@
 import path from "path";
-
-import { renderHTML } from "@shared/infra/queue/utils";
-import { fileToBase64DataURL } from "@shared/presentation/templates/utils";
+import { KickedViewModel } from "./views/kickedViewModel";
+import { renderBaseTemplate } from "./_baseTemplate";
 
 type KickedTemplateParseRequest = {
   kickedText: string;
@@ -9,31 +8,15 @@ type KickedTemplateParseRequest = {
 
 export class KickedTemplate {
   parseTemplate({ kickedText }: KickedTemplateParseRequest): string {
-    const iconImgSrc = fileToBase64DataURL(
-      path.resolve(__dirname, "assets", "invitationIcon.png")
-    );
-    const logoImgSrc = fileToBase64DataURL(
-      path.resolve(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "shared",
-        "presentation",
-        "templates",
-        "assets",
-        "logo.png"
-      )
-    );
+    const viewPath = path.resolve(__dirname, "views", "kickedView.ejs");
+    const viewModel = { kickedText };
+    const iconPath = path.resolve(__dirname, "assets", "kickedIcon.png");
 
-    const html = renderHTML(path.resolve(__dirname, "views", "kicked.ejs"), {
-      kickedText,
-      iconImgSrc,
-      logoImgSrc,
-    });
-
-    if (!html) throw new Error("Error trying to parse template");
+    const html = renderBaseTemplate<KickedViewModel>(
+      viewPath,
+      viewModel,
+      iconPath
+    );
 
     return html;
   }

@@ -1,7 +1,11 @@
 import { SocketIOSocketServerEmitterAdapter } from "@main/adapters";
 import { server } from "@main/server";
-import { PushRoleUpdatedNotificationService } from "@modules/project/infra/notifications/RoleUpdated";
+import {
+  NodemailerRoleUpdatedNotificationService,
+  PushRoleUpdatedNotificationService,
+} from "@modules/project/infra/notifications/RoleUpdated";
 import { NotificationServiceComposite } from "@shared/infra/notifications";
+import Queue from "@shared/infra/queue/Queue";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import {
   INotificationRepositoryFactory,
@@ -15,6 +19,11 @@ const notificationRepositoryFactory: INotificationRepositoryFactory =
   mongoDBNotificationRepositoryFactoryImpl;
 
 export function makeRoleUpdatedNotificationServiceComposite(): INotificationService {
+  const email = new NodemailerRoleUpdatedNotificationService(
+    Queue,
+    notificationRepositoryFactory.makeShouldAccountReceiveNotificationRepository(),
+    repositoryFactory.makeFindProjectNameByProjectIdRepository()
+  );
   const push = new PushRoleUpdatedNotificationService(
     notificationRepositoryFactory.makeShouldAccountReceiveNotificationRepository(),
     repositoryFactory.makeFindOneAccountIdByEmailRepository(),
@@ -22,6 +31,6 @@ export function makeRoleUpdatedNotificationServiceComposite(): INotificationServ
     notificationRepositoryFactory.makeCreateNotificationRepository(),
     SocketIOSocketServerEmitterAdapter(server)
   );
-  const notificationServices = [push];
+  const notificationServices = [push, email];
   return new NotificationServiceComposite(notificationServices);
 }

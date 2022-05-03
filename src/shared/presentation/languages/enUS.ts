@@ -17,7 +17,7 @@ export class ENUSLanguage implements ILanguage {
   }
 
   getRoleUpdatedEmailSubject(): string {
-    throw new Error("Method not implemented.");
+    return "Infinitum - Your role in a project has been updated";
   }
 
   getKickedEmailSubject(): string {

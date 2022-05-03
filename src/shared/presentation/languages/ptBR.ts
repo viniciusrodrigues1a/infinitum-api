@@ -17,7 +17,7 @@ export class PTBRLanguage implements ILanguage {
   }
 
   getRoleUpdatedEmailSubject(): string {
-    throw new Error("Method not implemented.");
+    return "Infinitum - Sua função em um projeto foi alterada";
   }
 
   getKickedEmailSubject(): string {
