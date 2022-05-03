@@ -20,6 +20,7 @@ import {
   IReportIssuesWeeklyOverviewMetricsRepository,
 } from "@modules/issue/presentation/interfaces/repositories";
 import {
+  IAssignIssueToAccountRepository,
   ICreateIssueRepository,
   IDeleteIssueRepository,
   IDoesIssueExistRepository,
@@ -111,4 +112,5 @@ export interface IRepositoryFactory {
   makeReportAllIssuesMetricsRepository(): IReportAllIssuesMetricsRepository;
   makeReportIssuesForTodayMetricsRepository(): IReportIssuesForTodayMetricsRepository;
   makeFindOneAccountIdByEmailRepository(): IFindOneAccountIdByEmailRepository;
+  makeAssignIssueToAccountRepository(): IAssignIssueToAccountRepository;
 }

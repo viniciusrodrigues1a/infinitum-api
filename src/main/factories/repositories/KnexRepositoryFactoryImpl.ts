@@ -25,6 +25,7 @@ import {
   IReportIssuesWeeklyOverviewMetricsRepository,
 } from "@modules/issue/presentation/interfaces/repositories";
 import {
+  IAssignIssueToAccountRepository,
   ICreateIssueRepository,
   IDeleteIssueRepository,
   IDoesIssueExistRepository,
@@ -74,6 +75,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeAssignIssueToAccountRepository(): IAssignIssueToAccountRepository {
+    return this.makeIssueRepository();
+  }
 
   makeFindOneAccountIdByEmailRepository(): IFindOneAccountIdByEmailRepository {
     return this.makeAccountRepository();

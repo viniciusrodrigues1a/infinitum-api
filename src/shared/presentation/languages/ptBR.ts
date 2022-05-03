@@ -4,6 +4,10 @@ import { ILanguage } from "./ILanguage";
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getAssignedToEmailParamMessage(): string {
+    return "email a ser atribuído";
+  }
+
   getNotificationNotFoundErrorMessage(): string {
     return "Notificação não encontrada";
   }

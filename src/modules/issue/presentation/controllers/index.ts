@@ -3,3 +3,4 @@ export * from "./DeleteIssueController";
 export * from "./UpdateIssueController";
 export * from "./OverviewMetricsController";
 export * from "./MoveIssueToAnotherIssueGroupController";
+export * from "./AssignIssueToAccountController";

@@ -44,6 +44,13 @@ issuesRoutes.patch(
   )
 );
 
+issuesRoutes.patch(
+  "/:issueId/assign",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeAssignIssueToAccountController(language)
+  )
+);
+
 issuesRoutes.get(
   "/overview",
   ExpressControllerAdapter((language) =>

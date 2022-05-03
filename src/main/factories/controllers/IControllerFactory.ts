@@ -6,6 +6,7 @@ import {
   UpdateAccountController,
 } from "@modules/account/presentation/controllers";
 import {
+  AssignIssueToAccountController,
   CreateIssueController,
   DeleteIssueController,
   MoveIssueToAnotherIssueGroupController,
@@ -81,4 +82,7 @@ export interface IControllerFactory {
   makeFindOneNotificationSettingsController(
     language: ILanguage
   ): FindOneNotificationSettingsController;
+  makeAssignIssueToAccountController(
+    language: ILanguage
+  ): AssignIssueToAccountController;
 }

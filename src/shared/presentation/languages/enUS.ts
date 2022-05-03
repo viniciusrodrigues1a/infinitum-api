@@ -4,6 +4,10 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getAssignedToEmailParamMessage(): string {
+    return "assigned to email";
+  }
+
   getNotificationNotFoundErrorMessage(): string {
     return "Notification not found";
   }

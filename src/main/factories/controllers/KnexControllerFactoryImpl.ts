@@ -16,6 +16,7 @@ import {
   UpdateAccountController,
 } from "@modules/account/presentation/controllers";
 import {
+  AssignIssueToAccountController,
   CreateIssueController,
   DeleteIssueController,
   MoveIssueToAnotherIssueGroupController,
@@ -63,6 +64,17 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeAssignIssueToAccountController(
+    language: ILanguage
+  ): AssignIssueToAccountController {
+    return new AssignIssueToAccountController(
+      this.useCaseFactory.makeAssignIssueToAccountUseCase(language),
+      this.validationFactory.makeAssignIssueToAccountControllerValidation(
+        language
+      )
+    );
+  }
 
   makeFindOneNotificationSettingsController(
     language: ILanguage

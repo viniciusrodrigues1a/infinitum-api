@@ -15,6 +15,24 @@ type Field = {
 };
 
 export class ControllerValidationFactory {
+  makeAssignIssueToAccountControllerValidation(
+    language: ILanguage
+  ): ValidationComposite {
+    const requiredAndStringFields = [
+      {
+        accessor: "assignedToEmail",
+        i18n: language.getAssignedToEmailParamMessage(),
+      },
+    ];
+
+    const required = this.makeAllRequired(requiredAndStringFields, language);
+    const string = this.makeAllString(requiredAndStringFields, language);
+
+    const validations = [...required, ...string];
+
+    return new ValidationComposite(validations);
+  }
+
   makeMoveIssueToAnotherIssueGroupControllerValidation(
     language: ILanguage
   ): ValidationComposite {

@@ -1,3 +1,4 @@
+import { AssignIssueToAccountRepositoryDTO } from "@modules/issue/use-cases/DTOs";
 import { configuration, connection } from "@shared/infra/database/connection";
 import { KnexIssueRepository } from "./KnexIssueRepository";
 
@@ -50,6 +51,40 @@ describe("issue repository using Knex", () => {
 
   afterAll(async () => {
     await connection.destroy();
+  });
+
+  describe("assignIssueToAccount", () => {
+    it("should update the column assigned_to_account_id of a row in the table issue", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const newIssueGroup = {
+        id: "ig-id-9123387129",
+        project_id: projectId,
+        title: "In progress",
+        is_final: true,
+      };
+      const issue = {
+        id: "issue-id-0",
+        title: "My issue",
+        description: "My issue's description",
+        issue_group_id: issueGroupId,
+      };
+      await connection("issue_group").insert(newIssueGroup);
+      await connection("issue").insert(issue);
+      const givenRequest: AssignIssueToAccountRepositoryDTO = {
+        issueId: issue.id,
+        assignedToEmail: accountEmail,
+      };
+
+      await sut.assignIssueToAccount(givenRequest);
+
+      const storedIssue = await connection("issue")
+        .select("*")
+        .where({ id: issue.id })
+        .first();
+      expect(storedIssue.assigned_to_account_id).toBe(accountId);
+    });
   });
 
   describe("moveIssue", () => {

@@ -17,6 +17,7 @@ import {
   knexRepositoryFactoryImpl,
 } from "@main/factories/repositories";
 import {
+  AssignIssueToAccountUseCase,
   CreateIssueUseCase,
   MoveIssueToAnotherIssueGroupUseCase,
   UpdateIssueUseCase,
@@ -27,6 +28,23 @@ import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeAssignIssueToAccountUseCase(
+    language: ILanguage
+  ): AssignIssueToAccountUseCase {
+    return new AssignIssueToAccountUseCase(
+      this.repositoryFactory.makeAssignIssueToAccountRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueIdRepository(),
+      this.repositoryFactory.makeDoesIssueExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      language,
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeMoveIssueToAnotherIssueGroupUseCase(
     language: ILanguage

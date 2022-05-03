@@ -24,6 +24,7 @@ import { api, defaultLanguage } from "../helpers";
 describe("/issues/ endpoint", () => {
   let authorizationToken: string;
   let accountId: string;
+  let accountEmail: string;
   let issueGroupId: string;
   let projectId: string;
 
@@ -31,7 +32,7 @@ describe("/issues/ endpoint", () => {
     await connection.migrate.latest(configuration.migrations);
 
     accountId = "account-id-0";
-    const accountEmail = "jorge@email.com";
+    accountEmail = "jorge@email.com";
     await connection("account").insert({
       id: accountId,
       name: "jorge",

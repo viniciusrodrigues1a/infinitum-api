@@ -13,11 +13,13 @@ import {
   IssuesWeeklyOverviewMetrics,
 } from "@modules/issue/presentation/interfaces/repositories";
 import {
+  AssignIssueToAccountRepositoryDTO,
   CreateIssueRepositoryDTO,
   MoveIssueToAnotherIssueGroupRepositoryDTO,
   UpdateIssueRepositoryDTO,
 } from "@modules/issue/use-cases/DTOs";
 import {
+  IAssignIssueToAccountRepository,
   ICreateIssueRepository,
   IDeleteIssueRepository,
   IDoesIssueExistRepository,
@@ -45,8 +47,25 @@ export class KnexIssueRepository
     IDoesIssueGroupExistRepository,
     IShouldIssueGroupUpdateIssuesToCompletedRepository,
     IMoveIssueToAnotherIssueGroupRepository,
-    IReportIssuesMonthlyOverviewMetricsRepository
+    IReportIssuesMonthlyOverviewMetricsRepository,
+    IAssignIssueToAccountRepository
 {
+  async assignIssueToAccount({
+    issueId,
+    assignedToEmail,
+  }: AssignIssueToAccountRepositoryDTO): Promise<void> {
+    const { id: accountId } = await connection("account")
+      .select("id")
+      .where({ email: assignedToEmail })
+      .first();
+
+    await connection("issue")
+      .update({
+        assigned_to_account_id: accountId,
+      })
+      .where({ id: issueId });
+  }
+
   async reportIssuesMonthlyOverview({
     accountEmailMakingRequest,
   }: AccountMakingRequestDTO): Promise<IssuesMonthlyOverviewMetrics> {

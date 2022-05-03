@@ -12,4 +12,5 @@ export interface IParamsLanguage {
   getRoleNameParamMessage(): string;
   getIssueIdParamMessage(): string;
   getCompletedParamMessage(): string;
+  getAssignedToEmailParamMessage(): string;
 }
