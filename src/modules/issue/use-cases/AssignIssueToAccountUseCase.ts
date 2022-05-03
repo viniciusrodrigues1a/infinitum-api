@@ -15,42 +15,26 @@ import {
   IProjectNotFoundErrorLanguage,
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
-import { Issue } from "../entities";
-import { UpdateIssueUseCaseDTO } from "./DTOs";
-import { IssueNotFoundError } from "./errors";
-import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
-import {
-  IFindOneIssueRepository,
-  IUpdateIssueRepository,
-} from "./interfaces/repositories";
+import { AssignIssueToAccountUseCaseDTO } from "./DTOs";
+import { IAssignIssueToAccountRepository } from "./interfaces/repositories";
 
-export class UpdateIssueUseCase {
+export class AssignIssueToAccountUseCase {
   constructor(
-    private readonly updateIssueRepository: IUpdateIssueRepository,
-    private readonly findOneIssueRepository: IFindOneIssueRepository,
+    private readonly assignIssueToAccountRepository: IAssignIssueToAccountRepository,
     private readonly findProjectIdByIssueIdRepository: IFindProjectIdByIssueIdRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
-    private readonly issueNotFoundErrorLanguage: IIssueNotFoundErrorLanguage,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly roleInsufficientPermissionErrorLanguage: IRoleInsufficientPermissionErrorLanguage
   ) {}
 
-  async update({
+  async assign({
     issueId,
+    assignedToEmail,
     accountEmailMakingRequest,
-    newTitle,
-    newExpiresAt,
-    newDescription,
-    newCompleted,
-  }: UpdateIssueUseCaseDTO): Promise<void> {
-    const oldIssue = await this.findOneIssueRepository.findOneIssue(issueId);
-    if (!oldIssue) {
-      throw new IssueNotFoundError(this.issueNotFoundErrorLanguage);
-    }
-
+  }: AssignIssueToAccountUseCaseDTO): Promise<void> {
     const projectId =
       await this.findProjectIdByIssueIdRepository.findProjectIdByIssueId(
         issueId
@@ -59,14 +43,26 @@ export class UpdateIssueUseCase {
       throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
     }
 
-    const doesParticipantExist =
+    const doesAccountMakingRequestExist =
       await this.doesParticipantExistRepository.doesParticipantExist({
         projectId,
         accountEmail: accountEmailMakingRequest,
       });
-    if (!doesParticipantExist) {
+    if (!doesAccountMakingRequestExist) {
       throw new NotParticipantInProjectError(
         accountEmailMakingRequest,
+        this.notParticipantInProjectErrorLanguage
+      );
+    }
+
+    const doesAccountBeingAssignedToIssueExist =
+      await this.doesParticipantExistRepository.doesParticipantExist({
+        projectId,
+        accountEmail: assignedToEmail,
+      });
+    if (!doesAccountBeingAssignedToIssueExist) {
+      throw new NotParticipantInProjectError(
+        assignedToEmail,
         this.notParticipantInProjectErrorLanguage
       );
     }
@@ -77,27 +73,16 @@ export class UpdateIssueUseCase {
         accountEmail: accountEmailMakingRequest,
       });
     const role = new Role(participantRole, this.invalidRoleNameErrorLanguage);
-    if (!role.can("UPDATE_ISSUE")) {
+    if (!role.can("ASSIGN_ISSUE_TO_ACCOUNT")) {
       throw new RoleInsufficientPermissionError(
         participantRole,
         this.roleInsufficientPermissionErrorLanguage
       );
     }
 
-    const newIssue = new Issue({
-      title: newTitle || oldIssue.title,
-      description: newDescription || oldIssue.description,
-      expiresAt: newExpiresAt || oldIssue.expiresAt,
-      completed: newCompleted || oldIssue.completed,
-      assignedToEmail: oldIssue.assignedToEmail,
-    });
-
-    await this.updateIssueRepository.updateIssue({
+    this.assignIssueToAccountRepository.assignIssueToAccount({
       issueId,
-      newTitle: newIssue.title,
-      newDescription: newIssue.description,
-      newExpiresAt: newIssue.expiresAt,
-      newCompleted: newIssue.completed,
+      assignedToEmail,
     });
   }
 }

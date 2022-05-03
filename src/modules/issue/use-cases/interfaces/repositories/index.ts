@@ -6,3 +6,4 @@ export * from "./IFindOneIssueRepository";
 export * from "./IMoveIssueToAnotherIssueGroupRepository";
 export * from "./IDoesIssueGroupExistRepository";
 export * from "./IShouldIssueGroupUpdateIssuesToCompletedRepository";
+export * from "./IAssignIssueToAccountRepository";

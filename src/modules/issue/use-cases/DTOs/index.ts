@@ -5,3 +5,5 @@ export * from "./UpdateIssueUseCaseDTO";
 export * from "./UpdateIssueRepositoryDTO";
 export * from "./MoveIssueToAnotherIssueGroupUseCaseDTO";
 export * from "./MoveIssueToAnotherIssueGroupRepositoryDTO";
+export * from "./AssignIssueToAccountUseCaseDTO";
+export * from "./AssignIssueToAccountRepositoryDTO";
