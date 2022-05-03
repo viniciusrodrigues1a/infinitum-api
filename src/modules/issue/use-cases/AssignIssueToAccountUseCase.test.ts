@@ -16,9 +16,14 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { IInvalidRoleNameErrorLanguage } from "@modules/project/entities/interfaces/languages";
-import { IAssignIssueToAccountRepository } from "./interfaces/repositories";
+import {
+  IAssignIssueToAccountRepository,
+  IDoesIssueExistRepository,
+} from "./interfaces/repositories";
 import { AssignIssueToAccountUseCase } from "./AssignIssueToAccountUseCase";
 import { AssignIssueToAccountUseCaseDTO } from "./DTOs";
+import { IssueNotFoundError } from "./errors";
+import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
 
 jest.mock("../../project/entities/value-objects/Role");
 
@@ -26,12 +31,14 @@ function makeSut() {
   const assignIssueToAccountMock = mock<IAssignIssueToAccountRepository>();
   const findProjectIdByIssueIdRepositoryMock =
     mock<IFindProjectIdByIssueIdRepository>();
+  const doesIssueExistRepositoryMock = mock<IDoesIssueExistRepository>();
   const doesParticipantExistRepositoryMock =
     mock<IDoesParticipantExistRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
+  const issueNotFoundErrorLanguageMock = mock<IIssueNotFoundErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
     mock<INotParticipantInProjectErrorLanguage>();
   const invalidRoleNameErrorLanguageMock =
@@ -41,9 +48,11 @@ function makeSut() {
   const sut = new AssignIssueToAccountUseCase(
     assignIssueToAccountMock,
     findProjectIdByIssueIdRepositoryMock,
+    doesIssueExistRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
     projectNotFoundErrorLanguageMock,
+    issueNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
     invalidRoleNameErrorLanguageMock,
     roleInsufficientPermissionErrorLanguageMock
@@ -55,6 +64,7 @@ function makeSut() {
     findProjectIdByIssueIdRepositoryMock,
     doesParticipantExistRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
+    doesIssueExistRepositoryMock,
     notParticipantInProjectErrorLanguageMock,
   };
 }
@@ -85,6 +95,7 @@ describe("assignIssueToAccount use-case", () => {
       sut,
       assignIssueToAccountMock,
       findProjectIdByIssueIdRepositoryMock,
+      doesIssueExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
     } = makeSut();
@@ -96,6 +107,7 @@ describe("assignIssueToAccount use-case", () => {
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
+    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
       true
     );
@@ -108,6 +120,29 @@ describe("assignIssueToAccount use-case", () => {
     expect(assignIssueToAccountMock.assignIssueToAccount).toHaveBeenCalledTimes(
       1
     );
+  });
+
+  it("should throw IssueNotFoundError if doesIssueExistRepository returns false", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findProjectIdByIssueIdRepositoryMock,
+      doesIssueExistRepositoryMock,
+    } = makeSut();
+    const givenRequest: AssignIssueToAccountUseCaseDTO = {
+      accountEmailMakingRequest: "alan@email.com",
+      assignedToEmail: "jorge@email.com",
+      issueId: "issue-id-0",
+    };
+    findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
+      "project-id-0"
+    );
+    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(false);
+
+    const when = () => sut.assign(givenRequest);
+
+    await expect(when).rejects.toBeInstanceOf(IssueNotFoundError);
   });
 
   it("should throw ProjectNotFoundError if findProjectIdByIssueIdRepository returns undefined", async () => {
@@ -134,6 +169,7 @@ describe("assignIssueToAccount use-case", () => {
     const {
       sut,
       findProjectIdByIssueIdRepositoryMock,
+      doesIssueExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       notParticipantInProjectErrorLanguageMock,
     } = makeSut();
@@ -145,6 +181,7 @@ describe("assignIssueToAccount use-case", () => {
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
+    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.accountEmailMakingRequest)
@@ -171,6 +208,7 @@ describe("assignIssueToAccount use-case", () => {
     const {
       sut,
       findProjectIdByIssueIdRepositoryMock,
+      doesIssueExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       notParticipantInProjectErrorLanguageMock,
     } = makeSut();
@@ -182,6 +220,7 @@ describe("assignIssueToAccount use-case", () => {
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
+    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementation(
       async ({ accountEmail }) => {
         if (accountEmail === givenRequest.assignedToEmail) return false;
@@ -207,6 +246,7 @@ describe("assignIssueToAccount use-case", () => {
     const {
       sut,
       findProjectIdByIssueIdRepositoryMock,
+      doesIssueExistRepositoryMock,
       doesParticipantExistRepositoryMock,
       findParticipantRoleInProjectRepositoryMock,
     } = makeSut();
@@ -218,6 +258,7 @@ describe("assignIssueToAccount use-case", () => {
     findProjectIdByIssueIdRepositoryMock.findProjectIdByIssueId.mockResolvedValueOnce(
       "project-id-0"
     );
+    doesIssueExistRepositoryMock.doesIssueExist.mockResolvedValueOnce(true);
     doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValue(
       true
     );

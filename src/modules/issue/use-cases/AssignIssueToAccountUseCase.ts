@@ -16,15 +16,22 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { AssignIssueToAccountUseCaseDTO } from "./DTOs";
-import { IAssignIssueToAccountRepository } from "./interfaces/repositories";
+import { IssueNotFoundError } from "./errors";
+import { IIssueNotFoundErrorLanguage } from "./interfaces/languages";
+import {
+  IAssignIssueToAccountRepository,
+  IDoesIssueExistRepository,
+} from "./interfaces/repositories";
 
 export class AssignIssueToAccountUseCase {
   constructor(
     private readonly assignIssueToAccountRepository: IAssignIssueToAccountRepository,
     private readonly findProjectIdByIssueIdRepository: IFindProjectIdByIssueIdRepository,
+    private readonly doesIssueExistRepository: IDoesIssueExistRepository,
     private readonly doesParticipantExistRepository: IDoesParticipantExistRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
+    private readonly issueNotFoundErrorLanguage: IIssueNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly invalidRoleNameErrorLanguage: IInvalidRoleNameErrorLanguage,
     private readonly roleInsufficientPermissionErrorLanguage: IRoleInsufficientPermissionErrorLanguage
@@ -41,6 +48,13 @@ export class AssignIssueToAccountUseCase {
       );
     if (!projectId) {
       throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
+    }
+
+    const doesIssueExist = await this.doesIssueExistRepository.doesIssueExist(
+      issueId
+    );
+    if (!doesIssueExist) {
+      throw new IssueNotFoundError(this.issueNotFoundErrorLanguage);
     }
 
     const doesAccountMakingRequestExist =
