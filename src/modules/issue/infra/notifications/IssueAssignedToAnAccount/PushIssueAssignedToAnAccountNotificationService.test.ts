@@ -7,7 +7,7 @@ import {
   ISocketServerEmitter,
 } from "@shared/infra/notifications/interfaces";
 import { mock } from "jest-mock-extended";
-import { IFindIssueTitleByIssueIdRepository } from "./interfaces/repositories";
+import { IFindIssueTitleByIssueIdRepository } from "../interfaces/repositories";
 import { PushIssueAssignedToAnAccountNotificationService } from "./PushIssueAssignedToAnAccountNotificationService";
 
 const issueAssignedTemplateLanguageMock =

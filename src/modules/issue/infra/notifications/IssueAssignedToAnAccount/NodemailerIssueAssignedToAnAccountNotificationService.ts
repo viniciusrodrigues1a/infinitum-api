@@ -4,8 +4,8 @@ import { IFindProjectIdByIssueIdRepository } from "@modules/project/use-cases/in
 import { IShouldAccountReceiveNotificationRepository } from "@shared/infra/notifications/interfaces";
 import { IQueue } from "@shared/infra/queue/interfaces";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
-import { SendIssueAssignedEmailJob } from "../jobs";
-import { IFindIssueTitleByIssueIdRepository } from "./interfaces/repositories";
+import { SendIssueAssignedEmailJob } from "../../jobs";
+import { IFindIssueTitleByIssueIdRepository } from "../interfaces/repositories";
 
 type Payload = {
   issueId: string;

@@ -3,7 +3,7 @@ import { server } from "@main/server";
 import {
   NodemailerIssueAssignedNotificationService,
   PushIssueAssignedToAnAccountNotificationService,
-} from "@modules/issue/infra/notifications";
+} from "@modules/issue/infra/notifications/IssueAssignedToAnAccount";
 import { NotificationServiceComposite } from "@shared/infra/notifications";
 import Queue from "@shared/infra/queue/Queue";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";

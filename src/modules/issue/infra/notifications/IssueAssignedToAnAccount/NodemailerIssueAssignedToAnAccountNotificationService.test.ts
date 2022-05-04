@@ -4,8 +4,8 @@ import { IFindProjectIdByIssueIdRepository } from "@modules/project/use-cases/in
 import { IShouldAccountReceiveNotificationRepository } from "@shared/infra/notifications/interfaces";
 import { IQueue } from "@shared/infra/queue/interfaces";
 import { mock } from "jest-mock-extended";
-import { SendIssueAssignedEmailJob } from "../jobs";
-import { IFindIssueTitleByIssueIdRepository } from "./interfaces/repositories";
+import { SendIssueAssignedEmailJob } from "../../jobs";
+import { IFindIssueTitleByIssueIdRepository } from "../interfaces/repositories";
 import { NodemailerIssueAssignedNotificationService } from "./NodemailerIssueAssignedToAnAccountNotificationService";
 
 const issueAssignedTemplateLanguageMock =

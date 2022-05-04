@@ -8,7 +8,7 @@ import {
   ISocketServerEmitter,
 } from "@shared/infra/notifications/interfaces";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
-import { IFindIssueTitleByIssueIdRepository } from "./interfaces/repositories";
+import { IFindIssueTitleByIssueIdRepository } from "../interfaces/repositories";
 
 type Payload = {
   issueId: string;
