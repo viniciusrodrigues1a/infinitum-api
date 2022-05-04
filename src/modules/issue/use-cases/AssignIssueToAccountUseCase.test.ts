@@ -234,7 +234,7 @@ describe("assignIssueToAccount use-case", () => {
     const when = () => sut.assign(givenRequest);
 
     const expectedErr = new NotParticipantInProjectError(
-      givenRequest.assignedToEmail,
+      givenRequest.assignedToEmail as string,
       notParticipantInProjectErrorLanguageMock
     );
     await expect(when).rejects.toStrictEqual(expectedErr);

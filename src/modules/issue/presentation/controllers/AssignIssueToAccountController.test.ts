@@ -137,7 +137,7 @@ describe("assignIssueToAccount controller", () => {
     };
     assignIssueToAccountUseCaseMock.assign.mockImplementationOnce(() => {
       throw new NotParticipantInProjectError(
-        givenRequest.assignedToEmail,
+        givenRequest.assignedToEmail as string,
         notParticipantInProjectErrorLanguageMock
       );
     });
