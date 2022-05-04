@@ -3,6 +3,7 @@ import { IIssuesWeeklyOverviewWeekdaysLanguage } from "@modules/issue/presentati
 import {
   AllIssuesMetrics,
   ExpiredIssuesMetrics,
+  IFindAccountEmailAssignedToIssueRepository,
   IReportAllIssuesMetricsRepository,
   IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
@@ -50,8 +51,27 @@ export class KnexIssueRepository
     IMoveIssueToAnotherIssueGroupRepository,
     IReportIssuesMonthlyOverviewMetricsRepository,
     IAssignIssueToAccountRepository,
-    IFindIssueTitleByIssueIdRepository
+    IFindIssueTitleByIssueIdRepository,
+    IFindAccountEmailAssignedToIssueRepository
 {
+  async findAccountEmailAssignedToIssue(
+    issueId: string
+  ): Promise<string | undefined> {
+    const { assigned_to_account_id: accountId } = await connection("issue")
+      .select("assigned_to_account_id")
+      .where({ id: issueId })
+      .first();
+
+    if (!accountId) return undefined;
+
+    const { email: accountEmail } = await connection("account")
+      .select("email")
+      .where({ id: accountId })
+      .first();
+
+    return accountEmail;
+  }
+
   async findIssueTitle(issueId: string): Promise<string> {
     const { title } = await connection("issue")
       .select("title")

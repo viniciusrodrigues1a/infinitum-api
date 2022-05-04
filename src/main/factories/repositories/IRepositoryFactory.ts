@@ -13,6 +13,7 @@ import {
   IDoesAccountExistRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
 import {
+  IFindAccountEmailAssignedToIssueRepository,
   IReportAllIssuesMetricsRepository,
   IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
@@ -115,4 +116,5 @@ export interface IRepositoryFactory {
   makeFindOneAccountIdByEmailRepository(): IFindOneAccountIdByEmailRepository;
   makeAssignIssueToAccountRepository(): IAssignIssueToAccountRepository;
   makeFindIssueTitleByProjectIdRepository(): IFindIssueTitleByIssueIdRepository;
+  makeFindAccountEmailAssignedToIssueRepository(): IFindAccountEmailAssignedToIssueRepository;
 }

@@ -19,6 +19,7 @@ import {
 import { IFindIssueTitleByIssueIdRepository } from "@modules/issue/infra/notifications/interfaces/repositories";
 import { KnexIssueRepository } from "@modules/issue/infra/repositories";
 import {
+  IFindAccountEmailAssignedToIssueRepository,
   IReportAllIssuesMetricsRepository,
   IReportExpiredIssuesMetricsRepository,
   IReportIssuesForTodayMetricsRepository,
@@ -76,6 +77,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeFindAccountEmailAssignedToIssueRepository(): IFindAccountEmailAssignedToIssueRepository {
+    return this.makeIssueRepository();
+  }
 
   makeFindIssueTitleByProjectIdRepository(): IFindIssueTitleByIssueIdRepository {
     return this.makeIssueRepository();

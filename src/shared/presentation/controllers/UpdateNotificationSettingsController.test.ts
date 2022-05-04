@@ -26,6 +26,7 @@ describe("update notification settings controller", () => {
         invitation: { push: false, email: true },
         kicked: { push: true, email: true },
         roleUpdated: { push: false, email: false },
+        issueAssigned: { push: false, email: false },
       },
       accountEmailMakingRequest: "jorge@email.com",
     };
@@ -47,6 +48,7 @@ describe("update notification settings controller", () => {
         invitation: { push: false, email: true },
         kicked: { push: true, email: true },
         roleUpdated: { push: false, email: false },
+        issueAssigned: { push: false, email: false },
       },
       accountEmailMakingRequest: "jorge@email.com",
     };

@@ -1,7 +1,9 @@
 import { AssignIssueToAccountUseCase } from "@modules/issue/use-cases";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
 import { IIssueNotFoundErrorLanguage } from "@modules/issue/use-cases/interfaces/languages";
+import { IIssueAssignedToAnAccountTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   NotParticipantInProjectError,
@@ -14,6 +16,7 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
+import { IFindAccountEmailAssignedToIssueRepository } from "../interfaces/repositories";
 import {
   AssignIssueToAccountController,
   AssignIssueToAccountControllerRequest,
@@ -28,10 +31,18 @@ const roleInsufficientPermissionErrorLanguageMock =
 
 function makeSut() {
   const assignIssueToAccountUseCaseMock = mock<AssignIssueToAccountUseCase>();
+  const findAccountEmailAssignedToIssueRepositoryMock =
+    mock<IFindAccountEmailAssignedToIssueRepository>();
   const validationMock = mock<IValidation>();
+  const notificationServiceMock = mock<INotificationService>();
+  const issueAssignedTemplateLanguageMock =
+    mock<IIssueAssignedToAnAccountTemplateLanguage>();
   const sut = new AssignIssueToAccountController(
     assignIssueToAccountUseCaseMock,
-    validationMock
+    findAccountEmailAssignedToIssueRepositoryMock,
+    validationMock,
+    notificationServiceMock,
+    issueAssignedTemplateLanguageMock
   );
 
   return { sut, assignIssueToAccountUseCaseMock, validationMock };

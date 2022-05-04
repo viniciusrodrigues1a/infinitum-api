@@ -71,6 +71,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   ): AssignIssueToAccountController {
     return new AssignIssueToAccountController(
       this.useCaseFactory.makeAssignIssueToAccountUseCase(language),
+      this.repositoryFactory.makeFindAccountEmailAssignedToIssueRepository(),
       this.validationFactory.makeAssignIssueToAccountControllerValidation(
         language
       ),

@@ -1,6 +1,7 @@
 import { AssignIssueToAccountUseCase } from "@modules/issue/use-cases";
 import { AssignIssueToAccountUseCaseDTO } from "@modules/issue/use-cases/DTOs";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
+import { IFindOneIssueRepository } from "@modules/issue/use-cases/interfaces/repositories";
 import { IIssueAssignedToAnAccountTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import {
   badRequestResponse,
@@ -18,6 +19,7 @@ import {
   NotParticipantInProjectError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
+import { IFindAccountEmailAssignedToIssueRepository } from "../interfaces/repositories";
 
 export type AssignIssueToAccountControllerRequest =
   AssignIssueToAccountUseCaseDTO;
@@ -25,6 +27,7 @@ export type AssignIssueToAccountControllerRequest =
 export class AssignIssueToAccountController implements IController {
   constructor(
     private readonly assignIssueToAccountUseCase: AssignIssueToAccountUseCase,
+    private readonly findAccountEmailAssignedToIssueRepository: IFindAccountEmailAssignedToIssueRepository,
     private readonly validation: IValidation,
     private readonly notificationService: INotificationService,
     private readonly issueAssignedTemplateLanguage: IIssueAssignedToAnAccountTemplateLanguage
@@ -41,9 +44,15 @@ export class AssignIssueToAccountController implements IController {
 
       await this.assignIssueToAccountUseCase.assign(request);
 
+      const emailAlreadyAssignedToIssue =
+        await this.findAccountEmailAssignedToIssueRepository.findAccountEmailAssignedToIssue(
+          request.issueId
+        );
+
       if (
         request.assignedToEmail &&
-        request.assignedToEmail !== request.accountEmailMakingRequest
+        request.assignedToEmail !== request.accountEmailMakingRequest &&
+        emailAlreadyAssignedToIssue !== request.assignedToEmail
       ) {
         await this.notificationService.notify(request.assignedToEmail, {
           issueId: request.issueId,
