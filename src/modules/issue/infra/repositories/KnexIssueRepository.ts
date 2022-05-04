@@ -54,10 +54,16 @@ export class KnexIssueRepository
     issueId,
     assignedToEmail,
   }: AssignIssueToAccountRepositoryDTO): Promise<void> {
-    const { id: accountId } = await connection("account")
-      .select("id")
-      .where({ email: assignedToEmail })
-      .first();
+    let accountId: string | null = null;
+
+    if (assignedToEmail) {
+      const { id } = await connection("account")
+        .select("id")
+        .where({ email: assignedToEmail })
+        .first();
+
+      accountId = id;
+    }
 
     await connection("issue")
       .update({

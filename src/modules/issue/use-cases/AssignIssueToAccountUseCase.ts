@@ -69,16 +69,18 @@ export class AssignIssueToAccountUseCase {
       );
     }
 
-    const doesAccountBeingAssignedToIssueExist =
-      await this.doesParticipantExistRepository.doesParticipantExist({
-        projectId,
-        accountEmail: assignedToEmail,
-      });
-    if (!doesAccountBeingAssignedToIssueExist) {
-      throw new NotParticipantInProjectError(
-        assignedToEmail,
-        this.notParticipantInProjectErrorLanguage
-      );
+    if (assignedToEmail) {
+      const doesAccountBeingAssignedToIssueExist =
+        await this.doesParticipantExistRepository.doesParticipantExist({
+          projectId,
+          accountEmail: assignedToEmail,
+        });
+      if (!doesAccountBeingAssignedToIssueExist) {
+        throw new NotParticipantInProjectError(
+          assignedToEmail,
+          this.notParticipantInProjectErrorLanguage
+        );
+      }
     }
 
     const participantRole =

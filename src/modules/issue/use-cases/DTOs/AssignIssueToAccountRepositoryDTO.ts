@@ -1,4 +1,6 @@
-export type AssignIssueToAccountRepositoryDTO = {
-  issueId: string;
-  assignedToEmail: string;
-};
+import { AssignIssueToAccountUseCaseDTO } from "./AssignIssueToAccountUseCaseDTO";
+
+export type AssignIssueToAccountRepositoryDTO = Omit<
+  AssignIssueToAccountUseCaseDTO,
+  "accountEmailMakingRequest"
+>;
