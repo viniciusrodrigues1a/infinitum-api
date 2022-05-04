@@ -41,7 +41,10 @@ export class AssignIssueToAccountController implements IController {
 
       await this.assignIssueToAccountUseCase.assign(request);
 
-      if (request.assignedToEmail) {
+      if (
+        request.assignedToEmail &&
+        request.assignedToEmail !== request.accountEmailMakingRequest
+      ) {
         await this.notificationService.notify(request.assignedToEmail, {
           issueId: request.issueId,
           issueAssignedTemplateLanguage: this.issueAssignedTemplateLanguage,
