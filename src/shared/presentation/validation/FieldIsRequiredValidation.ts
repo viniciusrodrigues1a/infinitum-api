@@ -10,7 +10,7 @@ export class FieldIsRequiredValidation implements IValidation {
   ) {}
 
   validate(input: any): Error | void {
-    if (!input[this.accessor]) {
+    if (input[this.accessor] === undefined) {
       return new MissingParamsError([this.fieldNameI18N], this.language);
     }
   }
