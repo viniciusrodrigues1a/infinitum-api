@@ -18,13 +18,7 @@ exports.up = function (knex) {
 };
 
 exports.down = function (knex) {
-  return knex.schema.table("issue", (table) => {
-    table.dropForeign("issue_group_id");
-    table
-      .foreign("issue_group_id")
-      .references("id")
-      .inTable("project")
-      .onDelete("CASCADE")
-      .onUpdate("CASCADE");
-  });
+  // adding the FK again will result in an error
+  // if there are rows in the issue table, since the column can't be null
+  return new Promise((res) => res());
 };

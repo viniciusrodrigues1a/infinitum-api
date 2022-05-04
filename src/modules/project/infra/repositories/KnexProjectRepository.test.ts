@@ -42,6 +42,58 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findAllEmails method", () => {
+    it("should return somethign", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        name: "My project",
+        description: "My project's description",
+        begins_at: new Date().toISOString(),
+      };
+      const newAccount = {
+        id: "account-id-123",
+        email: "alan@email.com",
+        name: "alan",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const newAccount1 = {
+        ...newAccount,
+        id: "account-id-124",
+        email: "jorge@email.com",
+        name: "jorge",
+      };
+      const { id: adminRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "admin" })
+        .first();
+      const adminParticipant = {
+        account_id: newAccount.id,
+        project_id: project.id,
+        project_role_id: adminRoleId,
+      };
+      const adminParticipant1 = {
+        ...adminParticipant,
+        account_id: newAccount1.id,
+      };
+      await connection("account").insert(newAccount);
+      await connection("account").insert(newAccount1);
+      await connection("project").insert(project);
+      await connection("account_project_project_role").insert(adminParticipant);
+      await connection("account_project_project_role").insert(
+        adminParticipant1
+      );
+
+      const emails = await sut.findAllEmails(project.id);
+
+      expect(emails).toEqual([newAccount.email, newAccount1.email]);
+    });
+  });
+
   describe("findStartDate method", () => {
     it("should return the start date of a project", async () => {
       expect.assertions(1);

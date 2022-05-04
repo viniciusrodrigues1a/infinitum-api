@@ -21,6 +21,7 @@ import {
   IInvitationTemplateLanguage,
   IIssueAssignedToAnAccountTemplateLanguage,
   IKickedTemplateLanguage,
+  IProjectDeletedTemplateLanguage,
   IRoleUpdatedTemplateLanguage,
   ITodoIssueGroupTitleLanguage,
 } from "@modules/project/presentation/interfaces/languages";
@@ -89,4 +90,5 @@ export interface ILanguage
     IRoleUpdatedTemplateLanguage,
     INotificationNotFoundErrorLanguage,
     INotificationDoesntBelongToYouErrorLanguage,
-    IIssueAssignedToAnAccountTemplateLanguage {}
+    IIssueAssignedToAnAccountTemplateLanguage,
+    IProjectDeletedTemplateLanguage {}

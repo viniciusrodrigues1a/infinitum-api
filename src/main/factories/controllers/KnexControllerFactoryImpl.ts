@@ -49,6 +49,7 @@ import { ILanguage } from "@shared/presentation/languages";
 import {
   makeInvitationToProjectNotificationServiceComposite,
   makeKickedOutOfProjectNotificationServiceComposite,
+  makeProjectDeletedNotificationServiceComposite,
 } from "../notifications";
 import { makeIssueAssignedNotificationServiceComposite } from "../notifications/IssueAssignedNotificationServiceCompositeFactory";
 import { makeRoleUpdatedNotificationServiceComposite } from "../notifications/RoleUpdatedNotificationServiceCompositeFactory";
@@ -284,7 +285,11 @@ class KnexControllerFactoryImpl implements IControllerFactory {
 
   makeDeleteProjectController(language: ILanguage): DeleteProjectController {
     return new DeleteProjectController(
-      this.useCaseFactory.makeDeleteProjectUseCase(language)
+      this.useCaseFactory.makeDeleteProjectUseCase(language),
+      this.repositoryFactory.makeFindProjectNameByProjectIdRepository(),
+      this.repositoryFactory.makeFindAllEmailsParticipantInProjectRepository(),
+      makeProjectDeletedNotificationServiceComposite(),
+      language
     );
   }
 

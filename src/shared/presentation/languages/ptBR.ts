@@ -3,6 +3,15 @@ import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
+
+  getProjectDeletedText(projectName: string): string {
+    return `O projeto ${projectName}, do qual você fazia parte, foi deletado.`;
+  }
+
+  getProjectDeletedEmailSubject(): string {
+    return "Infinitum - Um projeto do qual você participava foi excluído";
+  }
+
   getIssueAssignedText(issueName: string): string {
     return `O ticket ${issueName} foi atribuído a você`;
   }

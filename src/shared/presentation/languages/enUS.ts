@@ -4,6 +4,14 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getProjectDeletedText(projectName: string): string {
+    return `The project ${projectName}, that you were a participant in, has been deleted.`;
+  }
+
+  getProjectDeletedEmailSubject(): string {
+    return "Infinitum - A project you took part in was deleted";
+  }
+
   getIssueAssignedText(issueName: string): string {
     return `You have been assigned the issue ${issueName}`;
   }

@@ -6,6 +6,7 @@ import {
   Role,
 } from "@modules/project/entities/value-objects";
 import {
+  IFindAllEmailsParticipantInProject,
   IFindProjectImageDataURLRepository,
   IFindProjectNameByProjectIdRepository,
   IUpdateIssueGroupColorRepository,
@@ -81,8 +82,23 @@ export class KnexProjectRepository
     IFindProjectNameByProjectIdRepository,
     IFindOneAccountEmailByInvitationTokenRepository,
     IUpdateIssueGroupColorRepository,
-    IFindStartDateByProjectIdRepository
+    IFindStartDateByProjectIdRepository,
+    IFindAllEmailsParticipantInProject
 {
+  async findAllEmails(projectId: string): Promise<string[]> {
+    const idsResult = await connection("account_project_project_role")
+      .select("account_id")
+      .where({ project_id: projectId });
+    const mappedIds = idsResult.map((i) => i.account_id);
+
+    const emailsResult = await connection("account")
+      .select("email")
+      .whereIn("id", mappedIds);
+    const mappedEmails = emailsResult.map((e) => e.email);
+
+    return mappedEmails;
+  }
+
   async findStartDate(projectId: string): Promise<Date | null> {
     const { begins_at: startDate } = await connection("project")
       .select("begins_at")
@@ -118,12 +134,14 @@ export class KnexProjectRepository
   }
 
   async findProjectNameByProjectId(projectId: string): Promise<string> {
-    const { name } = await connection("project")
+    const project = await connection("project")
       .select("name")
       .where({ id: projectId })
       .first();
 
-    return name;
+    if (!project) return "";
+
+    return project.name;
   }
 
   async updateIssueGroupFinalStatus({

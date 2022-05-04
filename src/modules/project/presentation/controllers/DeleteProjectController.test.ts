@@ -1,5 +1,6 @@
 import { DeleteProjectUseCase } from "@modules/project/use-cases";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import {
   NotParticipantInProjectError,
   ProjectNotFoundError,
@@ -11,6 +12,11 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
+import { IProjectDeletedTemplateLanguage } from "../interfaces/languages";
+import {
+  IFindAllEmailsParticipantInProject,
+  IFindProjectNameByProjectIdRepository,
+} from "../interfaces/repositories";
 import { DeleteProjectController } from "./DeleteProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -21,16 +27,48 @@ const roleInsufficientPermissionErrorLanguageMock =
 
 function makeSut() {
   const deleteProjectUseCaseMock = mock<DeleteProjectUseCase>();
-  const sut = new DeleteProjectController(deleteProjectUseCaseMock);
+  const findProjectNameByProjectIdRepositoryMock =
+    mock<IFindProjectNameByProjectIdRepository>();
+  const findAllEmailsParticipantInProjectMock =
+    mock<IFindAllEmailsParticipantInProject>();
+  const notificationServiceMock = mock<INotificationService>();
+  const projectDeletedTemplateLanguageMock =
+    mock<IProjectDeletedTemplateLanguage>();
+  const sut = new DeleteProjectController(
+    deleteProjectUseCaseMock,
+    findProjectNameByProjectIdRepositoryMock,
+    findAllEmailsParticipantInProjectMock,
+    notificationServiceMock,
+    projectDeletedTemplateLanguageMock
+  );
 
-  return { sut, deleteProjectUseCaseMock };
+  return {
+    sut,
+    deleteProjectUseCaseMock,
+    findProjectNameByProjectIdRepositoryMock,
+    findAllEmailsParticipantInProjectMock,
+    notificationServiceMock,
+    projectDeletedTemplateLanguageMock,
+  };
 }
 
 describe("deleteProject controller", () => {
   it("should return HttpStatusCodes.noContent", async () => {
     expect.assertions(2);
 
-    const { sut, deleteProjectUseCaseMock } = makeSut();
+    const {
+      sut,
+      deleteProjectUseCaseMock,
+      findProjectNameByProjectIdRepositoryMock,
+      findAllEmailsParticipantInProjectMock,
+    } = makeSut();
+    findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
+      "my project"
+    );
+    findAllEmailsParticipantInProjectMock.findAllEmails.mockResolvedValueOnce([
+      "jorge@email.com",
+      "alan@email.com",
+    ]);
     const givenRequest = {
       projectId: "project-id-0",
       accountEmailMakingRequest: "jorge@email.com",
@@ -43,6 +81,68 @@ describe("deleteProject controller", () => {
       1,
       givenRequest
     );
+  });
+
+  it("should call the notificationService", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findProjectNameByProjectIdRepositoryMock,
+      findAllEmailsParticipantInProjectMock,
+      notificationServiceMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    const projectName = "my project";
+    findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
+      projectName
+    );
+    const mockedEmails = ["jorge@email.com", "alan@email.com"];
+    findAllEmailsParticipantInProjectMock.findAllEmails.mockResolvedValueOnce(
+      mockedEmails
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notificationServiceMock.notify).toHaveBeenCalledTimes(1);
+  });
+
+  it("shouldn't notify the account making the request", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findProjectNameByProjectIdRepositoryMock,
+      findAllEmailsParticipantInProjectMock,
+      notificationServiceMock,
+      projectDeletedTemplateLanguageMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    const projectName = "my project";
+    findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
+      projectName
+    );
+    const mockedEmails = ["jorge@email.com", "alan@email.com"];
+    findAllEmailsParticipantInProjectMock.findAllEmails.mockResolvedValueOnce(
+      mockedEmails
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    const expectedFilteredEmails = mockedEmails.filter(
+      (e) => e !== givenRequest.accountEmailMakingRequest
+    );
+    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(1, "", {
+      projectName,
+      emails: expectedFilteredEmails,
+      projectDeletedTemplateLanguage: projectDeletedTemplateLanguageMock,
+    });
   });
 
   it("should return HttpStatusCodes.notFound if useCase throws ProjectNotFoundError", async () => {
