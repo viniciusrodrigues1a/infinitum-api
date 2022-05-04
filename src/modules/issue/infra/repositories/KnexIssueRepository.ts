@@ -32,6 +32,7 @@ import {
 import { connection } from "@shared/infra/database/connection";
 import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
 import moment from "moment";
+import { IFindIssueTitleByIssueIdRepository } from "../notifications/interfaces/repositories";
 
 export class KnexIssueRepository
   implements
@@ -48,8 +49,18 @@ export class KnexIssueRepository
     IShouldIssueGroupUpdateIssuesToCompletedRepository,
     IMoveIssueToAnotherIssueGroupRepository,
     IReportIssuesMonthlyOverviewMetricsRepository,
-    IAssignIssueToAccountRepository
+    IAssignIssueToAccountRepository,
+    IFindIssueTitleByIssueIdRepository
 {
+  async findIssueTitle(issueId: string): Promise<string> {
+    const { title } = await connection("issue")
+      .select("title")
+      .where({ id: issueId })
+      .first();
+
+    return title;
+  }
+
   async assignIssueToAccount({
     issueId,
     assignedToEmail,

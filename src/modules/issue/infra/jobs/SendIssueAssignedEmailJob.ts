@@ -1,10 +1,10 @@
 import { EmailJobHandlerPayload, emailJobHandler } from "@shared/infra/jobs";
 import { IJob } from "@shared/infra/queue/interfaces";
 
-export class SendInvitationEmailJob implements IJob {
-  public key = "InvitationEmailJob";
+export class SendIssueAssignedEmailJob implements IJob {
+  public key = "IssueAssignedEmailJob";
 
-  async handle(payload: EmailJobHandlerPayload): Promise<void> {
+  handle(payload: EmailJobHandlerPayload): void {
     emailJobHandler(payload);
   }
 }

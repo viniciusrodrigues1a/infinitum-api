@@ -1,3 +1,4 @@
+import { SendIssueAssignedEmailJob } from "@modules/issue/infra/jobs";
 import {
   SendInvitationEmailJob,
   SendKickedEmailJob,
@@ -22,6 +23,7 @@ class Queue implements IQueue {
     new SendInvitationEmailJob(),
     new SendKickedEmailJob(),
     new SendRoleUpdatedEmailJob(),
+    new SendIssueAssignedEmailJob(),
   ];
   queues: { [key: string]: QueueEntry } = {};
 

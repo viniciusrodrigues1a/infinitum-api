@@ -4,18 +4,7 @@ import { renderHTML } from "@shared/infra/queue/utils";
 import { fileToBase64DataURL } from "@shared/presentation/templates/utils";
 
 const logoImgSrc = fileToBase64DataURL(
-  path.resolve(
-    __dirname,
-    "..",
-    "..",
-    "..",
-    "..",
-    "shared",
-    "presentation",
-    "templates",
-    "assets",
-    "logo.png"
-  )
+  path.resolve(__dirname, "assets", "logo.png")
 );
 
 export function renderBaseTemplate<T>(

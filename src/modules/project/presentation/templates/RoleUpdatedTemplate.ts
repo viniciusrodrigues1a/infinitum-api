@@ -1,6 +1,6 @@
 import path from "path";
 
-import { renderBaseTemplate } from "./_baseTemplate";
+import { renderBaseTemplate } from "@shared/presentation/templates/_baseTemplate";
 import { RoleUpdatedViewModel } from "./views/roleUpdatedViewModel";
 
 type RoleUpdatedTemplateParseRequest = {

@@ -14,5 +14,9 @@ export type NotificationSettings = {
     push: boolean;
     email: boolean;
   };
+  issueAssigned: {
+    push: boolean;
+    email: boolean;
+  };
   id?: ObjectId;
 };

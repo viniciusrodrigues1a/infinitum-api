@@ -19,6 +19,7 @@ import {
   ICompletedIssueGroupTitleLanguage,
   IInProgressIssueGroupTitleLanguage,
   IInvitationTemplateLanguage,
+  IIssueAssignedToAnAccountTemplateLanguage,
   IKickedTemplateLanguage,
   IRoleUpdatedTemplateLanguage,
   ITodoIssueGroupTitleLanguage,
@@ -87,4 +88,5 @@ export interface ILanguage
     IKickedTemplateLanguage,
     IRoleUpdatedTemplateLanguage,
     INotificationNotFoundErrorLanguage,
-    INotificationDoesntBelongToYouErrorLanguage {}
+    INotificationDoesntBelongToYouErrorLanguage,
+    IIssueAssignedToAnAccountTemplateLanguage {}

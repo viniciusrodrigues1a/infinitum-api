@@ -4,8 +4,20 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getIssueAssignedText(issueName: string): string {
+    return `You have been assigned the issue ${issueName}`;
+  }
+
+  getIssueAssignedEmailSubject(): string {
+    return "Infinitum - You have been assigned an issue";
+  }
+
+  getIssueAssignedLinkToProjectButtonText(): string {
+    return "Go to project";
+  }
+
   getAssignedToEmailParamMessage(): string {
-    return "assigned to email";
+    return "email to be assigned";
   }
 
   getNotificationNotFoundErrorMessage(): string {

@@ -50,6 +50,7 @@ import {
   makeInvitationToProjectNotificationServiceComposite,
   makeKickedOutOfProjectNotificationServiceComposite,
 } from "../notifications";
+import { makeIssueAssignedNotificationServiceComposite } from "../notifications/IssueAssignedNotificationServiceCompositeFactory";
 import { makeRoleUpdatedNotificationServiceComposite } from "../notifications/RoleUpdatedNotificationServiceCompositeFactory";
 import {
   ControllerValidationFactory,
@@ -72,7 +73,9 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       this.useCaseFactory.makeAssignIssueToAccountUseCase(language),
       this.validationFactory.makeAssignIssueToAccountControllerValidation(
         language
-      )
+      ),
+      makeIssueAssignedNotificationServiceComposite(),
+      language
     );
   }
 

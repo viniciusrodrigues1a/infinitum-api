@@ -1,6 +1,7 @@
 import { AssignIssueToAccountUseCase } from "@modules/issue/use-cases";
 import { AssignIssueToAccountUseCaseDTO } from "@modules/issue/use-cases/DTOs";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
+import { IIssueAssignedToAnAccountTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import {
   badRequestResponse,
   noContentResponse,
@@ -10,6 +11,7 @@ import {
 } from "@shared/presentation/http/httpHelper";
 import { HttpResponse } from "@shared/presentation/http/HttpResponse";
 import { IController } from "@shared/presentation/interfaces/controllers";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
 import {
   ProjectNotFoundError,
@@ -23,7 +25,9 @@ export type AssignIssueToAccountControllerRequest =
 export class AssignIssueToAccountController implements IController {
   constructor(
     private readonly assignIssueToAccountUseCase: AssignIssueToAccountUseCase,
-    private readonly validation: IValidation
+    private readonly validation: IValidation,
+    private readonly notificationService: INotificationService,
+    private readonly issueAssignedTemplateLanguage: IIssueAssignedToAnAccountTemplateLanguage
   ) {}
 
   async handleRequest(
@@ -36,6 +40,13 @@ export class AssignIssueToAccountController implements IController {
       }
 
       await this.assignIssueToAccountUseCase.assign(request);
+
+      if (request.assignedToEmail) {
+        await this.notificationService.notify(request.assignedToEmail, {
+          issueId: request.issueId,
+          issueAssignedTemplateLanguage: this.issueAssignedTemplateLanguage,
+        });
+      }
 
       return noContentResponse();
     } catch (err) {

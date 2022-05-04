@@ -61,6 +61,7 @@ import {
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
+import { IFindIssueTitleByIssueIdRepository } from "@modules/issue/infra/notifications/interfaces/repositories";
 
 export interface IRepositoryFactory {
   makeRegisterRepository(language: ILanguage): IRegisterRepository;
@@ -113,4 +114,5 @@ export interface IRepositoryFactory {
   makeReportIssuesForTodayMetricsRepository(): IReportIssuesForTodayMetricsRepository;
   makeFindOneAccountIdByEmailRepository(): IFindOneAccountIdByEmailRepository;
   makeAssignIssueToAccountRepository(): IAssignIssueToAccountRepository;
+  makeFindIssueTitleByProjectIdRepository(): IFindIssueTitleByIssueIdRepository;
 }

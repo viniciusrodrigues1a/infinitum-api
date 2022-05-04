@@ -1,7 +1,7 @@
 import path from "path";
 
+import { renderBaseTemplate } from "@shared/presentation/templates/_baseTemplate";
 import { InvitationViewModel } from "./views/invitationViewModel";
-import { renderBaseTemplate } from "./_baseTemplate";
 
 type InvitationTemplateParseRequest = {
   invitationText: string;

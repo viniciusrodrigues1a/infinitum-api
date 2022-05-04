@@ -3,6 +3,17 @@ import { ILanguage } from "./ILanguage";
 
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
+  getIssueAssignedText(issueName: string): string {
+    return `O ticket ${issueName} foi atribuído a você`;
+  }
+
+  getIssueAssignedEmailSubject(): string {
+    return "Infinitum - Um ticket foi atribuído a você";
+  }
+
+  getIssueAssignedLinkToProjectButtonText(): string {
+    return "Ir para projeto";
+  }
 
   getAssignedToEmailParamMessage(): string {
     return "email a ser atribuído";

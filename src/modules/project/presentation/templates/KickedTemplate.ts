@@ -1,6 +1,7 @@
 import path from "path";
+
+import { renderBaseTemplate } from "@shared/presentation/templates/_baseTemplate";
 import { KickedViewModel } from "./views/kickedViewModel";
-import { renderBaseTemplate } from "./_baseTemplate";
 
 type KickedTemplateParseRequest = {
   kickedText: string;
