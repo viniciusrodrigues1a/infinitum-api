@@ -14,6 +14,7 @@ export type RegisterControllerRequest = {
   name: string;
   email: string;
   password: string;
+  languageIsoCode: string;
 };
 
 export class RegisterController implements IController {

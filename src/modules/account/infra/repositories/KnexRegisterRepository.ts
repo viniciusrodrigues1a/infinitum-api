@@ -23,6 +23,7 @@ export class KnexRegisterRepository implements IRegisterRepository {
     name,
     email,
     password,
+    languageIsoCode,
   }: RegisterRepositoryDTO): Promise<void> {
     const account = new Account(name, email, this.invalidEmailErrorLanguage);
 
@@ -39,6 +40,19 @@ export class KnexRegisterRepository implements IRegisterRepository {
 
     const { hash, salt, iterations } = pbkdf2.hash(password);
 
+    let languageId;
+
+    if (languageIsoCode) {
+      const language = await connection("language")
+        .select("id")
+        .where({ iso_code: languageIsoCode })
+        .first();
+
+      if (language) {
+        languageId = language.id;
+      }
+    }
+
     await connection("account").insert({
       id: uuid,
       name,
@@ -46,6 +60,7 @@ export class KnexRegisterRepository implements IRegisterRepository {
       password_hash: hash,
       salt,
       iterations,
+      language_id: languageId,
     });
 
     const notificationSettings: NotificationSettings = {
