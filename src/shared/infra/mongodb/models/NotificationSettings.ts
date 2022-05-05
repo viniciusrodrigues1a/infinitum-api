@@ -7,5 +7,7 @@ export type NotificationSettings = {
   roleUpdated: { push: boolean; email: boolean };
   issueAssigned: { push: boolean; email: boolean };
   projectDeleted: { push: boolean; email: boolean };
+  kickedAdmin: { push: boolean; email: boolean };
+  roleUpdatedAdmin: { push: boolean; email: boolean };
   id?: ObjectId;
 };

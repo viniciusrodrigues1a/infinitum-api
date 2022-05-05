@@ -23,6 +23,7 @@ import {
   IKickedAdminTemplateLanguage,
   IKickedTemplateLanguage,
   IProjectDeletedTemplateLanguage,
+  IRoleUpdatedAdminTemplateLanguage,
   IRoleUpdatedTemplateLanguage,
   ITodoIssueGroupTitleLanguage,
 } from "@modules/project/presentation/interfaces/languages";
@@ -93,4 +94,5 @@ export interface ILanguage
     INotificationDoesntBelongToYouErrorLanguage,
     IIssueAssignedToAnAccountTemplateLanguage,
     IProjectDeletedTemplateLanguage,
-    IKickedAdminTemplateLanguage {}
+    IKickedAdminTemplateLanguage,
+    IRoleUpdatedAdminTemplateLanguage {}

@@ -25,10 +25,7 @@ import {
   IKickedAdminTemplateLanguage,
   IKickedTemplateLanguage,
 } from "../interfaces/languages";
-import {
-  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
-  IFindProjectNameByProjectIdRepository,
-} from "../interfaces/repositories";
+import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
 import { KickParticipantFromProjectController } from "./KickParticipantFromProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();

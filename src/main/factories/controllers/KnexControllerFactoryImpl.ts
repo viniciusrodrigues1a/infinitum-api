@@ -53,6 +53,7 @@ import {
   makeProjectDeletedNotificationServiceComposite,
 } from "../notifications";
 import { makeIssueAssignedNotificationServiceComposite } from "../notifications/IssueAssignedNotificationServiceCompositeFactory";
+import { makeRoleUpdatedAdminNotificationServiceComposite } from "../notifications/RoleUpdatedAdminNotificationServiceCompositeFactory";
 import { makeRoleUpdatedNotificationServiceComposite } from "../notifications/RoleUpdatedNotificationServiceCompositeFactory";
 import {
   ControllerValidationFactory,
@@ -189,10 +190,13 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   ): UpdateParticipantRoleInProjectController {
     return new UpdateParticipantRoleInProjectController(
       this.useCaseFactory.makeUpdateParticipantRoleInProjectUseCase(language),
+      this.repositoryFactory.makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(),
       this.validationFactory.makeUpdateParticipantRoleInProjectControllerValidation(
         language
       ),
       makeRoleUpdatedNotificationServiceComposite(),
+      makeRoleUpdatedAdminNotificationServiceComposite(),
+      language,
       language
     );
   }

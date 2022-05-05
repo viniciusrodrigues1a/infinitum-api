@@ -22,14 +22,21 @@ import {
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
-import { IRoleUpdatedTemplateLanguage } from "../interfaces/languages";
+import {
+  IRoleUpdatedAdminTemplateLanguage,
+  IRoleUpdatedTemplateLanguage,
+} from "../interfaces/languages";
+import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
 
 export class UpdateParticipantRoleInProjectController implements IController {
   constructor(
     private readonly updateParticipantRoleInProjectUseCase: UpdateParticipantRoleInProjectUseCase,
+    private readonly findAllEmailsOfOwnersAndAdminsOfProjectRepository: IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
     private readonly validation: IValidation,
-    private readonly notificationService: INotificationService,
-    private readonly roleUpdatedTemplateLanguage: IRoleUpdatedTemplateLanguage
+    private readonly notifyUserNotificationService: INotificationService,
+    private readonly notifyAdminsNotificationService: INotificationService,
+    private readonly roleUpdatedTemplateLanguage: IRoleUpdatedTemplateLanguage,
+    private readonly roleUpdatedAdminTemplateLanguage: IRoleUpdatedAdminTemplateLanguage
   ) {}
 
   async handleRequest(
@@ -45,7 +52,26 @@ export class UpdateParticipantRoleInProjectController implements IController {
         request
       );
 
-      await this.notificationService.notify(request.accountEmail, {
+      const emailsOfOwnersAndAdmins =
+        await this.findAllEmailsOfOwnersAndAdminsOfProjectRepository.findAllEmailsOfOwnersAndAdmins(
+          request.projectId
+        );
+      const filteredEmails = emailsOfOwnersAndAdmins.filter(
+        (e) =>
+          e !== request.accountEmailMakingRequest && e !== request.accountEmail
+      );
+
+      filteredEmails.forEach(async (e: string) => {
+        await this.notifyAdminsNotificationService.notify(e, {
+          emailWhoseRoleHasBeenUpdated: request.accountEmail,
+          projectId: request.projectId,
+          roleName: request.roleName,
+          roleUpdatedAdminTemplateLanguage:
+            this.roleUpdatedAdminTemplateLanguage,
+        });
+      });
+
+      await this.notifyUserNotificationService.notify(request.accountEmail, {
         projectId: request.projectId,
         roleName: request.roleName,
         roleUpdatedTemplateLanguage: this.roleUpdatedTemplateLanguage,

@@ -1,18 +1,19 @@
-import { IKickedAdminTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
+import { IRoleUpdatedAdminTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import { IFindProjectNameByProjectIdRepository } from "@modules/project/presentation/interfaces/repositories";
 import { KickedAdminTemplate } from "@modules/project/presentation/templates";
 import { IShouldAccountReceiveNotificationRepository } from "@shared/infra/notifications/interfaces";
 import { IQueue } from "@shared/infra/queue/interfaces";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
-import { SendKickedAdminEmailJob } from "../../jobs";
+import { SendRoleUpdatedEmailJob } from "../../jobs";
 
 type Payload = {
   projectId: string;
-  emailKicked: string;
-  kickedAdminTemplateLanguage: IKickedAdminTemplateLanguage;
+  emailWhoseRoleHasBeenUpdated: string;
+  roleName: string;
+  roleUpdatedAdminTemplateLanguage: IRoleUpdatedAdminTemplateLanguage;
 };
 
-export class NodemailerKickedOutOfProjectAdminNotificationService
+export class NodemailerRoleUpdatedAdminNotificationService
   implements INotificationService
 {
   constructor(
@@ -25,15 +26,16 @@ export class NodemailerKickedOutOfProjectAdminNotificationService
     const shouldNotify =
       await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
         email,
-        "kickedAdmin",
+        "roleUpdatedAdmin",
         "email"
       );
     if (!shouldNotify) return;
 
     const {
+      emailWhoseRoleHasBeenUpdated,
       projectId,
-      emailKicked,
-      kickedAdminTemplateLanguage: lang,
+      roleName,
+      roleUpdatedAdminTemplateLanguage: lang,
     } = payload;
 
     const projectName =
@@ -42,13 +44,18 @@ export class NodemailerKickedOutOfProjectAdminNotificationService
       );
 
     const html = new KickedAdminTemplate().parseTemplate({
-      kickedAdminText: lang.getKickedAdminText(emailKicked, projectName),
-      linkToProjectButtonText: lang.getKickedAdminLinkToProjectButtonText(),
+      kickedAdminText: lang.getRoleUpdatedAdminText(
+        emailWhoseRoleHasBeenUpdated,
+        projectName,
+        roleName
+      ),
+      linkToProjectButtonText:
+        lang.getRoleUpdatedAdminLinkToProjectButtonText(),
       projectId,
     });
 
-    this.queue.add(new SendKickedAdminEmailJob().key, {
-      subject: lang.getKickedAdminEmailSubject(),
+    this.queue.add(new SendRoleUpdatedEmailJob().key, {
+      subject: lang.getRoleUpdatedAdminEmailSubject(),
       email,
       html,
     });

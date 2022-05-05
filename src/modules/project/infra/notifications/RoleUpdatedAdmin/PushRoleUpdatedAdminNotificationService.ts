@@ -1,21 +1,22 @@
-import { IKickedAdminTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
+import { IRoleUpdatedAdminTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import { IFindProjectNameByProjectIdRepository } from "@modules/project/presentation/interfaces/repositories";
-import { Notification } from "@shared/infra/mongodb/models";
+import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import {
-  IShouldAccountReceiveNotificationRepository,
-  IFindOneAccountIdByEmailRepository,
   ICreateNotificationRepository,
+  IFindOneAccountIdByEmailRepository,
+  IShouldAccountReceiveNotificationRepository,
   ISocketServerEmitter,
 } from "@shared/infra/notifications/interfaces";
-import { INotificationService } from "@shared/presentation/interfaces/notifications";
+import { Notification } from "@shared/infra/mongodb/models";
 
 type Payload = {
   projectId: string;
-  emailKicked: string;
-  kickedAdminTemplateLanguage: IKickedAdminTemplateLanguage;
+  emailWhoseRoleHasBeenUpdated: string;
+  roleName: string;
+  roleUpdatedAdminTemplateLanguage: IRoleUpdatedAdminTemplateLanguage;
 };
 
-export class PushKickedOutOfProjectAdminNotificationService
+export class PushRoleUpdatedAdminNotificationService
   implements INotificationService
 {
   constructor(
@@ -30,15 +31,16 @@ export class PushKickedOutOfProjectAdminNotificationService
     const shouldNotify =
       await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
         email,
-        "kickedAdmin",
+        "roleUpdatedAdmin",
         "push"
       );
     if (!shouldNotify) return;
 
     const {
+      emailWhoseRoleHasBeenUpdated,
       projectId,
-      emailKicked,
-      kickedAdminTemplateLanguage: lang,
+      roleName,
+      roleUpdatedAdminTemplateLanguage: lang,
     } = payload;
 
     const accountId =
@@ -52,15 +54,15 @@ export class PushKickedOutOfProjectAdminNotificationService
         projectId
       );
 
-    const type = "KICKED_ADMIN";
-    const message = lang.getKickedAdminText(emailKicked, projectName);
-
-    const createdAt = new Date().getTime();
-    const notification = {
-      message,
-      type: type as Notification["type"],
+    const notification: Omit<Notification, "user_id"> = {
+      message: lang.getRoleUpdatedAdminText(
+        emailWhoseRoleHasBeenUpdated,
+        projectName,
+        roleName
+      ),
+      type: "ROLE_UPDATED_ADMIN",
       metadata: {},
-      createdAt,
+      createdAt: new Date().getTime(),
     };
 
     const id = await this.createNotificationRepository.createNotification({

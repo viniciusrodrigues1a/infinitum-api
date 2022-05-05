@@ -55,6 +55,8 @@ export class KnexRegisterRepository implements IRegisterRepository {
       roleUpdated: { push: true, email: false },
       issueAssigned: { push: true, email: false },
       projectDeleted: { push: true, email: true },
+      roleUpdatedAdmin: { push: true, email: true },
+      kickedAdmin: { push: true, email: true },
     };
     await this.createNotificationSettingsRepository.createNotificationSettings(
       notificationSettings

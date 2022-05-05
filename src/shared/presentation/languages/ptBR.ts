@@ -4,12 +4,28 @@ import { ILanguage } from "./ILanguage";
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getRoleUpdatedAdminText(
+    email: string,
+    projectName: string,
+    roleName: string
+  ): string {
+    return `O usuário ${email} teve sua função alterada para ${roleName} no projeto ${projectName}, do qual você gerencia.`;
+  }
+
+  getRoleUpdatedAdminLinkToProjectButtonText(): string {
+    return "Ir para projeto";
+  }
+
+  getRoleUpdatedAdminEmailSubject(): string {
+    return "Infinitum - Um membro de um projeto que você gerencia teve sua função alterada";
+  }
+
   getKickedAdminLinkToProjectButtonText(): string {
     return "Ir para projeto";
   }
 
   getKickedAdminText(email: string, projectName: string): string {
-    return `O membro ${email} foi expulso do projeto ${projectName}.`;
+    return `O usuário ${email} foi expulso do projeto ${projectName}.`;
   }
 
   getKickedAdminEmailSubject(): string {

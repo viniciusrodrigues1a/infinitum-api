@@ -25,8 +25,14 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import { IRoleUpdatedTemplateLanguage } from "../interfaces/languages";
-import { IFindProjectNameByProjectIdRepository } from "../interfaces/repositories";
+import {
+  IRoleUpdatedAdminTemplateLanguage,
+  IRoleUpdatedTemplateLanguage,
+} from "../interfaces/languages";
+import {
+  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
+  IFindProjectNameByProjectIdRepository,
+} from "../interfaces/repositories";
 import { UpdateParticipantRoleInProjectController } from "./UpdateParticipantRoleInProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -45,22 +51,33 @@ const cannotUpdateRoleOfOwnerErrorLanguageMock =
 function makeSut() {
   const updateParticipantRoleInProjectUseCaseMock =
     mock<UpdateParticipantRoleInProjectUseCase>();
+  const findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock =
+    mock<IFindAllEmailsOfOwnersAndAdminsOfProjectRepository>();
   const validationMock = mock<IValidation>();
-  const notificationServiceMock = mock<INotificationService>();
+  const notifyUserNotificationServiceMock = mock<INotificationService>();
+  const notifyAdminsNotificationServiceMock = mock<INotificationService>();
   const roleUpdatedTemplateLanguageMock = mock<IRoleUpdatedTemplateLanguage>();
+  const roleUpdatedAdminTemplateLanguageMock =
+    mock<IRoleUpdatedAdminTemplateLanguage>();
   const sut = new UpdateParticipantRoleInProjectController(
     updateParticipantRoleInProjectUseCaseMock,
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
     validationMock,
-    notificationServiceMock,
-    roleUpdatedTemplateLanguageMock
+    notifyUserNotificationServiceMock,
+    notifyAdminsNotificationServiceMock,
+    roleUpdatedTemplateLanguageMock,
+    roleUpdatedAdminTemplateLanguageMock
   );
 
   return {
     sut,
-    notificationServiceMock,
-    roleUpdatedTemplateLanguageMock,
     updateParticipantRoleInProjectUseCaseMock,
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+    notifyUserNotificationServiceMock,
+    notifyAdminsNotificationServiceMock,
     validationMock,
+    roleUpdatedTemplateLanguageMock,
+    roleUpdatedAdminTemplateLanguageMock,
   };
 }
 
@@ -87,13 +104,20 @@ describe("updateParticipantRoleInProject controller", () => {
   it("should return HttpStatusCodes.noContent and call the use-case", async () => {
     expect.assertions(2);
 
-    const { sut, updateParticipantRoleInProjectUseCaseMock } = makeSut();
+    const {
+      sut,
+      updateParticipantRoleInProjectUseCaseMock,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+    } = makeSut();
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
     };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValue(
+      []
+    );
 
     const response = await sut.handleRequest(givenRequest);
 
@@ -103,11 +127,18 @@ describe("updateParticipantRoleInProject controller", () => {
     ).toHaveBeenNthCalledWith(1, givenRequest);
   });
 
-  it("should call notificationServiceMock", async () => {
+  it("should call notifyUserNotificationService", async () => {
     expect.assertions(1);
 
-    const { sut, notificationServiceMock, roleUpdatedTemplateLanguageMock } =
-      makeSut();
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyUserNotificationServiceMock,
+      roleUpdatedTemplateLanguageMock,
+    } = makeSut();
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValue(
+      []
+    );
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
@@ -117,7 +148,7 @@ describe("updateParticipantRoleInProject controller", () => {
 
     await sut.handleRequest(givenRequest);
 
-    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(
+    expect(notifyUserNotificationServiceMock.notify).toHaveBeenNthCalledWith(
       1,
       givenRequest.accountEmail,
       {
@@ -126,6 +157,77 @@ describe("updateParticipantRoleInProject controller", () => {
         roleUpdatedTemplateLanguage: roleUpdatedTemplateLanguageMock,
       }
     );
+  });
+
+  it("should call notifyAdminsNotificationServiceMock", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyAdminsNotificationServiceMock,
+    } = makeSut();
+    const givenRequest = {
+      roleName: "member",
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmailMakingRequest, "alan@email.com"]
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalled();
+  });
+
+  it("shouldn't call notifyAdminsNotificationServiceMock on the account email making the request", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyAdminsNotificationServiceMock,
+      roleUpdatedAdminTemplateLanguageMock,
+    } = makeSut();
+    const givenRequest = {
+      roleName: "member",
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmailMakingRequest]
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalledTimes(0);
+  });
+
+  it("shouldn't call notifyAdminsNotificationServiceMock on the account having its role updated", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyAdminsNotificationServiceMock,
+      roleUpdatedAdminTemplateLanguageMock,
+    } = makeSut();
+    const givenRequest = {
+      roleName: "member",
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmail]
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalledTimes(0);
   });
 
   it("should return HttpStatusCodes.notFound if ProjectNotFoundError is thrown", async () => {

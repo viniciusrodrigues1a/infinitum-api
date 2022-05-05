@@ -4,6 +4,22 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getRoleUpdatedAdminText(
+    email: string,
+    projectName: string,
+    roleName: string
+  ): string {
+    return `The participant ${email} has had their role changed to ${roleName}, in the project ${projectName}, of which you're a manager.`;
+  }
+
+  getRoleUpdatedAdminLinkToProjectButtonText(): string {
+    return "Go to project";
+  }
+
+  getRoleUpdatedAdminEmailSubject(): string {
+    return "Infinitum - A participant has had their role changed in a project that you manage";
+  }
+
   getKickedAdminLinkToProjectButtonText(): string {
     return "Go to project";
   }
