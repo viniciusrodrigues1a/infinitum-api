@@ -90,7 +90,7 @@ describe("/invitations/ endpoint", () => {
     await connection.destroy();
   });
 
-  describe("method DELETE /", () => {
+  describe("method POST /revoke/", () => {
     it("should return 204", async () => {
       expect.assertions(1);
 
@@ -99,7 +99,7 @@ describe("/invitations/ endpoint", () => {
       };
 
       const response = await api
-        .delete("/invitations/")
+        .post("/invitations/revoke/")
         .set(givenAuthHeader)
         .send({
           projectId,
@@ -117,7 +117,7 @@ describe("/invitations/ endpoint", () => {
       };
 
       const response = await api
-        .delete("/invitations/")
+        .post("/invitations/revoke/")
         .set(givenAuthHeader)
         .send({
           projectId: "inexistent-project-id-12394721412",
@@ -139,7 +139,7 @@ describe("/invitations/ endpoint", () => {
       const inexistentAccountEmail = "user832678312@email.com";
 
       const response = await api
-        .delete("/invitations/")
+        .post("/invitations/revoke/")
         .set(givenAuthHeader)
         .send({
           projectId,
@@ -174,7 +174,7 @@ describe("/invitations/ endpoint", () => {
       };
 
       const response = await api
-        .delete("/invitations/")
+        .post("/invitations/revoke/")
         .set(givenAuthHeader)
         .send({
           projectId,
@@ -222,7 +222,7 @@ describe("/invitations/ endpoint", () => {
         .where({ account_id: accountId });
 
       const response = await api
-        .delete("/invitations/")
+        .post("/invitations/revoke/")
         .set(givenAuthHeader)
         .send({
           projectId,

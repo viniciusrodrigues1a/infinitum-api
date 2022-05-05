@@ -29,15 +29,15 @@ invitationsRoutes.post(
 );
 
 invitationsRoutes.post(
-  "/kick",
+  "/revoke",
   ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeKickParticipantFromProjectController(language)
+    knexControllerFactoryImpl.makeRevokeInvitationController(language)
   )
 );
 
-invitationsRoutes.delete(
-  "/",
+invitationsRoutes.post(
+  "/kick",
   ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeRevokeInvitationController(language)
+    knexControllerFactoryImpl.makeKickParticipantFromProjectController(language)
   )
 );
