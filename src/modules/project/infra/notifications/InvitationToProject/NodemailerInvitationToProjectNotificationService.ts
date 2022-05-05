@@ -39,6 +39,7 @@ export class NodemailerInvitationToProjectNotificationService
 
     const html = new InvitationTemplate().parseTemplate({
       token,
+      projectId,
       invitationText: lang.getInvitationText(projectName),
       acceptInvitationButtonText: lang.getAcceptInvitationButtonText(),
       declineInvitationButtonText: lang.getDeclineInvitationButtonText(),

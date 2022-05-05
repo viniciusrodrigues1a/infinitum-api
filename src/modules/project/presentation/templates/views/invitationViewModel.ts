@@ -3,6 +3,7 @@ export type InvitationViewModel = {
   acceptInvitationButtonText: string;
   declineInvitationButtonText: string;
   token: string;
+  projectId: string;
   iconImgSrc: string;
   logoImgSrc: string;
 };

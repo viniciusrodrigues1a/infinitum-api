@@ -52,7 +52,7 @@ export class PushInvitationToProjectNotificationService
     const message = lang.getInvitationText(projectName);
     const metadata = {
       acceptInvitationLink: `/invitation/${token}`,
-      declineInvitationLink: `/revoke/${token}`,
+      declineInvitationLink: `/revoke/${projectId}`,
     };
 
     const createdAt = new Date().getTime();

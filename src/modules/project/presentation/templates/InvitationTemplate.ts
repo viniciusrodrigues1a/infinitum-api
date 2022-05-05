@@ -7,6 +7,7 @@ type InvitationTemplateParseRequest = {
   invitationText: string;
   acceptInvitationButtonText: string;
   declineInvitationButtonText: string;
+  projectId: string;
   token: string;
 };
 
@@ -15,6 +16,7 @@ export class InvitationTemplate {
     invitationText,
     acceptInvitationButtonText,
     declineInvitationButtonText,
+    projectId,
     token,
   }: InvitationTemplateParseRequest): string {
     const viewPath = path.resolve(__dirname, "views", "invitationView.ejs");
@@ -22,6 +24,7 @@ export class InvitationTemplate {
       invitationText,
       acceptInvitationButtonText,
       declineInvitationButtonText,
+      projectId,
       token,
     };
     const iconPath = path.resolve(__dirname, "assets", "invitationIcon.png");
