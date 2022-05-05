@@ -11,7 +11,7 @@ export class RoleUpdatedTemplate {
   parseTemplate({ roleUpdatedText }: RoleUpdatedTemplateParseRequest): string {
     const viewPath = path.resolve(__dirname, "views", "roleUpdatedView.ejs");
     const viewModel = { roleUpdatedText };
-    const iconPath = path.resolve(__dirname, "assets", "invitationIcon.png");
+    const iconPath = path.resolve(__dirname, "assets", "roleUpdatedIcon.png");
 
     const html = renderBaseTemplate<RoleUpdatedViewModel>(
       viewPath,

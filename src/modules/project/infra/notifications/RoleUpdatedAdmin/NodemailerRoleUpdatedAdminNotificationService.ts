@@ -1,6 +1,6 @@
 import { IRoleUpdatedAdminTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import { IFindProjectNameByProjectIdRepository } from "@modules/project/presentation/interfaces/repositories";
-import { KickedAdminTemplate } from "@modules/project/presentation/templates";
+import { RoleUpdatedAdminTemplate } from "@modules/project/presentation/templates";
 import { IShouldAccountReceiveNotificationRepository } from "@shared/infra/notifications/interfaces";
 import { IQueue } from "@shared/infra/queue/interfaces";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
@@ -43,8 +43,8 @@ export class NodemailerRoleUpdatedAdminNotificationService
         projectId
       );
 
-    const html = new KickedAdminTemplate().parseTemplate({
-      kickedAdminText: lang.getRoleUpdatedAdminText(
+    const html = new RoleUpdatedAdminTemplate().parseTemplate({
+      roleUpdatedAdminText: lang.getRoleUpdatedAdminText(
         emailWhoseRoleHasBeenUpdated,
         projectName,
         roleName
