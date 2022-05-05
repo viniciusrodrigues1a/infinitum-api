@@ -58,17 +58,19 @@ export class RevokeInvitationUseCase {
       );
     }
 
-    const participantRole =
-      await this.findParticipantRoleInProjectRepository.findParticipantRole({
-        accountEmail: accountEmailMakingRequest,
-        projectId,
-      });
-    const role = new Role(participantRole, this.invalidRoleNameErrorLanguage);
-    if (!role.can("REVOKE_INVITATION")) {
-      throw new RoleInsufficientPermissionError(
-        participantRole,
-        this.roleInsufficientPermissionErrorLanguage
-      );
+    if (accountEmail !== accountEmailMakingRequest) {
+      const participantRole =
+        await this.findParticipantRoleInProjectRepository.findParticipantRole({
+          accountEmail: accountEmailMakingRequest,
+          projectId,
+        });
+      const role = new Role(participantRole, this.invalidRoleNameErrorLanguage);
+      if (!role.can("REVOKE_INVITATION")) {
+        throw new RoleInsufficientPermissionError(
+          participantRole,
+          this.roleInsufficientPermissionErrorLanguage
+        );
+      }
     }
 
     const doesAccountExist =

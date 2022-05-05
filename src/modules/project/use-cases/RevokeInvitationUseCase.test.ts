@@ -129,6 +129,42 @@ describe("revokeInvitation use-case", () => {
     ).toHaveBeenCalledTimes(1);
   });
 
+  it("should be able to revoke an invitation sent to yourself", async () => {
+    expect.assertions(2);
+
+    const {
+      sut,
+      revokeInvitationRepositoryMock,
+      doesProjectExistRepositoryMock,
+      doesAccountExistRepositoryMock,
+      doesParticipantExistRepositoryMock,
+      findParticipantRoleInProjectRepositoryMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+    doesProjectExistRepositoryMock.doesProjectExist.mockResolvedValueOnce(true);
+    doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
+    doesParticipantExistRepositoryMock.doesParticipantExist.mockImplementationOnce(
+      async ({ accountEmail }) => {
+        if (accountEmail === givenRequest.accountEmailMakingRequest)
+          return true;
+        return false;
+      }
+    );
+
+    await sut.revokeInvitation(givenRequest);
+
+    expect(
+      findParticipantRoleInProjectRepositoryMock.findParticipantRole
+    ).toHaveBeenCalledTimes(0);
+    expect(
+      revokeInvitationRepositoryMock.revokeInvitation
+    ).toHaveBeenCalledTimes(1);
+  });
+
   it("should throw ProjectNotFoundError", async () => {
     expect.assertions(1);
 
