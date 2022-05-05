@@ -36,6 +36,7 @@ describe("register controller", () => {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     const errReturned = new Error("Validation error");
     validationMock.validate.mockImplementationOnce(() => errReturned);
@@ -54,6 +55,7 @@ describe("register controller", () => {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
 
     const response = await sut.handleRequest(request);
@@ -69,6 +71,7 @@ describe("register controller", () => {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     registerAccountRepositoryMock.create.mockImplementationOnce(() => {
       throw new Error("Supposedly unhandled server side error");
@@ -87,6 +90,7 @@ describe("register controller", () => {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     registerAccountRepositoryMock.create.mockImplementationOnce(() => {
       throw new EmailAlreadyInUseError(request.email, languageMock);
@@ -106,6 +110,7 @@ describe("register controller", () => {
       name: "Jorge",
       email: "notanemail",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     registerAccountRepositoryMock.create.mockImplementationOnce(() => {
       throw new InvalidEmailError(languageMock);

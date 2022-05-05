@@ -50,6 +50,7 @@ describe("createAccount repository using Knex", () => {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(
       false
@@ -75,6 +76,7 @@ describe("createAccount repository using Knex", () => {
       name: "Jorge",
       email: "jorge@email.com",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(true);
 
@@ -93,6 +95,7 @@ describe("createAccount repository using Knex", () => {
       name: "Jorge",
       email: "1238yewqhi",
       password: "pa55",
+      languageIsoCode: "en-US",
     };
     doesAccountExistRepositoryMock.doesAccountExist.mockResolvedValueOnce(
       false
