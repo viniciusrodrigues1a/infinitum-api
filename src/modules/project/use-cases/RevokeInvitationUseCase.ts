@@ -46,19 +46,19 @@ export class RevokeInvitationUseCase {
       throw new ProjectNotFoundError(this.projectNotFoundErrorLanguage);
     }
 
-    const doesParticipantExist =
-      await this.doesParticipantExistRepository.doesParticipantExist({
-        projectId,
-        accountEmail: accountEmailMakingRequest,
-      });
-    if (!doesParticipantExist) {
-      throw new NotParticipantInProjectError(
-        accountEmailMakingRequest,
-        this.notParticipantInProjectErrorLanguage
-      );
-    }
-
     if (accountEmail !== accountEmailMakingRequest) {
+      const doesParticipantExist =
+        await this.doesParticipantExistRepository.doesParticipantExist({
+          projectId,
+          accountEmail: accountEmailMakingRequest,
+        });
+      if (!doesParticipantExist) {
+        throw new NotParticipantInProjectError(
+          accountEmailMakingRequest,
+          this.notParticipantInProjectErrorLanguage
+        );
+      }
+
       const participantRole =
         await this.findParticipantRoleInProjectRepository.findParticipantRole({
           accountEmail: accountEmailMakingRequest,

@@ -158,6 +158,9 @@ describe("revokeInvitation use-case", () => {
     await sut.revokeInvitation(givenRequest);
 
     expect(
+      doesParticipantExistRepositoryMock.doesParticipantExist
+    ).toHaveBeenCalledTimes(0);
+    expect(
       findParticipantRoleInProjectRepositoryMock.findParticipantRole
     ).toHaveBeenCalledTimes(0);
     expect(
