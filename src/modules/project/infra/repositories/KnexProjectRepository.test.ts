@@ -42,8 +42,69 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("findAllEmailsOfOwnersAndAdmins method", () => {
+    it("should return every email that has the owner or admin role in given project", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        name: "My project",
+        description: "My project's description",
+        begins_at: new Date().toISOString(),
+      };
+      const newAccount = {
+        id: "account-id-123",
+        email: "alan@email.com",
+        name: "alan",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const newAccount1 = {
+        ...newAccount,
+        id: "account-id-124",
+        email: "jorge@email.com",
+        name: "jorge",
+      };
+      const { id: adminRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "admin" })
+        .first();
+      const { id: especRoleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "espectator" })
+        .first();
+      const ownerParticipant = {
+        account_id: accountId,
+        project_id: project.id,
+        project_role_id: adminRoleId,
+      };
+      const adminParticipant = {
+        account_id: newAccount.id,
+        project_id: project.id,
+        project_role_id: adminRoleId,
+      };
+      const especParticipant = {
+        account_id: newAccount1.id,
+        project_id: project.id,
+        project_role_id: especRoleId,
+      };
+      await connection("account").insert(newAccount);
+      await connection("account").insert(newAccount1);
+      await connection("project").insert(project);
+      await connection("account_project_project_role").insert(ownerParticipant);
+      await connection("account_project_project_role").insert(adminParticipant);
+      await connection("account_project_project_role").insert(especParticipant);
+
+      const emails = await sut.findAllEmailsOfOwnersAndAdmins(project.id);
+
+      expect(emails).toEqual([accountEmail, newAccount.email]);
+    });
+  });
+
   describe("findAllEmails method", () => {
-    it("should return somethign", async () => {
+    it("should return every email that participates in given project", async () => {
       expect.assertions(1);
 
       const { sut } = makeSut();

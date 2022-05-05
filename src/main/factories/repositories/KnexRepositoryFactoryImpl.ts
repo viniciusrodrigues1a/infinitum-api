@@ -39,6 +39,7 @@ import {
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { KnexProjectRepository } from "@modules/project/infra/repositories";
 import {
+  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
   IFindAllEmailsParticipantInProject,
   IFindProjectImageDataURLRepository,
   IFindProjectNameByProjectIdRepository,
@@ -78,6 +79,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(): IFindAllEmailsOfOwnersAndAdminsOfProjectRepository {
+    return this.makeProjectRepository();
+  }
 
   makeFindAllEmailsParticipantInProjectRepository(): IFindAllEmailsParticipantInProject {
     return this.makeProjectRepository();

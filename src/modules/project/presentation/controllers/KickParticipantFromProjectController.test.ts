@@ -21,8 +21,14 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import { IKickedTemplateLanguage } from "../interfaces/languages";
-import { IFindProjectNameByProjectIdRepository } from "../interfaces/repositories";
+import {
+  IKickedAdminTemplateLanguage,
+  IKickedTemplateLanguage,
+} from "../interfaces/languages";
+import {
+  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
+  IFindProjectNameByProjectIdRepository,
+} from "../interfaces/repositories";
 import { KickParticipantFromProjectController } from "./KickParticipantFromProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -38,22 +44,32 @@ const roleInsufficientPermissionErrorLanguageMock =
 function makeSut() {
   const kickParticipantFromProjectUseCaseMock =
     mock<KickParticipantFromProjectUseCase>();
-  const notificationServiceMock = mock<INotificationService>();
+  const findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock =
+    mock<IFindAllEmailsOfOwnersAndAdminsOfProjectRepository>();
+  const notifyUserNotificationServiceMock = mock<INotificationService>();
+  const notifyAdminsNotificationServiceMock = mock<INotificationService>();
   const kickedTemplateLanguageMock = mock<IKickedTemplateLanguage>();
+  const kickedAdminTemplateLanguageMock = mock<IKickedAdminTemplateLanguage>();
   const validationMock = mock<IValidation>();
   const sut = new KickParticipantFromProjectController(
     kickParticipantFromProjectUseCaseMock,
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
     validationMock,
-    notificationServiceMock,
-    kickedTemplateLanguageMock
+    notifyUserNotificationServiceMock,
+    notifyAdminsNotificationServiceMock,
+    kickedTemplateLanguageMock,
+    kickedAdminTemplateLanguageMock
   );
 
   return {
     sut,
     kickParticipantFromProjectUseCaseMock,
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
     validationMock,
-    notificationServiceMock,
+    notifyUserNotificationServiceMock,
+    notifyAdminsNotificationServiceMock,
     kickedTemplateLanguageMock,
+    kickedAdminTemplateLanguageMock,
   };
 }
 
@@ -79,12 +95,19 @@ describe("kickParticipantFromProject controller", () => {
   it("should return HttpStatusCodes.noContent", async () => {
     expect.assertions(2);
 
-    const { sut, kickParticipantFromProjectUseCaseMock } = makeSut();
+    const {
+      sut,
+      kickParticipantFromProjectUseCaseMock,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+    } = makeSut();
     const givenRequest = {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
     };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmailMakingRequest]
+    );
 
     const response = await sut.handleRequest(givenRequest);
 
@@ -95,20 +118,27 @@ describe("kickParticipantFromProject controller", () => {
     );
   });
 
-  it("should call notificationService", async () => {
+  it("should call notifyUserNotificationService", async () => {
     expect.assertions(1);
 
-    const { sut, notificationServiceMock, kickedTemplateLanguageMock } =
-      makeSut();
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyUserNotificationServiceMock,
+      kickedTemplateLanguageMock,
+    } = makeSut();
     const givenRequest = {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
     };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmailMakingRequest]
+    );
 
     await sut.handleRequest(givenRequest);
 
-    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(
+    expect(notifyUserNotificationServiceMock.notify).toHaveBeenNthCalledWith(
       1,
       givenRequest.accountEmail,
       {
@@ -116,6 +146,81 @@ describe("kickParticipantFromProject controller", () => {
         kickedTemplateLanguage: kickedTemplateLanguageMock,
       }
     );
+  });
+
+  it("should call notifyAdminsNotificationServiceMock", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyAdminsNotificationServiceMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmailMakingRequest, "alan@email.com"]
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalled();
+  });
+
+  it("shouldn't call notifyAdminsNotificationServiceMock on the account email making request", async () => {
+    expect.assertions(2);
+
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyAdminsNotificationServiceMock,
+      kickedAdminTemplateLanguageMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmailMakingRequest, "alan@email.com"]
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notifyAdminsNotificationServiceMock.notify).not.toHaveBeenCalledWith(
+      givenRequest.accountEmailMakingRequest,
+      {
+        projectId: givenRequest.projectId,
+        emailKicked: givenRequest.accountEmail,
+        kickedAdminTemplateLanguage: kickedAdminTemplateLanguageMock,
+      }
+    );
+    expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalledTimes(1);
+  });
+
+  it("shouldn't call notifyAdminsNotificationServiceMock on the account being kicked, even if they're an admin", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
+      notifyAdminsNotificationServiceMock,
+    } = makeSut();
+    const givenRequest = {
+      projectId: "project-id-0",
+      accountEmail: "jorge@email.com",
+      accountEmailMakingRequest: "garcia@email.com",
+    };
+    findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
+      [givenRequest.accountEmail]
+    );
+
+    await sut.handleRequest(givenRequest);
+
+    expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalledTimes(0);
   });
 
   it("should return HttpStatusCodes.notFound if ProjectNotFoundError is thrown", async () => {

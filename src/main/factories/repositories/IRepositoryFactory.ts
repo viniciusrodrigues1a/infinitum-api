@@ -38,6 +38,7 @@ import {
   IUpdateProjectImageRepository,
   IFindProjectNameByProjectIdRepository,
   IFindAllEmailsParticipantInProject,
+  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
 } from "@modules/project/presentation/interfaces/repositories";
 import {
   IAcceptInvitationTokenRepository,
@@ -119,4 +120,5 @@ export interface IRepositoryFactory {
   makeFindIssueTitleByProjectIdRepository(): IFindIssueTitleByIssueIdRepository;
   makeFindAccountEmailAssignedToIssueRepository(): IFindAccountEmailAssignedToIssueRepository;
   makeFindAllEmailsParticipantInProjectRepository(): IFindAllEmailsParticipantInProject;
+  makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(): IFindAllEmailsOfOwnersAndAdminsOfProjectRepository;
 }

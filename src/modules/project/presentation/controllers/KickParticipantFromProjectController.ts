@@ -20,14 +20,21 @@ import {
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
-import { IKickedTemplateLanguage } from "../interfaces/languages";
+import {
+  IKickedAdminTemplateLanguage,
+  IKickedTemplateLanguage,
+} from "../interfaces/languages";
+import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
 
 export class KickParticipantFromProjectController implements IController {
   constructor(
     private readonly kickParticipantFromProjectUseCase: KickParticipantFromProjectUseCase,
+    private readonly findAllEmailsOfOwnersAndAdminsOfProjectRepository: IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
     private readonly validation: IValidation,
-    private readonly notificationService: INotificationService,
-    private readonly kickedTemplateLanguage: IKickedTemplateLanguage
+    private readonly notifyUserNotificationService: INotificationService,
+    private readonly notifyAdminsNotificationService: INotificationService,
+    private readonly kickedTemplateLanguage: IKickedTemplateLanguage,
+    private readonly kickedAdminTemplateLanguage: IKickedAdminTemplateLanguage
   ) {}
 
   async handleRequest(
@@ -41,7 +48,24 @@ export class KickParticipantFromProjectController implements IController {
 
       await this.kickParticipantFromProjectUseCase.kick(request);
 
-      await this.notificationService.notify(request.accountEmail, {
+      const emailsOfOwnersAndAdmins =
+        await this.findAllEmailsOfOwnersAndAdminsOfProjectRepository.findAllEmailsOfOwnersAndAdmins(
+          request.projectId
+        );
+      const filteredEmails = emailsOfOwnersAndAdmins.filter(
+        (e) =>
+          e !== request.accountEmailMakingRequest && e !== request.accountEmail
+      );
+
+      filteredEmails.forEach(async (e: string) => {
+        await this.notifyAdminsNotificationService.notify(e, {
+          projectId: request.projectId,
+          emailKicked: request.accountEmail,
+          kickedAdminTemplateLanguage: this.kickedAdminTemplateLanguage,
+        });
+      });
+
+      await this.notifyUserNotificationService.notify(request.accountEmail, {
         projectId: request.projectId,
         kickedTemplateLanguage: this.kickedTemplateLanguage,
       });

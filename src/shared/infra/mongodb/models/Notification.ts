@@ -7,7 +7,8 @@ export type Notification = {
     | "KICKED"
     | "ROLE_UPDATED"
     | "ISSUE_ASSIGNED"
-    | "PROJECT_DELETED";
+    | "PROJECT_DELETED"
+    | "KICKED_ADMIN";
   metadata: Record<any, any>;
   id?: string;
   createdAt?: number;

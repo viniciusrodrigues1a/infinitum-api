@@ -48,6 +48,7 @@ import {
 import { ILanguage } from "@shared/presentation/languages";
 import {
   makeInvitationToProjectNotificationServiceComposite,
+  makeKickedOutOfProjectAdminNotificationServiceComposite,
   makeKickedOutOfProjectNotificationServiceComposite,
   makeProjectDeletedNotificationServiceComposite,
 } from "../notifications";
@@ -210,10 +211,13 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   ): KickParticipantFromProjectController {
     return new KickParticipantFromProjectController(
       this.useCaseFactory.makeKickParticipantFromProjectUseCase(language),
+      this.repositoryFactory.makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(),
       this.validationFactory.makeKickParticipantFromProjectControllerValidation(
         language
       ),
       makeKickedOutOfProjectNotificationServiceComposite(),
+      makeKickedOutOfProjectAdminNotificationServiceComposite(),
+      language,
       language
     );
   }

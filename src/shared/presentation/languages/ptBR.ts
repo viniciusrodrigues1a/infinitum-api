@@ -4,6 +4,18 @@ import { ILanguage } from "./ILanguage";
 export class PTBRLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getKickedAdminLinkToProjectButtonText(): string {
+    return "Ir para projeto";
+  }
+
+  getKickedAdminText(email: string, projectName: string): string {
+    return `O membro ${email} foi expulso do projeto ${projectName}.`;
+  }
+
+  getKickedAdminEmailSubject(): string {
+    return "Infinitum - Um membro de um projeto que você gerencia foi expulso";
+  }
+
   getProjectDeletedText(projectName: string): string {
     return `O projeto ${projectName}, do qual você fazia parte, foi deletado.`;
   }

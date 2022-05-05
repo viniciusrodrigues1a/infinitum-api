@@ -6,3 +6,4 @@ export * from "./IKickedTemplateLanguage";
 export * from "./IRoleUpdatedTemplateLanguage";
 export * from "./IIssueAssignedToAnAccountTemplateLanguage";
 export * from "./IProjectDeletedTemplateLanguage";
+export * from "./IKickedAdminTemplateLanguage";

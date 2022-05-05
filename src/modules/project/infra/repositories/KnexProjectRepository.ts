@@ -6,6 +6,7 @@ import {
   Role,
 } from "@modules/project/entities/value-objects";
 import {
+  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
   IFindAllEmailsParticipantInProject,
   IFindProjectImageDataURLRepository,
   IFindProjectNameByProjectIdRepository,
@@ -83,8 +84,27 @@ export class KnexProjectRepository
     IFindOneAccountEmailByInvitationTokenRepository,
     IUpdateIssueGroupColorRepository,
     IFindStartDateByProjectIdRepository,
-    IFindAllEmailsParticipantInProject
+    IFindAllEmailsParticipantInProject,
+    IFindAllEmailsOfOwnersAndAdminsOfProjectRepository
 {
+  async findAllEmailsOfOwnersAndAdmins(projectId: string): Promise<string[]> {
+    const ownerRoleId = await this.findRoleIdByRoleName("owner");
+    const adminRoleId = await this.findRoleIdByRoleName("admin");
+
+    const idsResult = await connection("account_project_project_role")
+      .select("account_id")
+      .where({ project_id: projectId, project_role_id: adminRoleId })
+      .orWhere({ project_id: projectId, project_role_id: ownerRoleId });
+    const mappedIds = idsResult.map((i) => i.account_id);
+
+    const emailsResult = await connection("account")
+      .select("email")
+      .whereIn("id", mappedIds);
+    const mappedEmails = emailsResult.map((e) => e.email);
+
+    return mappedEmails;
+  }
+
   async findAllEmails(projectId: string): Promise<string[]> {
     const idsResult = await connection("account_project_project_role")
       .select("account_id")

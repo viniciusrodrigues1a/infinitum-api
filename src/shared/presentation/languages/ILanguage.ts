@@ -20,6 +20,7 @@ import {
   IInProgressIssueGroupTitleLanguage,
   IInvitationTemplateLanguage,
   IIssueAssignedToAnAccountTemplateLanguage,
+  IKickedAdminTemplateLanguage,
   IKickedTemplateLanguage,
   IProjectDeletedTemplateLanguage,
   IRoleUpdatedTemplateLanguage,
@@ -91,4 +92,5 @@ export interface ILanguage
     INotificationNotFoundErrorLanguage,
     INotificationDoesntBelongToYouErrorLanguage,
     IIssueAssignedToAnAccountTemplateLanguage,
-    IProjectDeletedTemplateLanguage {}
+    IProjectDeletedTemplateLanguage,
+    IKickedAdminTemplateLanguage {}

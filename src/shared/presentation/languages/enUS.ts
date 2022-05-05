@@ -4,6 +4,18 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getKickedAdminLinkToProjectButtonText(): string {
+    return "Go to project";
+  }
+
+  getKickedAdminText(email: string, projectName: string): string {
+    return `The participant ${email} has been kicked out of the project ${projectName}, of which you're a manager.`;
+  }
+
+  getKickedAdminEmailSubject(): string {
+    return "Infinitum - A participant has been kicked out of a project that you manage";
+  }
+
   getProjectDeletedText(projectName: string): string {
     return `The project ${projectName}, that you were a participant in, has been deleted.`;
   }
