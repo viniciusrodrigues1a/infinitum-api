@@ -7,6 +7,7 @@ import {
   DeleteProjectUseCase,
   InviteAccountToProjectUseCase,
   KickParticipantFromProjectUseCase,
+  ListParticipantsInvitedToProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
   RevokeInvitationUseCase,
   UpdateParticipantRoleInProjectUseCase,
@@ -28,6 +29,21 @@ import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeListParticipantsInvitedToProjectUseCase(
+    language: ILanguage
+  ): ListParticipantsInvitedToProjectUseCase {
+    return new ListParticipantsInvitedToProjectUseCase(
+      this.repositoryFactory.makeListParticipantsInvitedToProjectRepository(),
+      this.repositoryFactory.makeDoesProjectExistRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeAssignIssueToAccountUseCase(
     language: ILanguage

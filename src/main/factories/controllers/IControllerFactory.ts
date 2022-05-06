@@ -20,6 +20,7 @@ import {
   DeleteProjectController,
   FindProjectImageDataURLController,
   InviteAccountToProjectController,
+  ListParticipantsInvitedToProjectController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
   UpdateIssueGroupColorController,
@@ -85,4 +86,7 @@ export interface IControllerFactory {
   makeAssignIssueToAccountController(
     language: ILanguage
   ): AssignIssueToAccountController;
+  makeListParticipantsInvitedToProjectController(
+    language: ILanguage
+  ): ListParticipantsInvitedToProjectController;
 }

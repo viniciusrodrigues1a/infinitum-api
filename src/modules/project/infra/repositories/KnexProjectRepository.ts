@@ -1,3 +1,4 @@
+import { Account } from "@modules/account/entities/Account";
 import { Issue } from "@modules/issue/entities";
 import { Project } from "@modules/project/entities";
 import {
@@ -48,6 +49,7 @@ import {
   IFindOneAccountEmailByInvitationTokenRepository,
   IFindStartDateByProjectIdRepository,
   IKickParticipantFromProjectRepository,
+  IListParticipantsInvitedToProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import { getDataURLFromImageBuffer } from "@shared/infra/repositories/helpers";
@@ -85,8 +87,22 @@ export class KnexProjectRepository
     IUpdateIssueGroupColorRepository,
     IFindStartDateByProjectIdRepository,
     IFindAllEmailsParticipantInProject,
-    IFindAllEmailsOfOwnersAndAdminsOfProjectRepository
+    IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
+    IListParticipantsInvitedToProjectRepository
 {
+  async listParticipants(projectId: string): Promise<Account[]> {
+    const idsResult = await connection("project_invitation")
+      .select("account_id")
+      .where({ project_id: projectId });
+    const mappedIds = idsResult.map((i) => i.account_id);
+
+    const accounts = await connection("account")
+      .select("name", "email")
+      .whereIn("id", mappedIds);
+
+    return accounts;
+  }
+
   async findAllEmailsOfOwnersAndAdmins(projectId: string): Promise<string[]> {
     const ownerRoleId = await this.findRoleIdByRoleName("owner");
     const adminRoleId = await this.findRoleIdByRoleName("admin");

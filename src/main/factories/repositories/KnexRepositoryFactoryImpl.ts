@@ -65,6 +65,7 @@ import {
   IIsInvitationTokenValidRepository,
   IIsProjectArchivedRepository,
   IKickParticipantFromProjectRepository,
+  IListParticipantsInvitedToProjectRepository,
   IListProjectsOwnedByAccountRepository,
   IRevokeInvitationRepository,
   IUpdateParticipantRoleInProjectRepository,
@@ -79,6 +80,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeListParticipantsInvitedToProjectRepository(): IListParticipantsInvitedToProjectRepository {
+    return this.makeProjectRepository();
+  }
 
   makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(): IFindAllEmailsOfOwnersAndAdminsOfProjectRepository {
     return this.makeProjectRepository();

@@ -42,6 +42,47 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("listParticipants method", () => {
+    it("should every account associated to given project id in table project_invitation", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        name: "My project",
+        description: "My project's description",
+        archived: false,
+      };
+      const accountBeingInvited = {
+        id: "account-id-123",
+        email: "garcia@email.com",
+        name: "garcia",
+        password_hash: "hash",
+        salt: "salt",
+        iterations: 1,
+      };
+      const { id: roleId } = await connection("project_role")
+        .select("id")
+        .where({ name: "member" })
+        .first();
+      const projectInvitation = {
+        account_id: accountBeingInvited.id,
+        project_id: project.id,
+        project_role_id: roleId,
+        token: "invitationToken-0",
+      };
+      await connection("project").insert(project);
+      await connection("account").insert(accountBeingInvited);
+      await connection("project_invitation").insert(projectInvitation);
+
+      const participants = await sut.listParticipants(project.id);
+
+      expect(participants).toEqual([
+        { name: accountBeingInvited.name, email: accountBeingInvited.email },
+      ]);
+    });
+  });
+
   describe("findAllEmailsOfOwnersAndAdmins method", () => {
     it("should return every email that has the owner or admin role in given project", async () => {
       expect.assertions(1);

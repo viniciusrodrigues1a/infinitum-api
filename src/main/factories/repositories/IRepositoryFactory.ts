@@ -58,6 +58,7 @@ import {
   IIsInvitationTokenValidRepository,
   IIsProjectArchivedRepository,
   IKickParticipantFromProjectRepository,
+  IListParticipantsInvitedToProjectRepository,
   IListProjectsOwnedByAccountRepository,
   IRevokeInvitationRepository,
   IUpdateParticipantRoleInProjectRepository,
@@ -121,4 +122,5 @@ export interface IRepositoryFactory {
   makeFindAccountEmailAssignedToIssueRepository(): IFindAccountEmailAssignedToIssueRepository;
   makeFindAllEmailsParticipantInProjectRepository(): IFindAllEmailsParticipantInProject;
   makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(): IFindAllEmailsOfOwnersAndAdminsOfProjectRepository;
+  makeListParticipantsInvitedToProjectRepository(): IListParticipantsInvitedToProjectRepository;
 }

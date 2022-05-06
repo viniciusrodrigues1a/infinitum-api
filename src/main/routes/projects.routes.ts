@@ -25,6 +25,15 @@ projectsRoutes.post(
   )
 );
 
+projectsRoutes.get(
+  "/invitedParticipants/:projectId",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeListParticipantsInvitedToProjectController(
+      language
+    )
+  )
+);
+
 projectsRoutes.delete(
   "/:projectId",
   ExpressControllerAdapter((language) =>

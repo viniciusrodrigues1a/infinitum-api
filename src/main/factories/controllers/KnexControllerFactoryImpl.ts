@@ -31,6 +31,7 @@ import {
   FindProjectImageDataURLController,
   InviteAccountToProjectController,
   KickParticipantFromProjectController,
+  ListParticipantsInvitedToProjectController,
   ListProjectsOwnedByAccountController,
   RevokeInvitationController,
   UpdateIssueGroupColorController,
@@ -68,6 +69,14 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeListParticipantsInvitedToProjectController(
+    language: ILanguage
+  ): ListParticipantsInvitedToProjectController {
+    return new ListParticipantsInvitedToProjectController(
+      this.useCaseFactory.makeListParticipantsInvitedToProjectUseCase(language)
+    );
+  }
 
   makeAssignIssueToAccountController(
     language: ILanguage

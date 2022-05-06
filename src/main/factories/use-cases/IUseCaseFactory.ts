@@ -13,6 +13,7 @@ import {
   DeleteProjectUseCase,
   InviteAccountToProjectUseCase,
   KickParticipantFromProjectUseCase,
+  ListParticipantsInvitedToProjectUseCase,
   ListProjectsOwnedByAccountUseCase,
   RevokeInvitationUseCase,
   UpdateParticipantRoleInProjectUseCase,
@@ -51,4 +52,7 @@ export interface IUseCaseFactory {
   makeAssignIssueToAccountUseCase(
     language: ILanguage
   ): AssignIssueToAccountUseCase;
+  makeListParticipantsInvitedToProjectUseCase(
+    language: ILanguage
+  ): ListParticipantsInvitedToProjectUseCase;
 }
