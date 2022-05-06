@@ -18,6 +18,7 @@ export const permissions: PermissionsType = {
     "KICK_ACCOUNT_FROM_PROJECT",
     "MOVE_ISSUE",
     "ASSIGN_ISSUE_TO_ACCOUNT",
+    "LIST_INVITED_PARTICIPANTS",
   ],
   owner: [
     "DELETE_PROJECT",
@@ -32,5 +33,6 @@ export const permissions: PermissionsType = {
     "UPDATE_PARTICIPANT_ROLE",
     "MOVE_ISSUE",
     "ASSIGN_ISSUE_TO_ACCOUNT",
+    "LIST_INVITED_PARTICIPANTS",
   ],
 };
