@@ -130,7 +130,7 @@ describe("revokeInvitation use-case", () => {
   });
 
   it("should be able to revoke an invitation sent to yourself", async () => {
-    expect.assertions(2);
+    expect.assertions(3);
 
     const {
       sut,

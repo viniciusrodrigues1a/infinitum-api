@@ -102,6 +102,7 @@ describe("invitation to project email notification", () => {
       invitationText: message,
       acceptInvitationButtonText: acceptMessage,
       declineInvitationButtonText: declineMessage,
+      projectId: "project-id-0",
     });
     expect(queueMock.add).toHaveBeenNthCalledWith(
       1,

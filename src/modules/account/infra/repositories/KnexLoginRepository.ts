@@ -15,7 +15,7 @@ export class KnexLoginRepository implements ILoginRepository {
   async login({
     email,
     password,
-  }: Omit<RegisterRepositoryDTO, "name">): Promise<string> {
+  }: Omit<RegisterRepositoryDTO, "name" | "languageIsoCode">): Promise<string> {
     const account = (await this.findOneAccountRepository.findOneAccount(
       email
     )) as any;
