@@ -7,3 +7,4 @@ export * from "./InviteAccountToProjectUseCase";
 export * from "./KickParticipantFromProjectUseCase";
 export * from "./RevokeInvitationUseCase";
 export * from "./UpdateParticipantRoleInProjectUseCase";
+export * from "./ListParticipantsInvitedToProjectUseCase";
