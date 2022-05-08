@@ -5,13 +5,35 @@ import {
 } from "@main/adapters";
 import { knexControllerFactoryImpl } from "@main/factories/controllers";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
+import { EmitProjectEventMiddleware } from "@main/middlewares/EmitProjectEventMiddleware";
+import { AddProjectIdToRequestObjectMiddleware } from "@main/middlewares";
 
 export const issuesRoutes = Router();
+
+const emitProjectEventMiddleware = new EmitProjectEventMiddleware();
+const addProjectIdToRequestObjectMiddleware =
+  new AddProjectIdToRequestObjectMiddleware();
+
+/* AUTHORIZED ROUTES */
 
 issuesRoutes.use(
   ExpressMiddlewareAdapter(() =>
     knexMiddlewareFactoryImpl.makeAuthorizationMiddleware()
   )
+);
+
+issuesRoutes.get(
+  "/overview",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeOverviewMetricsController(language)
+  )
+);
+
+/* ROUTES THAT WILL EMIT A SOCKET EVENT */
+
+issuesRoutes.use(
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest
 );
 
 issuesRoutes.post(
@@ -23,6 +45,8 @@ issuesRoutes.post(
 
 issuesRoutes.delete(
   "/:issueId",
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest,
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeDeleteIssueController(language)
   )
@@ -48,12 +72,5 @@ issuesRoutes.patch(
   "/:issueId/assign",
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeAssignIssueToAccountController(language)
-  )
-);
-
-issuesRoutes.get(
-  "/overview",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeOverviewMetricsController(language)
   )
 );

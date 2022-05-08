@@ -7,21 +7,24 @@ import {
 } from "@main/adapters";
 import { knexControllerFactoryImpl } from "@main/factories/controllers";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
+import {
+  EmitProjectEventMiddleware,
+  AddProjectIdToRequestObjectMiddleware,
+} from "@main/middlewares";
 
 export const projectsRoutes = Router();
 
 const upload = multer({ storage: multer.memoryStorage() });
 
+const emitProjectEventMiddleware = new EmitProjectEventMiddleware();
+const addProjectIdToRequestObjectMiddleware =
+  new AddProjectIdToRequestObjectMiddleware();
+
+/* AUTHORIZED ROUTES */
+
 projectsRoutes.use(
   ExpressMiddlewareAdapter(() =>
     knexMiddlewareFactoryImpl.makeAuthorizationMiddleware()
-  )
-);
-
-projectsRoutes.post(
-  "/",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeCreateProjectController(language)
   )
 );
 
@@ -31,6 +34,43 @@ projectsRoutes.get(
     knexControllerFactoryImpl.makeListParticipantsInvitedToProjectController(
       language
     )
+  )
+);
+
+projectsRoutes.get(
+  "/",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeListProjectsOwnedByAccountController()
+  )
+);
+
+projectsRoutes.patch(
+  "/image",
+  upload.single("file"),
+  ExpressUploadFileBufferAdapter(),
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeUpdateProjectImageController()
+  )
+);
+
+projectsRoutes.get(
+  "/:projectId/image",
+  ExpressControllerAdapter(() =>
+    knexControllerFactoryImpl.makeFindProjectImageDataURLController()
+  )
+);
+
+/* ROUTES THAT WILL EMIT A SOCKET EVENT */
+
+projectsRoutes.use(
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest
+);
+
+projectsRoutes.post(
+  "/",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeCreateProjectController(language)
   )
 );
 
@@ -48,34 +88,11 @@ projectsRoutes.put(
   )
 );
 
-projectsRoutes.get(
-  "/",
-  ExpressControllerAdapter(() =>
-    knexControllerFactoryImpl.makeListProjectsOwnedByAccountController()
-  )
-);
-
 projectsRoutes.patch(
   "/participantRole",
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeUpdateParticipantRoleInProjectController(
       language
     )
-  )
-);
-
-projectsRoutes.patch(
-  "/image",
-  upload.single("file"),
-  ExpressUploadFileBufferAdapter(),
-  ExpressControllerAdapter(() =>
-    knexControllerFactoryImpl.makeUpdateProjectImageController()
-  )
-);
-
-projectsRoutes.get(
-  "/:projectId/image",
-  ExpressControllerAdapter(() =>
-    knexControllerFactoryImpl.makeFindProjectImageDataURLController()
   )
 );

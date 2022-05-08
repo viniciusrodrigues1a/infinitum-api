@@ -24,6 +24,12 @@ type ConnectedUser = {
   socketId: string;
 };
 
+type ProjectBeingListenedByUsers = {
+  [projectId: string]: {
+    emails: string[];
+  };
+};
+
 export class Server {
   app = express();
   httpServer: HTTPServer = createServer(this.app);
@@ -33,6 +39,7 @@ export class Server {
     },
   });
   connectedUsers: ConnectedUser[] = [];
+  projectsBeingListenedByUsers: ProjectBeingListenedByUsers = {};
 
   constructor() {
     this.useMiddlewares();
@@ -84,10 +91,59 @@ export class Server {
         socket.emit("loadNotifications", notifications);
       });
 
+      socket.on("addUserToProjectListener", ({ email, projectId }) => {
+        this.addUserToProjectListener(email, projectId);
+      });
+
+      socket.on("removeUserFromProjectListener", ({ email, projectId }) => {
+        this.removeUserFromProjectListener(email, projectId);
+      });
+
       socket.on("disconnect", () => {
         this.removeUser(socket.id);
       });
     });
+  }
+
+  private isUserListeningToProject(email: string, projectId: string): boolean {
+    if (projectId in this.projectsBeingListenedByUsers) {
+      const emailFound = this.projectsBeingListenedByUsers[
+        projectId
+      ].emails.find((e) => e === email);
+      return !!emailFound;
+    }
+
+    return false;
+  }
+
+  private addUserToProjectListener(email: string, projectId: string): void {
+    if (this.isUserListeningToProject(email, projectId)) return;
+    if (!(projectId in this.projectsBeingListenedByUsers)) {
+      this.projectsBeingListenedByUsers[projectId] = { emails: [] };
+    }
+    this.projectsBeingListenedByUsers[projectId].emails.push(email);
+  }
+
+  private removeUserFromProjectListener(
+    email: string,
+    projectId: string
+  ): void {
+    if (!this.isUserListeningToProject(email, projectId)) return;
+    if (!(projectId in this.projectsBeingListenedByUsers)) return;
+    this.projectsBeingListenedByUsers[projectId].emails =
+      this.projectsBeingListenedByUsers[projectId].emails.filter(
+        (e) => e !== email
+      );
+  }
+
+  public getUsersListeningToProject(projectId: string): ConnectedUser[] {
+    if (!(projectId in this.projectsBeingListenedByUsers)) return [];
+
+    const { emails } = this.projectsBeingListenedByUsers[projectId];
+
+    const conns = emails.map((e) => this.getUser(e));
+
+    return conns.filter((c) => c !== undefined) as ConnectedUser[];
   }
 
   private addNewUser(email: string, socketId: string): void {

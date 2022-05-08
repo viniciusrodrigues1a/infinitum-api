@@ -4,5 +4,6 @@ declare namespace Express {
     authorizedAccountEmail: string;
     language: any;
     fileBuffer: Buffer;
+    projectId: string;
   }
 }
