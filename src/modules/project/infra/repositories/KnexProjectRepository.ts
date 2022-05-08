@@ -97,10 +97,15 @@ export class KnexProjectRepository
     const mappedIds = idsResult.map((i) => i.account_id);
 
     const accounts = await connection("account")
-      .select("name", "email")
+      .select("name", "email", "image")
       .whereIn("id", mappedIds);
+    const mappedAccounts = accounts.map((a) => ({
+      name: a.name,
+      email: a.email,
+      image: a.image ? getDataURLFromImageBuffer(a.image) : null,
+    }));
 
-    return accounts;
+    return mappedAccounts;
   }
 
   async findAllEmailsOfOwnersAndAdmins(projectId: string): Promise<string[]> {
@@ -494,6 +499,7 @@ export class KnexProjectRepository
       .select(
         "account.name as account_name",
         "account.email as account_email",
+        "account.image as account_image",
         "project_role.name as role_name"
       )
       .where({ project_id: projectId })
@@ -503,6 +509,9 @@ export class KnexProjectRepository
       account: {
         name: p.account_name,
         email: p.account_email,
+        image: p.account_image
+          ? getDataURLFromImageBuffer(p.account_image)
+          : null,
       },
       role: { name: { value: p.role_name } } as Role,
     }));

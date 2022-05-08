@@ -1027,13 +1027,17 @@ describe("project repository using Knex", () => {
       ];
       expectedFormattedParticipants = [
         {
-          account: { name: accountName, email: accountEmail },
+          account: { name: accountName, image: null, email: accountEmail },
           role: { name: { value: "owner" } } as Role,
-        },
+        } as Participant,
         {
-          account: { name: newAccount.name, email: newAccount.email },
+          account: {
+            name: newAccount.name,
+            image: null,
+            email: newAccount.email,
+          },
           role: { name: { value: "member" } } as Role,
-        },
+        } as Participant,
       ];
     });
 
