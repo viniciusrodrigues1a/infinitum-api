@@ -38,6 +38,7 @@ import {
   IUpdateIssueRepository,
 } from "@modules/issue/use-cases/interfaces/repositories";
 import { KnexProjectRepository } from "@modules/project/infra/repositories";
+import { IFindOneProjectRepository } from "@modules/project/infra/repositories/IFindOneProjectRepository";
 import {
   IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
   IFindAllEmailsParticipantInProject,
@@ -80,6 +81,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeFindOneProjectRepository(): IFindOneProjectRepository {
+    return this.makeProjectRepository();
+  }
 
   makeListParticipantsInvitedToProjectRepository(): IListParticipantsInvitedToProjectRepository {
     return this.makeProjectRepository();

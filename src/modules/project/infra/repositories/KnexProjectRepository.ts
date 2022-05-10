@@ -57,6 +57,7 @@ import {
   DoesParticipantExistRepositoryDTO,
   FindParticipantRoleInProjectRepositoryDTO,
 } from "@shared/use-cases/DTOs";
+import { IFindOneProjectRepository } from "./IFindOneProjectRepository";
 
 export class KnexProjectRepository
   implements
@@ -88,8 +89,34 @@ export class KnexProjectRepository
     IFindStartDateByProjectIdRepository,
     IFindAllEmailsParticipantInProject,
     IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
-    IListParticipantsInvitedToProjectRepository
+    IListParticipantsInvitedToProjectRepository,
+    IFindOneProjectRepository
 {
+  async findOneProject(projectId: string): Promise<Project | undefined> {
+    const project = await connection("project")
+      .select("*")
+      .where({ id: projectId })
+      .first();
+
+    if (!project) return undefined;
+
+    const issueGroups = await this.listIssueGroupsByProjectId(project.id);
+    const participants = await this.listParticipantsByProjectId(project.id);
+
+    const formattedProject = {
+      projectId: project.id,
+      name: project.name,
+      description: project.description,
+      createdAt: project.created_at,
+      beginsAt: project.begins_at,
+      finishesAt: project.finishes_at,
+      participants,
+      issueGroups,
+    };
+
+    return formattedProject as Project;
+  }
+
   async listParticipants(projectId: string): Promise<Account[]> {
     const idsResult = await connection("project_invitation")
       .select("account_id")

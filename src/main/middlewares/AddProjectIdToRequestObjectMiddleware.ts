@@ -11,7 +11,8 @@ export class AddProjectIdToRequestObjectMiddleware {
 
     let projectId = findProperty("projectId");
 
-    const issueGroupId = findProperty("issueGroupId");
+    const issueGroupId =
+      findProperty("issueGroupId") || findProperty("moveToIssueGroupId");
     if (issueGroupId) {
       projectId = await knexRepositoryFactoryImpl
         .makeFindProjectIdByIssueGroupIdRepository()

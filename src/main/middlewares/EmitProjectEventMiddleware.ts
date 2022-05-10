@@ -10,7 +10,9 @@ export class EmitProjectEventMiddleware {
     const { projectId } = request;
 
     if (projectId) {
-      response.once("finish", () => loadProject(projectId));
+      response.once("finish", () =>
+        loadProject(projectId, request.authorizedAccountEmail)
+      );
     }
     next();
   }

@@ -60,13 +60,6 @@ projectsRoutes.get(
   )
 );
 
-/* ROUTES THAT WILL EMIT A SOCKET EVENT */
-
-projectsRoutes.use(
-  addProjectIdToRequestObjectMiddleware.handleRequest,
-  emitProjectEventMiddleware.handleRequest
-);
-
 projectsRoutes.post(
   "/",
   ExpressControllerAdapter((language) =>
@@ -74,22 +67,28 @@ projectsRoutes.post(
   )
 );
 
-projectsRoutes.delete(
-  "/:projectId",
-  ExpressControllerAdapter((language) =>
-    knexControllerFactoryImpl.makeDeleteProjectController(language)
-  )
-);
-
 projectsRoutes.put(
   "/:projectId",
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest,
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeUpdateProjectController(language)
   )
 );
 
+projectsRoutes.delete(
+  "/:projectId",
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest,
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeDeleteProjectController(language)
+  )
+);
+
 projectsRoutes.patch(
   "/participantRole",
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest,
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeUpdateParticipantRoleInProjectController(
       language
