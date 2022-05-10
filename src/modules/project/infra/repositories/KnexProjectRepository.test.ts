@@ -43,7 +43,7 @@ describe("project repository using Knex", () => {
   });
 
   describe("listParticipants method", () => {
-    it("should every account associated to given project id in table project_invitation", async () => {
+    it("should list every account associated to given project id in table project_invitation", async () => {
       expect.assertions(1);
 
       const { sut } = makeSut();
@@ -78,7 +78,11 @@ describe("project repository using Knex", () => {
       const participants = await sut.listParticipants(project.id);
 
       expect(participants).toEqual([
-        { name: accountBeingInvited.name, email: accountBeingInvited.email },
+        {
+          name: accountBeingInvited.name,
+          email: accountBeingInvited.email,
+          image: null,
+        },
       ]);
     });
   });
