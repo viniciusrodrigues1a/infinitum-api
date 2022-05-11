@@ -50,6 +50,7 @@ import {
   IFindStartDateByProjectIdRepository,
   IKickParticipantFromProjectRepository,
   IListParticipantsInvitedToProjectRepository,
+  IDeleteIssueGroupRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
 import { getDataURLFromImageBuffer } from "@shared/infra/repositories/helpers";
@@ -94,8 +95,13 @@ export class KnexProjectRepository
     IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
     IListParticipantsInvitedToProjectRepository,
     IFindOneProjectRepository,
-    IFindOneProjectIdByInvitationTokenRepository
+    IFindOneProjectIdByInvitationTokenRepository,
+    IDeleteIssueGroupRepository
 {
+  async deleteIssueGroup(issueGroupId: string): Promise<void> {
+    await connection("issue_group").del().where({ id: issueGroupId });
+  }
+
   async findOneProjectIdByToken(token: string): Promise<string | undefined> {
     const invitation = await connection("project_invitation")
       .select("project_id")

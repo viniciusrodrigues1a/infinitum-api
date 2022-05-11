@@ -42,6 +42,35 @@ describe("project repository using Knex", () => {
     await connection.destroy();
   });
 
+  describe("deleteIssueGroup method", () => {
+    it("should delete a row in the issue_group table", async () => {
+      expect.assertions(1);
+
+      const { sut } = makeSut();
+      const project = {
+        id: "project-id-0",
+        name: "My project",
+        description: "My project's description",
+        archived: false,
+      };
+      const issueGroup = {
+        id: "ig-id-0",
+        project_id: project.id,
+        title: "In progress",
+      };
+      await connection("project").insert(project);
+      await connection("issue_group").insert(issueGroup);
+
+      await sut.deleteIssueGroup(issueGroup.id);
+
+      const storedIssueGroup = await connection("issue_group")
+        .select("*")
+        .where({ id: issueGroup.id })
+        .first();
+      expect(storedIssueGroup).toBeUndefined();
+    });
+  });
+
   describe("listParticipants method", () => {
     it("should list every account associated to given project id in table project_invitation", async () => {
       expect.assertions(1);
