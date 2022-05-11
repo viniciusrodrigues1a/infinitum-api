@@ -51,3 +51,10 @@ issueGroupsRoutes.patch(
     knexControllerFactoryImpl.makeUpdateIssueGroupColorController()
   )
 );
+
+issueGroupsRoutes.delete(
+  "/:issueGroupId",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeDeleteIssueGroupController(language)
+  )
+);

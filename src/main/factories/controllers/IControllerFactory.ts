@@ -17,6 +17,7 @@ import {
   AcceptInvitationToProjectController,
   CreateIssueGroupForProjectController,
   CreateProjectController,
+  DeleteIssueGroupController,
   DeleteProjectController,
   FindProjectImageDataURLController,
   InviteAccountToProjectController,
@@ -89,4 +90,7 @@ export interface IControllerFactory {
   makeListParticipantsInvitedToProjectController(
     language: ILanguage
   ): ListParticipantsInvitedToProjectController;
+  makeDeleteIssueGroupController(
+    language: ILanguage
+  ): DeleteIssueGroupController;
 }

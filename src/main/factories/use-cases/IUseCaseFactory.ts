@@ -10,6 +10,7 @@ import { DeleteIssueUseCase } from "@modules/issue/use-cases/DeleteIssueUseCase"
 import {
   CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
+  DeleteIssueGroupUseCase,
   DeleteProjectUseCase,
   InviteAccountToProjectUseCase,
   KickParticipantFromProjectUseCase,
@@ -55,4 +56,5 @@ export interface IUseCaseFactory {
   makeListParticipantsInvitedToProjectUseCase(
     language: ILanguage
   ): ListParticipantsInvitedToProjectUseCase;
+  makeDeleteIssueGroupUseCase(language: ILanguage): DeleteIssueGroupUseCase;
 }

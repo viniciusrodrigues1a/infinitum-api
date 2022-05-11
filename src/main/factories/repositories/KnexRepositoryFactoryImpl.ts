@@ -56,6 +56,7 @@ import {
   ICreateInvitationTokenRepository,
   ICreateIssueGroupForProjectRepository,
   ICreateProjectRepository,
+  IDeleteIssueGroupRepository,
   IDeleteProjectRepository,
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
@@ -84,6 +85,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeDeleteIssueGroupRepository(): IDeleteIssueGroupRepository {
+    return this.makeProjectRepository();
+  }
 
   makeFindOneProjectIdByInvitationTokenRepository(): IFindOneProjectIdByInvitationTokenRepository {
     return this.makeProjectRepository();

@@ -4,6 +4,7 @@ import { FindOneAccountUseCase } from "@modules/account/use-cases/FindOneAccount
 import {
   CreateIssueGroupForProjectUseCase,
   CreateProjectUseCase,
+  DeleteIssueGroupUseCase,
   DeleteProjectUseCase,
   InviteAccountToProjectUseCase,
   KickParticipantFromProjectUseCase,
@@ -29,6 +30,20 @@ import { IUseCaseFactory } from "./IUseCaseFactory";
 
 class KnexUseCaseFactoryImpl implements IUseCaseFactory {
   private repositoryFactory: IRepositoryFactory = knexRepositoryFactoryImpl;
+
+  makeDeleteIssueGroupUseCase(language: ILanguage): DeleteIssueGroupUseCase {
+    return new DeleteIssueGroupUseCase(
+      this.repositoryFactory.makeDeleteIssueGroupRepository(),
+      this.repositoryFactory.makeDoesIssueGroupExistRepository(),
+      this.repositoryFactory.makeFindProjectIdByIssueGroupIdRepository(),
+      this.repositoryFactory.makeDoesParticipantExistRepository(),
+      this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      language,
+      language,
+      language,
+      language
+    );
+  }
 
   makeListParticipantsInvitedToProjectUseCase(
     language: ILanguage

@@ -45,6 +45,7 @@ import {
   ICreateInvitationTokenRepository,
   ICreateIssueGroupForProjectRepository,
   ICreateProjectRepository,
+  IDeleteIssueGroupRepository,
   IDeleteProjectRepository,
   IDoesParticipantExistRepository,
   IDoesProjectExistRepository,
@@ -129,4 +130,5 @@ export interface IRepositoryFactory {
   makeListParticipantsInvitedToProjectRepository(): IListParticipantsInvitedToProjectRepository;
   makeFindOneProjectRepository(): IFindOneProjectRepository;
   makeFindOneProjectIdByInvitationTokenRepository(): IFindOneProjectIdByInvitationTokenRepository;
+  makeDeleteIssueGroupRepository(): IDeleteIssueGroupRepository;
 }
