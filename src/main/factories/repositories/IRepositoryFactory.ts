@@ -66,7 +66,10 @@ import {
 } from "@modules/project/use-cases/interfaces/repositories";
 import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
 import { IFindIssueTitleByIssueIdRepository } from "@modules/issue/infra/notifications/interfaces/repositories";
-import { IFindOneProjectRepository } from "@modules/project/infra/repositories/IFindOneProjectRepository";
+import {
+  IFindOneProjectIdByInvitationTokenRepository,
+  IFindOneProjectRepository,
+} from "@modules/project/infra/repositories/interfaces";
 
 export interface IRepositoryFactory {
   makeRegisterRepository(language: ILanguage): IRegisterRepository;
@@ -125,4 +128,5 @@ export interface IRepositoryFactory {
   makeFindAllEmailsOfOwnersAndAdminsOfProjectRepository(): IFindAllEmailsOfOwnersAndAdminsOfProjectRepository;
   makeListParticipantsInvitedToProjectRepository(): IListParticipantsInvitedToProjectRepository;
   makeFindOneProjectRepository(): IFindOneProjectRepository;
+  makeFindOneProjectIdByInvitationTokenRepository(): IFindOneProjectIdByInvitationTokenRepository;
 }

@@ -26,6 +26,13 @@ export class AddProjectIdToRequestObjectMiddleware {
         .findProjectIdByIssueId(issueId);
     }
 
+    const invitationToken = findProperty("invitationToken");
+    if (invitationToken) {
+      projectId = await knexRepositoryFactoryImpl
+        .makeFindOneProjectIdByInvitationTokenRepository()
+        .findOneProjectIdByToken(invitationToken);
+    }
+
     if (projectId) request.projectId = projectId;
 
     next();

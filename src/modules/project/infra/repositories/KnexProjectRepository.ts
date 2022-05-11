@@ -57,7 +57,10 @@ import {
   DoesParticipantExistRepositoryDTO,
   FindParticipantRoleInProjectRepositoryDTO,
 } from "@shared/use-cases/DTOs";
-import { IFindOneProjectRepository } from "./IFindOneProjectRepository";
+import {
+  IFindOneProjectIdByInvitationTokenRepository,
+  IFindOneProjectRepository,
+} from "./interfaces";
 
 export class KnexProjectRepository
   implements
@@ -90,8 +93,20 @@ export class KnexProjectRepository
     IFindAllEmailsParticipantInProject,
     IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
     IListParticipantsInvitedToProjectRepository,
-    IFindOneProjectRepository
+    IFindOneProjectRepository,
+    IFindOneProjectIdByInvitationTokenRepository
 {
+  async findOneProjectIdByToken(token: string): Promise<string | undefined> {
+    const invitation = await connection("project_invitation")
+      .select("project_id")
+      .where({ token })
+      .first();
+
+    if (!invitation) return undefined;
+
+    return invitation.project_id;
+  }
+
   async findOneProject(projectId: string): Promise<Project | undefined> {
     const project = await connection("project")
       .select("*")

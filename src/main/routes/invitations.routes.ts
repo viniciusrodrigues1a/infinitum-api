@@ -5,8 +5,16 @@ import {
 } from "@main/adapters";
 import { knexControllerFactoryImpl } from "@main/factories/controllers";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
+import {
+  EmitProjectEventMiddleware,
+  AddProjectIdToRequestObjectMiddleware,
+} from "@main/middlewares";
 
 export const invitationsRoutes = Router();
+
+const emitProjectEventMiddleware = new EmitProjectEventMiddleware();
+const addProjectIdToRequestObjectMiddleware =
+  new AddProjectIdToRequestObjectMiddleware();
 
 invitationsRoutes.use(
   ExpressMiddlewareAdapter(() =>
@@ -23,6 +31,8 @@ invitationsRoutes.post(
 
 invitationsRoutes.post(
   "/accept/:invitationToken",
+  addProjectIdToRequestObjectMiddleware.handleRequest,
+  emitProjectEventMiddleware.handleRequest,
   ExpressControllerAdapter((language) =>
     knexControllerFactoryImpl.makeAcceptInvitationToProjectController(language)
   )
