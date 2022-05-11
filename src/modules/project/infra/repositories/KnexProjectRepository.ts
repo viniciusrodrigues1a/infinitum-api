@@ -117,6 +117,7 @@ export class KnexProjectRepository
 
     const issueGroups = await this.listIssueGroupsByProjectId(project.id);
     const participants = await this.listParticipantsByProjectId(project.id);
+    const pendingInvitations = await this.listParticipants(project.id);
 
     const formattedProject = {
       projectId: project.id,
@@ -127,9 +128,10 @@ export class KnexProjectRepository
       finishesAt: project.finishes_at,
       participants,
       issueGroups,
+      pendingInvitations,
     };
 
-    return formattedProject as Project;
+    return formattedProject as unknown as Project;
   }
 
   async listParticipants(projectId: string): Promise<Account[]> {
@@ -455,6 +457,7 @@ export class KnexProjectRepository
     for (const project of projects) {
       const issueGroups = await this.listIssueGroupsByProjectId(project.id);
       const participants = await this.listParticipantsByProjectId(project.id);
+      const pendingInvitations = await this.listParticipants(project.id);
 
       formattedProjects.push({
         projectId: project.id,
@@ -465,7 +468,8 @@ export class KnexProjectRepository
         finishesAt: project.finishesAt,
         participants,
         issueGroups,
-      } as Project);
+        pendingInvitations,
+      } as unknown as Project);
     }
 
     return formattedProjects;
