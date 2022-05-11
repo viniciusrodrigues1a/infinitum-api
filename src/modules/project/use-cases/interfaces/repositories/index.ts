@@ -20,3 +20,4 @@ export * from "./IFindOneAccountEmailByInvitationTokenRepository";
 export * from "./IFindStartDateByProjectIdRepository";
 export * from "./IKickParticipantFromProjectRepository";
 export * from "./IListParticipantsInvitedToProjectRepository";
+export * from "./IDeleteIssueGroupRepository";

@@ -16,3 +16,4 @@ export * from "./UpdateParticipantRoleInProjectUseCaseDTO";
 export * from "./UpdateParticipantRoleInProjectRepositoryDTO";
 export * from "./AcceptInvitationToProjectUseCaseDTO";
 export * from "./ListParticipantsInvitedToProjectUseCaseDTO";
+export * from "./DeleteIssueGroupUseCaseDTO";

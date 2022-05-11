@@ -34,5 +34,6 @@ export const permissions: PermissionsType = {
     "MOVE_ISSUE",
     "ASSIGN_ISSUE_TO_ACCOUNT",
     "LIST_INVITED_PARTICIPANTS",
+    "DELETE_ISSUE_GROUP",
   ],
 };

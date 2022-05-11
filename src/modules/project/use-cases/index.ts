@@ -8,3 +8,4 @@ export * from "./KickParticipantFromProjectUseCase";
 export * from "./RevokeInvitationUseCase";
 export * from "./UpdateParticipantRoleInProjectUseCase";
 export * from "./ListParticipantsInvitedToProjectUseCase";
+export * from "./DeleteIssueGroupUseCase";
