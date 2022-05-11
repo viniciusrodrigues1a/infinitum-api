@@ -21,7 +21,7 @@ export type UpdateIssueControllerRequest = Omit<
   UpdateIssueUseCaseDTO,
   "newExpiresAt"
 > & {
-  newExpiresAt?: string;
+  newExpiresAt?: string | null;
 };
 
 export class UpdateIssueController implements IController {
@@ -41,7 +41,7 @@ export class UpdateIssueController implements IController {
         ...request,
         newExpiresAt: request.newExpiresAt
           ? new Date(request.newExpiresAt)
-          : undefined,
+          : request.newExpiresAt,
       });
 
       return noContentResponse();

@@ -6,7 +6,7 @@ export class Issue {
   title: string;
   description: string | undefined;
   createdAt: Date;
-  expiresAt: Date | undefined;
+  expiresAt: Date | undefined | null;
   assignedToEmail: string | undefined;
   completed: boolean;
 
@@ -23,8 +23,10 @@ export class Issue {
     this.title = title;
     this.description = description || undefined;
     this.createdAt = createdAt || new Date();
-    this.expiresAt = expiresAt ? new Date(expiresAt) : undefined;
     this.assignedToEmail = assignedToEmail || null!;
     this.completed = completed || false;
+    if (expiresAt === null) this.expiresAt = null;
+    if (expiresAt === undefined) this.expiresAt = undefined;
+    if (expiresAt) this.expiresAt = new Date(expiresAt);
   }
 }

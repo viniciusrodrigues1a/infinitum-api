@@ -5,5 +5,5 @@ export type CreateIssueRepositoryDTO = Required<
 > & {
   issueGroupId: string;
   description?: string;
-  expiresAt?: Date;
+  expiresAt?: Date | null;
 };

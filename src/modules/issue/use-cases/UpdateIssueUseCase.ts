@@ -87,7 +87,7 @@ export class UpdateIssueUseCase {
     const newIssue = new Issue({
       title: newTitle || oldIssue.title,
       description: newDescription || oldIssue.description,
-      expiresAt: newExpiresAt || oldIssue.expiresAt,
+      expiresAt: newExpiresAt === undefined ? oldIssue.expiresAt : newExpiresAt,
       completed: newCompleted || oldIssue.completed,
       assignedToEmail: oldIssue.assignedToEmail,
     });

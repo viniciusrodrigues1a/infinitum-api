@@ -3,7 +3,7 @@ export type IssueDTO = {
   description?: string;
   issueId?: string;
   createdAt?: Date;
-  expiresAt?: Date;
+  expiresAt?: Date | null;
   assignedToEmail?: string;
   completed?: boolean;
 };
