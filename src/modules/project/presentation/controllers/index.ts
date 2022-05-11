@@ -13,3 +13,4 @@ export * from "./FindProjectImageDataURLController";
 export * from "./UpdateIssueGroupFinalStatusController";
 export * from "./UpdateIssueGroupColorController";
 export * from "./ListParticipantsInvitedToProjectController";
+export * from "./DeleteIssueGroupController";
