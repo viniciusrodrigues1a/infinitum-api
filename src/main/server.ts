@@ -15,7 +15,10 @@ import {
   projectsRoutes,
 } from "@main/routes";
 import { knexMiddlewareFactoryImpl } from "@main/factories/middlewares";
-import { mongoDBNotificationRepositoryFactoryImpl } from "./factories/repositories";
+import {
+  knexRepositoryFactoryImpl,
+  mongoDBNotificationRepositoryFactoryImpl,
+} from "./factories/repositories";
 
 dotenv.config();
 
@@ -91,8 +94,14 @@ export class Server {
         socket.emit("loadNotifications", notifications);
       });
 
-      socket.on("addUserToProjectListener", ({ email, projectId }) => {
+      socket.on("addUserToProjectListener", async ({ email, projectId }) => {
         this.addUserToProjectListener(email, projectId);
+
+        const project = await knexRepositoryFactoryImpl
+          .makeFindOneProjectRepository()
+          .findOneProject(projectId);
+
+        socket.emit("loadProject", project);
       });
 
       socket.on("removeUserFromProjectListener", ({ email, projectId }) => {
