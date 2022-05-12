@@ -9,6 +9,7 @@ export class Issue {
   expiresAt: Date | undefined | null;
   assignedToEmail: string | undefined;
   completed: boolean;
+  order?: string;
 
   constructor({
     title,

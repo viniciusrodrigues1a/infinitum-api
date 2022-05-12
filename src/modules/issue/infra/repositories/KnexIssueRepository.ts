@@ -165,13 +165,38 @@ export class KnexIssueRepository
   async moveIssue({
     issueId,
     moveToIssueGroupId,
+    orderBefore,
+    orderAfter,
   }: MoveIssueToAnotherIssueGroupRepositoryDTO): Promise<void> {
+    const lastIssueGroup = await connection("issue")
+      .select("*")
+      .where({ issue_group_id: moveToIssueGroupId })
+      .orderBy("order", "desc")
+      .first();
+
+    let order: BigInt | undefined;
+
+    if (!lastIssueGroup) {
+      order = BigInt(Number.MAX_SAFE_INTEGER) / BigInt(2);
+    } else if (orderBefore && orderAfter) {
+      const afterMinusBeforeDivided =
+        (BigInt(orderAfter) - BigInt(orderBefore)) / BigInt(2);
+      order = BigInt(orderAfter) - afterMinusBeforeDivided;
+    } else if (orderBefore && !orderAfter) {
+      order =
+        BigInt(Number.MAX_SAFE_INTEGER) / BigInt(2) +
+        BigInt(orderBefore) / BigInt(2);
+    } else if (orderAfter && !orderBefore) {
+      order = BigInt(orderAfter) / BigInt(2);
+    }
+
     await connection("issue")
       .where({
         id: issueId,
       })
       .update({
         issue_group_id: moveToIssueGroupId,
+        order: order ? order.toString() : order,
       });
   }
 
@@ -437,14 +462,40 @@ export class KnexIssueRepository
     createdAt,
     expiresAt,
   }: CreateIssueRepositoryDTO): Promise<void> {
-    await connection("issue").insert({
-      title,
-      description,
-      issue_group_id: issueGroupId,
-      id: issueId,
-      created_at: createdAt,
-      expires_at: expiresAt,
-    });
+    // Arbitrarily ordering issues
+    // https://dba.stackexchange.com/questions/36875/arbitrarily-ordering-records-in-a-table
+
+    const lastIssueGroup = await connection("issue")
+      .select("*")
+      .where({ issue_group_id: issueGroupId })
+      .orderBy("order", "desc")
+      .first();
+
+    const BIGINT_MAX_VALUE = BigInt(Number.MAX_SAFE_INTEGER);
+
+    if (!lastIssueGroup) {
+      await connection("issue").insert({
+        title,
+        description,
+        issue_group_id: issueGroupId,
+        id: issueId,
+        created_at: createdAt,
+        expires_at: expiresAt,
+        order: (BIGINT_MAX_VALUE / BigInt(2)).toString(),
+      });
+    } else {
+      const order =
+        BIGINT_MAX_VALUE / BigInt(2) + BigInt(lastIssueGroup.order) / BigInt(2);
+      await connection("issue").insert({
+        title,
+        description,
+        issue_group_id: issueGroupId,
+        id: issueId,
+        created_at: createdAt,
+        expires_at: expiresAt,
+        order: order.toString(),
+      });
+    }
   }
 
   private async findAccountIdByEmail(

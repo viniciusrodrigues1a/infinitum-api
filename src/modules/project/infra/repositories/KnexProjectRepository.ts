@@ -516,10 +516,11 @@ export class KnexProjectRepository
         "issue.completed as issue_completed",
         "issue.created_at as issue_created_at",
         "issue.expires_at as issue_expires_at",
+        "issue.order as issue_order",
         "account.email as account_email"
       )
       .where({ issue_group_id: issueGroupId })
-      .orderBy("issue.created_at");
+      .orderBy("issue.order");
 
     const formattedIssues: Issue[] = issues.map((i) => ({
       issueId: i.issue_id,
@@ -529,6 +530,7 @@ export class KnexProjectRepository
       createdAt: new Date(i.issue_created_at),
       expiresAt: i.issue_expires_at ? new Date(i.issue_expires_at) : undefined,
       assignedToEmail: i.account_email || undefined,
+      order: i.issue_order,
     }));
 
     return formattedIssues;

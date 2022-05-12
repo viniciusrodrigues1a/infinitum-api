@@ -768,6 +768,7 @@ describe("project repository using Knex", () => {
         issue_group_id: issueGroup.id,
         title: "My issue",
         description: "My issue's description",
+        order: 1,
       };
       await connection("project").insert(project);
       await connection("issue_group").insert(issueGroup);
@@ -1017,6 +1018,7 @@ describe("project repository using Knex", () => {
         assigned_to_account_id: accountId,
         created_at: new Date().toISOString(),
         expires_at: undefined,
+        order: 1,
       };
       issue2 = {
         issue_group_id: issueGroup.id,
@@ -1027,6 +1029,7 @@ describe("project repository using Knex", () => {
         assigned_to_account_id: newAccount.id,
         created_at: new Date().toISOString(),
         expires_at: undefined,
+        order: 2,
       };
       await connection("issue_group").insert(issueGroup);
       await connection("issue").insert(issue1);
@@ -1047,7 +1050,8 @@ describe("project repository using Knex", () => {
           createdAt: new Date(issue1.created_at),
           expiresAt: issue1.expires_at,
           assignedToEmail: accountEmail,
-        },
+          order: 1,
+        } as unknown as Issue,
         {
           issueId: issue2.id,
           title: issue2.title,
@@ -1056,7 +1060,8 @@ describe("project repository using Knex", () => {
           createdAt: new Date(issue2.created_at),
           expiresAt: issue2.expires_at,
           assignedToEmail: newAccount.email,
-        },
+          order: 2,
+        } as unknown as Issue,
       ];
       expectedFormattedParticipants = [
         {

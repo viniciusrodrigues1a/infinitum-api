@@ -69,6 +69,7 @@ describe("issue repository using Knex", () => {
         title: "My issue",
         description: "My issue's description",
         issue_group_id: issueGroupId,
+        order: 1,
       };
       await connection("issue_group").insert(newIssueGroup);
       await connection("issue").insert(issue);
@@ -103,6 +104,7 @@ describe("issue repository using Knex", () => {
         title: "My issue",
         description: "My issue's description",
         issue_group_id: issueGroupId,
+        order: 1,
       };
       await connection("issue_group").insert(newIssueGroup);
       await connection("issue").insert(issue);
@@ -186,6 +188,7 @@ describe("issue repository using Knex", () => {
         title: "My issue",
         description: "My issue's description",
         issue_group_id: issueGroupId,
+        order: 1,
       });
 
       const issue = await sut.findOneIssue(issueId);
@@ -203,6 +206,7 @@ describe("issue repository using Knex", () => {
         title: "My issue",
         description: "My issue's description",
         issue_group_id: issueGroupId,
+        order: 1,
       });
 
       const issue = await sut.findOneIssue("nonexistent-issue-id-123964996");
@@ -222,6 +226,7 @@ describe("issue repository using Knex", () => {
         title: "My issue",
         description: "My issue's description",
         issue_group_id: issueGroupId,
+        order: 1,
       });
       const updatedIssueTitle = "updated issue name";
 
@@ -245,6 +250,7 @@ describe("issue repository using Knex", () => {
         issue_group_id: issueGroupId,
         title: "My issue",
         description: "My issue's description",
+        order: 1,
       };
       await connection("issue").insert(issue);
 
@@ -269,6 +275,7 @@ describe("issue repository using Knex", () => {
         issue_group_id: issueGroupId,
         title: "My issue",
         description: "My issue's description",
+        order: 1,
       };
       await connection("issue").insert(issue);
 
@@ -289,7 +296,7 @@ describe("issue repository using Knex", () => {
   });
 
   describe("createIssue method", () => {
-    it("should insert an issue associated to a user and a project", async () => {
+    it("should insert an issue associated to a project", async () => {
       expect.assertions(2);
 
       const { sut } = makeSut();

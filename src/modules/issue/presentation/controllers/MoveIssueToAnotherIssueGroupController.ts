@@ -18,7 +18,10 @@ import { IValidation } from "@shared/presentation/validation";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors";
 
 export type MoveIssueToAnotherIssueGroupControllerRequest =
-  MoveIssueToAnotherIssueGroupUseCaseDTO;
+  MoveIssueToAnotherIssueGroupUseCaseDTO & {
+    orderAfter?: string;
+    orderBefore?: string;
+  };
 
 export class MoveIssueToAnotherIssueGroupController implements IController {
   constructor(

@@ -47,6 +47,8 @@ export class MoveIssueToAnotherIssueGroupUseCase {
     issueId,
     moveToIssueGroupId,
     accountEmailMakingRequest,
+    orderAfter,
+    orderBefore,
   }: MoveIssueToAnotherIssueGroupUseCaseDTO): Promise<void> {
     const doesIssueExist = await this.doesIssueExistRepository.doesIssueExist(
       issueId
@@ -93,6 +95,8 @@ export class MoveIssueToAnotherIssueGroupUseCase {
     await this.moveIssueToAnotherIssueGroupRepository.moveIssue({
       issueId,
       moveToIssueGroupId,
+      orderAfter,
+      orderBefore,
     });
 
     const shouldUpdateIssuesToCompleted =
