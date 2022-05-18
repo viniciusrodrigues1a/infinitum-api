@@ -20,6 +20,11 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD
     ports:
       - "27017:27017"
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo localhost:27017 --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: ./docker/app
