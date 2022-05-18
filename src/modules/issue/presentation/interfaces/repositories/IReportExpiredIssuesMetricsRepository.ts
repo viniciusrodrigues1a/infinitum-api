@@ -1,5 +1,5 @@
 import { Issue } from "@modules/issue/entities";
-import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
+import { MetricsRepositoryDTO } from "./MetricsRepositoryDTO";
 
 export type ExpiredIssuesMetrics = {
   amount: number;
@@ -8,6 +8,6 @@ export type ExpiredIssuesMetrics = {
 
 export interface IReportExpiredIssuesMetricsRepository {
   reportExpiredIssues(
-    data: AccountMakingRequestDTO
+    data: MetricsRepositoryDTO
   ): Promise<ExpiredIssuesMetrics>;
 }

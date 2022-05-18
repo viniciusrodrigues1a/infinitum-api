@@ -14,6 +14,10 @@ import {
   IReportIssuesWeeklyOverviewMetricsRepository,
 } from "../interfaces/repositories";
 
+export type OverviewMetricsControllerRequest = AccountMakingRequestDTO & {
+  date: string;
+};
+
 export class OverviewMetricsController implements IController {
   constructor(
     private readonly reportExpiredIssuesMetricsRepository: IReportExpiredIssuesMetricsRepository,
@@ -26,16 +30,19 @@ export class OverviewMetricsController implements IController {
 
   async handleRequest({
     accountEmailMakingRequest,
-  }: AccountMakingRequestDTO): Promise<HttpResponse> {
+    date,
+  }: OverviewMetricsControllerRequest): Promise<HttpResponse> {
     try {
       const expiredIssues =
         await this.reportExpiredIssuesMetricsRepository.reportExpiredIssues({
           accountEmailMakingRequest,
+          date,
         });
 
       const issuesForToday =
         await this.reportIssuesForTodayMetricsRepository.reportIssuesForToday({
           accountEmailMakingRequest,
+          date,
         });
 
       const allIssues =
@@ -45,7 +52,7 @@ export class OverviewMetricsController implements IController {
 
       const issuesWeeklyOverview =
         await this.reportIssuesWeeklyOverviewMetricsRepositoryMock.reportIssuesWeeklyOverview(
-          { accountEmailMakingRequest },
+          { accountEmailMakingRequest, date },
           this.issuesWeeklyOverviewWeekdaysLanguage
         );
 

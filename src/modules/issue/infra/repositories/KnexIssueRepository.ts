@@ -13,6 +13,7 @@ import {
   IssuesMonthlyOverviewMetrics,
   IssuesWeeklyOverviewMetrics,
 } from "@modules/issue/presentation/interfaces/repositories";
+import { MetricsRepositoryDTO } from "@modules/issue/presentation/interfaces/repositories/MetricsRepositoryDTO";
 import {
   AssignIssueToAccountRepositoryDTO,
   CreateIssueRepositoryDTO,
@@ -105,53 +106,32 @@ export class KnexIssueRepository
 
   async reportIssuesMonthlyOverview({
     accountEmailMakingRequest,
-  }: AccountMakingRequestDTO): Promise<IssuesMonthlyOverviewMetrics> {
+    date,
+  }: MetricsRepositoryDTO): Promise<IssuesMonthlyOverviewMetrics> {
     const accountId = await this.findAccountIdByEmail(
       accountEmailMakingRequest
     );
 
-    const fullYear = new Date().getFullYear();
-    const monthIndex = new Date().getMonth();
-    const lastDayOfPreviousMonthDayIndex = 0;
-    const daysInMonth = new Date(
-      fullYear,
-      monthIndex + 1,
-      lastDayOfPreviousMonthDayIndex
-    ).getDate();
-
     const monthDays: any[] = [];
-    const nowUtc = moment().utc();
+    const startOfMonth = moment(date).startOf("month");
+    const endOfMonth = moment(date).endOf("month");
 
-    for (let i = 0; i < daysInMonth; i++) {
-      const start = moment(nowUtc).date(i + 1);
-      start.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      const end = moment(nowUtc).date(i + 1);
-      end.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
+    for (let i = 0; i < moment(date).daysInMonth(); i++) {
+      const d = moment(startOfMonth).date(i + 1);
 
       monthDays.push({
         issuesCompleted: 0,
-        start,
-        end,
+        date: d,
       });
     }
 
     const issues = await connection("issue")
       .select("*")
-      .where({ assigned_to_account_id: accountId, completed: true });
+      .whereBetween("expires_at", [startOfMonth, endOfMonth])
+      .andWhere({ assigned_to_account_id: accountId, completed: true });
 
     issues.forEach((issue) => {
-      if (issue.expires_at) {
-        monthDays.forEach((monthDay, index) => {
-          if (
-            moment(issue.expires_at).isBetween(
-              monthDay.start.toISOString(),
-              monthDay.end.toISOString()
-            )
-          ) {
-            monthDays[index].issuesCompleted += 1;
-          }
-        });
-      }
+      monthDays[moment(issue.expires_at).date() - 1].issuesCompleted += 1;
     });
 
     const formattedMonthlyOverview = monthDays.map((monthDay, index) => ({
@@ -226,62 +206,46 @@ export class KnexIssueRepository
   }
 
   async reportIssuesWeeklyOverview(
-    { accountEmailMakingRequest }: AccountMakingRequestDTO,
+    { accountEmailMakingRequest, date }: MetricsRepositoryDTO,
     issuesWeeklyOverviewWeekdaysLanguage: IIssuesWeeklyOverviewWeekdaysLanguage
   ): Promise<IssuesWeeklyOverviewMetrics> {
     const accountId = await this.findAccountIdByEmail(
       accountEmailMakingRequest
     );
 
-    const weekDaysName =
-      issuesWeeklyOverviewWeekdaysLanguage.getIssuesWeeklyOverviewWeekdays();
-    const weekDays: any = {};
+    const completed = [0, 0, 0, 0, 0, 0, 0, 0];
 
-    const nowUtc = moment().utc();
-
-    for (let i = 0; i < 7; i++) {
-      const start = moment(nowUtc).day(i);
-      start.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
-      const end = moment(nowUtc).day(i);
-      end.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
-
-      weekDays[weekDaysName[i]] = {
-        issuesCompleted: 0,
-        start,
-        end,
-      };
-    }
+    const monday = moment(date).weekday(1).format("YYYY-MM-DD");
+    const sunday = moment(date).weekday(7).format("YYYY-MM-DD");
 
     const issues = await connection("issue")
       .select("*")
-      .where({ assigned_to_account_id: accountId, completed: true });
+      .whereBetween("expires_at", [monday, sunday])
+      .andWhere({ assigned_to_account_id: accountId, completed: true });
 
     issues.forEach((issue) => {
-      if (issue.expires_at) {
-        Object.keys(weekDays).forEach((key) => {
-          if (
-            moment(issue.expires_at).isBetween(
-              weekDays[key].start.toISOString(),
-              weekDays[key].end.toISOString()
-            )
-          ) {
-            weekDays[key].issuesCompleted += 1;
-          }
-        });
-      }
+      const expiresAt = moment(issue.expires_at);
+      completed[expiresAt.day() - 1] += 1;
     });
 
-    const formattedWeekOverview = Object.keys(weekDays).map((key) => ({
-      date: key,
-      value: weekDays[key].issuesCompleted,
-    }));
+    const lang =
+      issuesWeeklyOverviewWeekdaysLanguage.getIssuesWeeklyOverviewWeekdays();
+    const formattedWeekOverview: IssuesWeeklyOverviewMetrics = [
+      { date: lang[6], value: completed[6] },
+      { date: lang[0], value: completed[0] },
+      { date: lang[1], value: completed[1] },
+      { date: lang[2], value: completed[2] },
+      { date: lang[3], value: completed[3] },
+      { date: lang[4], value: completed[4] },
+      { date: lang[5], value: completed[5] },
+    ];
 
-    return formattedWeekOverview as IssuesWeeklyOverviewMetrics;
+    return formattedWeekOverview;
   }
 
   async reportAllIssues({
     accountEmailMakingRequest,
-  }: AccountMakingRequestDTO): Promise<AllIssuesMetrics> {
+  }: MetricsRepositoryDTO): Promise<AllIssuesMetrics> {
     const accountId = await this.findAccountIdByEmail(
       accountEmailMakingRequest
     );
@@ -319,15 +283,13 @@ export class KnexIssueRepository
 
   async reportIssuesForToday({
     accountEmailMakingRequest,
-  }: AccountMakingRequestDTO): Promise<IssuesForTodayMetrics> {
+    date,
+  }: MetricsRepositoryDTO): Promise<IssuesForTodayMetrics> {
     const accountId = await this.findAccountIdByEmail(
       accountEmailMakingRequest
     );
 
-    const startDate = new Date();
-    startDate.setUTCHours(0, 0, 0, 0);
-    const endDate = new Date();
-    endDate.setUTCHours(23, 59, 59, 999);
+    const formattedDate = moment(date).format("YYYY-MM-DD");
 
     let issues = await connection("issue")
       .leftJoin("issue_group", "issue.issue_group_id", "=", "issue_group.id")
@@ -342,8 +304,7 @@ export class KnexIssueRepository
         "project.name as projectName"
       )
       .where({ assigned_to_account_id: accountId })
-      .where("expires_at", ">=", startDate.toISOString())
-      .where("expires_at", "<", endDate.toISOString());
+      .where("expires_at", "=", formattedDate);
 
     issues = issues.map((issue) => ({
       ...issue,
@@ -368,10 +329,13 @@ export class KnexIssueRepository
 
   async reportExpiredIssues({
     accountEmailMakingRequest,
-  }: AccountMakingRequestDTO): Promise<ExpiredIssuesMetrics> {
+    date,
+  }: MetricsRepositoryDTO): Promise<ExpiredIssuesMetrics> {
     const accountId = await this.findAccountIdByEmail(
       accountEmailMakingRequest
     );
+
+    const formattedDate = moment(date).format("YYYY-MM-DD");
 
     let issues = await connection("issue")
       .leftJoin("issue_group", "issue.issue_group_id", "=", "issue_group.id")
@@ -386,8 +350,7 @@ export class KnexIssueRepository
         "project.name as projectName"
       )
       .where({ assigned_to_account_id: accountId, completed: false })
-      .where("expires_at", ">=", "1970-01-01T00:00:00.000Z")
-      .where("expires_at", "<", new Date().toISOString());
+      .andWhere("expires_at", "<", formattedDate);
 
     issues = issues.map((issue) => ({
       ...issue,

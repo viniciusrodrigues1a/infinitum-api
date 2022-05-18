@@ -59,6 +59,7 @@ describe("overviewMetrics controller", () => {
 
     const response = await sut.handleRequest({
       accountEmailMakingRequest: "jorge@email.com",
+      date: "2022-05-18",
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.ok);
@@ -91,6 +92,7 @@ describe("overviewMetrics controller", () => {
 
     const response = await sut.handleRequest({
       accountEmailMakingRequest: "jorge@email.com",
+      date: "2022-05-18",
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.serverError);

@@ -1,5 +1,5 @@
 import { Issue } from "@modules/issue/entities";
-import { AccountMakingRequestDTO } from "@shared/use-cases/DTOs";
+import { MetricsRepositoryDTO } from "./MetricsRepositoryDTO";
 
 export type IssuesForTodayMetrics = {
   percentageCompleted: number;
@@ -8,6 +8,6 @@ export type IssuesForTodayMetrics = {
 
 export interface IReportIssuesForTodayMetricsRepository {
   reportIssuesForToday(
-    data: AccountMakingRequestDTO
+    data: MetricsRepositoryDTO
   ): Promise<IssuesForTodayMetrics>;
 }
