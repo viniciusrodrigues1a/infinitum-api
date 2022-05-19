@@ -37,7 +37,9 @@ function handleSignal(sig: string, closeOpenHandles: () => Promise<void>) {
 
 async function start() {
   await mongoHelper.connect();
-  server.start();
+  setTimeout(() => {
+    server.start();
+  }, 1000);
 }
 
 try {
@@ -47,7 +49,7 @@ try {
   exitSignals.map((sig) =>
     handleSignal(sig, async () => {
       server.close();
-      mongoHelper.destroy();
+      await mongoHelper.destroy();
       await connection.destroy();
       await Queue.close();
     })
