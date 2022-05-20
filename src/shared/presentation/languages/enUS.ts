@@ -77,7 +77,7 @@ export class ENUSLanguage implements ILanguage {
   }
 
   getKickedText(projectName: string): string {
-    return `You have been removed from the project ${projectName} and won't be able to acess it on the platform anymore.`;
+    return `You have been removed from the project ${projectName} and won't be able to access it on the platform anymore.`;
   }
 
   getInvitationEmailSubject(): string {
