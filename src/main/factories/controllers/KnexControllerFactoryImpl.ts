@@ -97,7 +97,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
         language
       ),
       makeIssueAssignedNotificationServiceComposite(),
-      language
+      this.repositoryFactory.makeFindAccountLanguageIsoCodeRepository()
     );
   }
 
@@ -214,8 +214,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       ),
       makeRoleUpdatedNotificationServiceComposite(),
       makeRoleUpdatedAdminNotificationServiceComposite(),
-      language,
-      language
+      this.repositoryFactory.makeFindAccountLanguageIsoCodeRepository()
     );
   }
 
@@ -239,8 +238,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       ),
       makeKickedOutOfProjectNotificationServiceComposite(),
       makeKickedOutOfProjectAdminNotificationServiceComposite(),
-      language,
-      language
+      this.repositoryFactory.makeFindAccountLanguageIsoCodeRepository()
     );
   }
 
@@ -268,7 +266,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
         language
       ),
       makeInvitationToProjectNotificationServiceComposite(),
-      language
+      this.repositoryFactory.makeFindAccountLanguageIsoCodeRepository()
     );
   }
 
@@ -315,7 +313,7 @@ class KnexControllerFactoryImpl implements IControllerFactory {
       this.repositoryFactory.makeFindProjectNameByProjectIdRepository(),
       this.repositoryFactory.makeFindAllEmailsParticipantInProjectRepository(),
       makeProjectDeletedNotificationServiceComposite(),
-      language
+      this.repositoryFactory.makeFindAccountLanguageIsoCodeRepository()
     );
   }
 

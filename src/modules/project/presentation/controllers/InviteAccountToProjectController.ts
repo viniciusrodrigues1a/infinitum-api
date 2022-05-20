@@ -6,6 +6,7 @@ import {
   AccountAlreadyParticipatesInProjectError,
   AccountHasAlreadyBeenInvitedError,
 } from "@modules/project/use-cases/errors";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import {
   badRequestResponse,
   noContentResponse,
@@ -22,17 +23,18 @@ import {
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
-import { IInvitationTemplateLanguage } from "../interfaces/languages";
 
 export type InviteAccountToProjectControllerRequest =
-  InviteAccountToProjectUseCaseDTO;
+  InviteAccountToProjectUseCaseDTO & {
+    languages: any;
+  };
 
 export class InviteAccountToProjectController implements IController {
   constructor(
     private readonly inviteAccountToProjectUseCase: InviteAccountToProjectUseCase,
     private readonly validation: IValidation,
     private readonly notificationService: INotificationService,
-    private readonly invitationTemplateLanguage: IInvitationTemplateLanguage
+    private readonly findAccountIsoCodeRepository: IFindAccountLanguageIsoCodeRepository
   ) {}
 
   async handleRequest(
@@ -46,10 +48,14 @@ export class InviteAccountToProjectController implements IController {
 
       const token = await this.inviteAccountToProjectUseCase.invite(request);
 
+      const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(
+        request.accountEmail
+      );
+      const lang = request.languages[isoCode];
       await this.notificationService.notify(request.accountEmail, {
         token,
         projectId: request.projectId,
-        invitationTemplateLanguage: this.invitationTemplateLanguage,
+        invitationTemplateLanguage: lang,
       });
 
       return noContentResponse();

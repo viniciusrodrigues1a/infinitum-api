@@ -7,6 +7,7 @@ import {
   ICannotKickOwnerOfProjectErrorLanguage,
   ICannotKickYourselfErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
@@ -21,10 +22,6 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import {
-  IKickedAdminTemplateLanguage,
-  IKickedTemplateLanguage,
-} from "../interfaces/languages";
 import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
 import { KickParticipantFromProjectController } from "./KickParticipantFromProjectController";
 
@@ -38,6 +35,8 @@ const cannotKickYourselfErrorLanguageMock =
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
 
+const languagesMock = { "en-us": {} };
+
 function makeSut() {
   const kickParticipantFromProjectUseCaseMock =
     mock<KickParticipantFromProjectUseCase>();
@@ -45,17 +44,19 @@ function makeSut() {
     mock<IFindAllEmailsOfOwnersAndAdminsOfProjectRepository>();
   const notifyUserNotificationServiceMock = mock<INotificationService>();
   const notifyAdminsNotificationServiceMock = mock<INotificationService>();
-  const kickedTemplateLanguageMock = mock<IKickedTemplateLanguage>();
-  const kickedAdminTemplateLanguageMock = mock<IKickedAdminTemplateLanguage>();
   const validationMock = mock<IValidation>();
+  const findAccountLanguageIsoCodeRepositoryMock =
+    mock<IFindAccountLanguageIsoCodeRepository>();
+  findAccountLanguageIsoCodeRepositoryMock.findIsoCode.mockResolvedValue(
+    "en-us"
+  );
   const sut = new KickParticipantFromProjectController(
     kickParticipantFromProjectUseCaseMock,
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
     validationMock,
     notifyUserNotificationServiceMock,
     notifyAdminsNotificationServiceMock,
-    kickedTemplateLanguageMock,
-    kickedAdminTemplateLanguageMock
+    findAccountLanguageIsoCodeRepositoryMock
   );
 
   return {
@@ -65,8 +66,7 @@ function makeSut() {
     validationMock,
     notifyUserNotificationServiceMock,
     notifyAdminsNotificationServiceMock,
-    kickedTemplateLanguageMock,
-    kickedAdminTemplateLanguageMock,
+    findAccountLanguageIsoCodeRepositoryMock,
   };
 }
 
@@ -79,6 +79,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errReturned = new Error("Validation error");
     validationMock.validate.mockImplementationOnce(() => errReturned);
@@ -101,6 +102,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmailMakingRequest]
@@ -122,12 +124,12 @@ describe("kickParticipantFromProject controller", () => {
       sut,
       findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
       notifyUserNotificationServiceMock,
-      kickedTemplateLanguageMock,
     } = makeSut();
     const givenRequest = {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmailMakingRequest]
@@ -135,14 +137,7 @@ describe("kickParticipantFromProject controller", () => {
 
     await sut.handleRequest(givenRequest);
 
-    expect(notifyUserNotificationServiceMock.notify).toHaveBeenNthCalledWith(
-      1,
-      givenRequest.accountEmail,
-      {
-        projectId: givenRequest.projectId,
-        kickedTemplateLanguage: kickedTemplateLanguageMock,
-      }
-    );
+    expect(notifyUserNotificationServiceMock.notify).toHaveBeenCalledTimes(1);
   });
 
   it("should call notifyAdminsNotificationServiceMock", async () => {
@@ -157,6 +152,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmailMakingRequest, "alan@email.com"]
@@ -174,12 +170,12 @@ describe("kickParticipantFromProject controller", () => {
       sut,
       findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
       notifyAdminsNotificationServiceMock,
-      kickedAdminTemplateLanguageMock,
     } = makeSut();
     const givenRequest = {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmailMakingRequest, "alan@email.com"]
@@ -192,7 +188,7 @@ describe("kickParticipantFromProject controller", () => {
       {
         projectId: givenRequest.projectId,
         emailKicked: givenRequest.accountEmail,
-        kickedAdminTemplateLanguage: kickedAdminTemplateLanguageMock,
+        kickedAdminTemplateLanguage: languagesMock["en-us"],
       }
     );
     expect(notifyAdminsNotificationServiceMock.notify).toHaveBeenCalledTimes(1);
@@ -210,6 +206,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmail]
@@ -234,6 +231,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
 
     const response = await sut.handleRequest(givenRequest);
@@ -250,6 +248,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errorThrown = new NotParticipantInProjectError(
       givenRequest.accountEmail,
@@ -273,6 +272,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errorThrown = new CannotKickOwnerOfProjectError(
       cannotKickOwnerOfProjectErrorLanguageMock
@@ -295,6 +295,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     const errorThrown = new CannotKickYourselfError(
       cannotKickYourselfErrorLanguageMock
@@ -317,6 +318,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errorThrown = new RoleInsufficientPermissionError(
       "user-role",
@@ -343,6 +345,7 @@ describe("kickParticipantFromProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
 
     const response = await sut.handleRequest(givenRequest);

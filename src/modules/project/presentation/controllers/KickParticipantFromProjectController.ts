@@ -4,6 +4,7 @@ import {
   CannotKickOwnerOfProjectError,
   CannotKickYourselfError,
 } from "@modules/project/use-cases/errors";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import {
   badRequestResponse,
   noContentResponse,
@@ -20,11 +21,12 @@ import {
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
-import {
-  IKickedAdminTemplateLanguage,
-  IKickedTemplateLanguage,
-} from "../interfaces/languages";
 import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
+
+type KickParticipantFromProjectControllerRequest =
+  KickParticipantFromProjectUseCaseDTO & {
+    languages: any;
+  };
 
 export class KickParticipantFromProjectController implements IController {
   constructor(
@@ -33,12 +35,11 @@ export class KickParticipantFromProjectController implements IController {
     private readonly validation: IValidation,
     private readonly notifyUserNotificationService: INotificationService,
     private readonly notifyAdminsNotificationService: INotificationService,
-    private readonly kickedTemplateLanguage: IKickedTemplateLanguage,
-    private readonly kickedAdminTemplateLanguage: IKickedAdminTemplateLanguage
+    private readonly findAccountIsoCodeRepository: IFindAccountLanguageIsoCodeRepository
   ) {}
 
   async handleRequest(
-    request: KickParticipantFromProjectUseCaseDTO
+    request: KickParticipantFromProjectControllerRequest
   ): Promise<HttpResponse> {
     try {
       const validationError = this.validation.validate(request);
@@ -58,16 +59,24 @@ export class KickParticipantFromProjectController implements IController {
       );
 
       filteredEmails.forEach(async (e: string) => {
+        const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(
+          request.accountEmail
+        );
+        const lang = request.languages[isoCode];
         await this.notifyAdminsNotificationService.notify(e, {
           projectId: request.projectId,
           emailKicked: request.accountEmail,
-          kickedAdminTemplateLanguage: this.kickedAdminTemplateLanguage,
+          kickedAdminTemplateLanguage: lang,
         });
       });
 
+      const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(
+        request.accountEmail
+      );
+      const lang = request.languages[isoCode];
       await this.notifyUserNotificationService.notify(request.accountEmail, {
         projectId: request.projectId,
-        kickedTemplateLanguage: this.kickedTemplateLanguage,
+        kickedTemplateLanguage: lang,
       });
 
       return noContentResponse();

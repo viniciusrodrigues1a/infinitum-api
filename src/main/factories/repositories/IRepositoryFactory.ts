@@ -65,7 +65,10 @@ import {
   IUpdateParticipantRoleInProjectRepository,
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
-import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
+import {
+  IFindAccountLanguageIsoCodeRepository,
+  IFindOneAccountIdByEmailRepository,
+} from "@shared/infra/notifications/interfaces";
 import { IFindIssueTitleByIssueIdRepository } from "@modules/issue/infra/notifications/interfaces/repositories";
 import {
   IFindOneProjectIdByInvitationTokenRepository,
@@ -131,4 +134,5 @@ export interface IRepositoryFactory {
   makeFindOneProjectRepository(): IFindOneProjectRepository;
   makeFindOneProjectIdByInvitationTokenRepository(): IFindOneProjectIdByInvitationTokenRepository;
   makeDeleteIssueGroupRepository(): IDeleteIssueGroupRepository;
+  makeFindAccountLanguageIsoCodeRepository(): IFindAccountLanguageIsoCodeRepository;
 }

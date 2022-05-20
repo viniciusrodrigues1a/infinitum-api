@@ -10,7 +10,6 @@ import { IProjectDeletedTemplateLanguage } from "@modules/project/presentation/i
 
 type Payload = {
   projectName: string;
-  emails: string[];
   projectDeletedTemplateLanguage: IProjectDeletedTemplateLanguage;
 };
 
@@ -24,37 +23,37 @@ export class PushProjectDeletedNotificationService
     private readonly socketServerEmitter: ISocketServerEmitter
   ) {}
 
-  async notify(_: string, payload: Payload): Promise<void> {
-    payload.emails.forEach(async (e) => {
-      const shouldNotify =
-        await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
-          e,
-          "projectDeleted",
-          "push"
-        );
-      if (!shouldNotify) return;
+  async notify(email: string, payload: Payload): Promise<void> {
+    const shouldNotify =
+      await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
+        email,
+        "projectDeleted",
+        "push"
+      );
+    if (!shouldNotify) return;
 
-      const accountId =
-        await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(e);
-      if (!accountId) return;
+    const accountId =
+      await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
+        email
+      );
+    if (!accountId) return;
 
-      const { projectName, projectDeletedTemplateLanguage: lang } = payload;
-      const notification: Omit<Notification, "user_id"> = {
-        message: lang.getProjectDeletedText(projectName),
-        type: "PROJECT_DELETED",
-        metadata: {},
-        createdAt: new Date().getTime(),
-      };
+    const { projectName, projectDeletedTemplateLanguage: lang } = payload;
+    const notification: Omit<Notification, "user_id"> = {
+      message: lang.getProjectDeletedText(projectName),
+      type: "PROJECT_DELETED",
+      metadata: {},
+      createdAt: new Date().getTime(),
+    };
 
-      const id = await this.createNotificationRepository.createNotification({
-        user_id: accountId,
-        ...notification,
-      });
+    const id = await this.createNotificationRepository.createNotification({
+      user_id: accountId,
+      ...notification,
+    });
 
-      this.socketServerEmitter.emitToUser(e, "newNotification", {
-        _id: id,
-        ...notification,
-      });
+    this.socketServerEmitter.emitToUser(email, "newNotification", {
+      _id: id,
+      ...notification,
     });
   }
 }

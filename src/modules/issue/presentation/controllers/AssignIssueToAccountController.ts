@@ -1,8 +1,8 @@
 import { AssignIssueToAccountUseCase } from "@modules/issue/use-cases";
 import { AssignIssueToAccountUseCaseDTO } from "@modules/issue/use-cases/DTOs";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
-import { IFindOneIssueRepository } from "@modules/issue/use-cases/interfaces/repositories";
 import { IIssueAssignedToAnAccountTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import {
   badRequestResponse,
   noContentResponse,
@@ -22,7 +22,9 @@ import {
 import { IFindAccountEmailAssignedToIssueRepository } from "../interfaces/repositories";
 
 export type AssignIssueToAccountControllerRequest =
-  AssignIssueToAccountUseCaseDTO;
+  AssignIssueToAccountUseCaseDTO & {
+    languages: any;
+  };
 
 export class AssignIssueToAccountController implements IController {
   constructor(
@@ -30,7 +32,7 @@ export class AssignIssueToAccountController implements IController {
     private readonly findAccountEmailAssignedToIssueRepository: IFindAccountEmailAssignedToIssueRepository,
     private readonly validation: IValidation,
     private readonly notificationService: INotificationService,
-    private readonly issueAssignedTemplateLanguage: IIssueAssignedToAnAccountTemplateLanguage
+    private readonly findAccountIsoCodeRepository: IFindAccountLanguageIsoCodeRepository
   ) {}
 
   async handleRequest(
@@ -54,9 +56,13 @@ export class AssignIssueToAccountController implements IController {
         request.assignedToEmail !== request.accountEmailMakingRequest &&
         emailAlreadyAssignedToIssue !== request.assignedToEmail
       ) {
+        const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(
+          request.assignedToEmail
+        );
+        const lang = request.languages[isoCode];
         await this.notificationService.notify(request.assignedToEmail, {
           issueId: request.issueId,
-          issueAssignedTemplateLanguage: this.issueAssignedTemplateLanguage,
+          issueAssignedTemplateLanguage: lang,
         });
       }
 

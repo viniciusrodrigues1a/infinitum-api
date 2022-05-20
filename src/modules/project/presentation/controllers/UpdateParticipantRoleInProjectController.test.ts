@@ -11,6 +11,7 @@ import {
   ICannotUpdateRoleToOwnerErrorLanguage,
   ICannotUpdateYourOwnRoleErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
@@ -29,10 +30,7 @@ import {
   IRoleUpdatedAdminTemplateLanguage,
   IRoleUpdatedTemplateLanguage,
 } from "../interfaces/languages";
-import {
-  IFindAllEmailsOfOwnersAndAdminsOfProjectRepository,
-  IFindProjectNameByProjectIdRepository,
-} from "../interfaces/repositories";
+import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
 import { UpdateParticipantRoleInProjectController } from "./UpdateParticipantRoleInProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -48,6 +46,8 @@ const cannotUpdateYourOwnRoleErrorLanguageMock =
 const cannotUpdateRoleOfOwnerErrorLanguageMock =
   mock<ICannotUpdateRoleOfOwnerErrorLanguage>();
 
+const languagesMock = { "en-us": {} };
+
 function makeSut() {
   const updateParticipantRoleInProjectUseCaseMock =
     mock<UpdateParticipantRoleInProjectUseCase>();
@@ -56,17 +56,18 @@ function makeSut() {
   const validationMock = mock<IValidation>();
   const notifyUserNotificationServiceMock = mock<INotificationService>();
   const notifyAdminsNotificationServiceMock = mock<INotificationService>();
-  const roleUpdatedTemplateLanguageMock = mock<IRoleUpdatedTemplateLanguage>();
-  const roleUpdatedAdminTemplateLanguageMock =
-    mock<IRoleUpdatedAdminTemplateLanguage>();
+  const findAccountLanguageIsoCodeRepositoryMock =
+    mock<IFindAccountLanguageIsoCodeRepository>();
+  findAccountLanguageIsoCodeRepositoryMock.findIsoCode.mockResolvedValue(
+    "en-us"
+  );
   const sut = new UpdateParticipantRoleInProjectController(
     updateParticipantRoleInProjectUseCaseMock,
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
     validationMock,
     notifyUserNotificationServiceMock,
     notifyAdminsNotificationServiceMock,
-    roleUpdatedTemplateLanguageMock,
-    roleUpdatedAdminTemplateLanguageMock
+    findAccountLanguageIsoCodeRepositoryMock
   );
 
   return {
@@ -76,8 +77,7 @@ function makeSut() {
     notifyUserNotificationServiceMock,
     notifyAdminsNotificationServiceMock,
     validationMock,
-    roleUpdatedTemplateLanguageMock,
-    roleUpdatedAdminTemplateLanguageMock,
+    findAccountLanguageIsoCodeRepositoryMock,
   };
 }
 
@@ -91,6 +91,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errReturned = new Error("Validation error");
     validationMock.validate.mockImplementationOnce(() => errReturned);
@@ -114,6 +115,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValue(
       []
@@ -134,7 +136,6 @@ describe("updateParticipantRoleInProject controller", () => {
       sut,
       findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
       notifyUserNotificationServiceMock,
-      roleUpdatedTemplateLanguageMock,
     } = makeSut();
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValue(
       []
@@ -144,19 +145,12 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
 
     await sut.handleRequest(givenRequest);
 
-    expect(notifyUserNotificationServiceMock.notify).toHaveBeenNthCalledWith(
-      1,
-      givenRequest.accountEmail,
-      {
-        projectId: givenRequest.projectId,
-        roleName: givenRequest.roleName,
-        roleUpdatedTemplateLanguage: roleUpdatedTemplateLanguageMock,
-      }
-    );
+    expect(notifyUserNotificationServiceMock.notify).toHaveBeenCalledTimes(1);
   });
 
   it("should call notifyAdminsNotificationServiceMock", async () => {
@@ -172,6 +166,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmailMakingRequest, "alan@email.com"]
@@ -189,13 +184,13 @@ describe("updateParticipantRoleInProject controller", () => {
       sut,
       findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
       notifyAdminsNotificationServiceMock,
-      roleUpdatedAdminTemplateLanguageMock,
     } = makeSut();
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmailMakingRequest]
@@ -213,13 +208,13 @@ describe("updateParticipantRoleInProject controller", () => {
       sut,
       findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock,
       notifyAdminsNotificationServiceMock,
-      roleUpdatedAdminTemplateLanguageMock,
     } = makeSut();
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     findAllEmailsOfOwnersAndAdminsOfProjectRepositoryMock.findAllEmailsOfOwnersAndAdmins.mockResolvedValueOnce(
       [givenRequest.accountEmail]
@@ -239,6 +234,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new ProjectNotFoundError(
       projectNotFoundErrorLanguageMock
@@ -264,6 +260,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new NotParticipantInProjectError(
       givenRequest.accountEmail,
@@ -290,6 +287,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new CannotUpdateRoleToOwnerError(
       cannotUpdateRoleToOwnerErrorLanguageMock
@@ -315,6 +313,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new CannotUpdateYourOwnRoleError(
       cannotUpdateYourOwnRoleErrorLanguageMock
@@ -340,6 +339,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new CannotUpdateRoleOfOwnerError(
       cannotUpdateRoleOfOwnerErrorLanguageMock
@@ -365,6 +365,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new InvalidRoleNameError(
       givenRequest.roleName,
@@ -391,6 +392,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     const errThrown = new RoleInsufficientPermissionError(
       "user-role",
@@ -417,6 +419,7 @@ describe("updateParticipantRoleInProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "jorge@email.com",
       accountEmailMakingRequest: "garcia@email.com",
+      languages: languagesMock,
     };
     updateParticipantRoleInProjectUseCaseMock.updateParticipantRole.mockImplementationOnce(
       () => {

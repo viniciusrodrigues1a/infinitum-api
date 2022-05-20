@@ -16,7 +16,10 @@ import {
   IFindOneAccountRepository,
 } from "@modules/account/use-cases/interfaces/repositories";
 import { connection } from "@shared/infra/database/connection";
-import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
+import {
+  IFindAccountLanguageIsoCodeRepository,
+  IFindOneAccountIdByEmailRepository,
+} from "@shared/infra/notifications/interfaces";
 import { getDataURLFromImageBuffer } from "@shared/infra/repositories/helpers";
 import { pbkdf2 } from "../cryptography";
 
@@ -29,8 +32,24 @@ export class KnexAccountRepository
     IListLanguagesRepository,
     IFindAccountImageDataURLRepository,
     IFindAccountLanguageIdRepository,
-    IFindOneAccountIdByEmailRepository
+    IFindOneAccountIdByEmailRepository,
+    IFindAccountLanguageIsoCodeRepository
 {
+  async findIsoCode(email: string): Promise<string> {
+    const languageId = (await this.findAccountLanguage(email)) as string;
+
+    if (!languageId) {
+      return "en-us";
+    }
+
+    const { iso_code: isoCode } = await connection("language")
+      .select("iso_code")
+      .where({ id: languageId })
+      .first();
+
+    return (isoCode as string).toLowerCase();
+  }
+
   async findOneAccountIdByEmail(email: string): Promise<string | undefined> {
     const account = await connection("account")
       .select("id")

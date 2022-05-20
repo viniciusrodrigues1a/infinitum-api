@@ -11,6 +11,7 @@ import {
   IAccountAlreadyParticipatesInProjectErrorLanguage,
   IAccountHasAlreadyBeenInvitedErrorLanguage,
 } from "@modules/project/use-cases/interfaces/languages";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
@@ -25,8 +26,6 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import { IInvitationTemplateLanguage } from "../interfaces/languages";
-import { IFindProjectNameByProjectIdRepository } from "../interfaces/repositories";
 import { InviteAccountToProjectController } from "./InviteAccountToProjectController";
 
 const projectNotFoundErrorLanguageMock = mock<IProjectNotFoundErrorLanguage>();
@@ -42,17 +41,23 @@ const roleInsufficientPermissionErrorLanguageMock =
 const ownerCantBeUsedAsARoleForAnInvitationErrorLanguageMock =
   mock<IOwnerCantBeUsedAsARoleForAnInvitationErrorLanguage>();
 
+const languagesMock = { "en-us": {} };
+
 function makeSut() {
   const inviteAccountToProjectUseCaseMock =
     mock<InviteAccountToProjectUseCase>();
   const validationMock = mock<IValidation>();
   const notificationServiceMock = mock<INotificationService>();
-  const invitationTemplateLanguageMock = mock<IInvitationTemplateLanguage>();
+  const findAccountLanguageIsoCodeRepositoryMock =
+    mock<IFindAccountLanguageIsoCodeRepository>();
+  findAccountLanguageIsoCodeRepositoryMock.findIsoCode.mockResolvedValue(
+    "en-us"
+  );
   const sut = new InviteAccountToProjectController(
     inviteAccountToProjectUseCaseMock,
     validationMock,
     notificationServiceMock,
-    invitationTemplateLanguageMock
+    findAccountLanguageIsoCodeRepositoryMock
   );
 
   return {
@@ -60,7 +65,7 @@ function makeSut() {
     inviteAccountToProjectUseCaseMock,
     validationMock,
     notificationServiceMock,
-    invitationTemplateLanguageMock,
+    findAccountLanguageIsoCodeRepositoryMock,
   };
 }
 
@@ -74,6 +79,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     const errReturned = new Error("Validation error");
     validationMock.validate.mockImplementationOnce(() => errReturned);
@@ -93,6 +99,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
 
     const response = await sut.handleRequest(givenRequest);
@@ -107,32 +114,21 @@ describe("invitAccountToProject controller", () => {
   it("should call notificationService", async () => {
     expect.assertions(1);
 
-    const {
-      sut,
-      notificationServiceMock,
-      inviteAccountToProjectUseCaseMock,
-      invitationTemplateLanguageMock,
-    } = makeSut();
+    const { sut, notificationServiceMock, inviteAccountToProjectUseCaseMock } =
+      makeSut();
     const givenRequest = {
       roleName: "member",
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     const token = "invitation-token-0";
     inviteAccountToProjectUseCaseMock.invite.mockResolvedValueOnce(token);
 
     await sut.handleRequest(givenRequest);
 
-    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(
-      1,
-      givenRequest.accountEmail,
-      {
-        token,
-        projectId: givenRequest.projectId,
-        invitationTemplateLanguage: invitationTemplateLanguageMock,
-      }
-    );
+    expect(notificationServiceMock.notify).toHaveBeenCalledTimes(1);
   });
 
   it("should return HttpStatusCode.badRequest if NotParticipantInProjectError is thrown", async () => {
@@ -144,6 +140,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new NotParticipantInProjectError(
@@ -167,6 +164,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new AccountAlreadyParticipatesInProjectError(
@@ -192,6 +190,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new AccountHasAlreadyBeenInvitedError(
@@ -215,6 +214,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new OwnerCantBeUsedAsARoleForAnInvitationError(
@@ -239,6 +239,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new ProjectNotFoundError(projectNotFoundErrorLanguageMock);
@@ -259,6 +260,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new AccountNotFoundError(
@@ -282,6 +284,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new RoleInsufficientPermissionError(
@@ -305,6 +308,7 @@ describe("invitAccountToProject controller", () => {
       projectId: "project-id-0",
       accountEmail: "garcia@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     inviteAccountToProjectUseCaseMock.invite.mockImplementationOnce(() => {
       throw new Error("unhandled server side err");

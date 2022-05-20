@@ -1,7 +1,7 @@
 import { AssignIssueToAccountUseCase } from "@modules/issue/use-cases";
 import { IssueNotFoundError } from "@modules/issue/use-cases/errors";
 import { IIssueNotFoundErrorLanguage } from "@modules/issue/use-cases/interfaces/languages";
-import { IIssueAssignedToAnAccountTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { IValidation } from "@shared/presentation/validation";
@@ -29,23 +29,34 @@ const notParticipantInProjectErrorLanguageMock =
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
 
+const languagesMock = { "en-us": {} };
+
 function makeSut() {
   const assignIssueToAccountUseCaseMock = mock<AssignIssueToAccountUseCase>();
   const findAccountEmailAssignedToIssueRepositoryMock =
     mock<IFindAccountEmailAssignedToIssueRepository>();
   const validationMock = mock<IValidation>();
   const notificationServiceMock = mock<INotificationService>();
-  const issueAssignedTemplateLanguageMock =
-    mock<IIssueAssignedToAnAccountTemplateLanguage>();
+  const findAccountLanguageIsoCodeRepositoryMock =
+    mock<IFindAccountLanguageIsoCodeRepository>();
+  findAccountLanguageIsoCodeRepositoryMock.findIsoCode.mockResolvedValue(
+    "en-us"
+  );
   const sut = new AssignIssueToAccountController(
     assignIssueToAccountUseCaseMock,
     findAccountEmailAssignedToIssueRepositoryMock,
     validationMock,
     notificationServiceMock,
-    issueAssignedTemplateLanguageMock
+    findAccountLanguageIsoCodeRepositoryMock
   );
 
-  return { sut, assignIssueToAccountUseCaseMock, validationMock };
+  return {
+    sut,
+    assignIssueToAccountUseCaseMock,
+    validationMock,
+    notificationServiceMock,
+    findAccountLanguageIsoCodeRepositoryMock,
+  };
 }
 
 describe("assignIssueToAccount controller", () => {
@@ -57,6 +68,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
 
     const response = await sut.handleRequest(givenRequest);
@@ -73,6 +85,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     const errReturned = new Error("Validation error");
     validationMock.validate.mockImplementationOnce(() => errReturned);
@@ -91,6 +104,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     assignIssueToAccountUseCaseMock.assign.mockImplementationOnce(() => {
       throw new Error("unhandled server side err");
@@ -109,6 +123,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     assignIssueToAccountUseCaseMock.assign.mockImplementationOnce(() => {
       throw new ProjectNotFoundError(projectNotFoundErrorLanguageMock);
@@ -127,6 +142,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     assignIssueToAccountUseCaseMock.assign.mockImplementationOnce(() => {
       throw new IssueNotFoundError(issueNotFoundErrorLanguageMock);
@@ -145,6 +161,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     assignIssueToAccountUseCaseMock.assign.mockImplementationOnce(() => {
       throw new NotParticipantInProjectError(
@@ -166,6 +183,7 @@ describe("assignIssueToAccount controller", () => {
       issueId: "issue-id-0",
       assignedToEmail: "alan@email.com",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     assignIssueToAccountUseCaseMock.assign.mockImplementationOnce(() => {
       throw new RoleInsufficientPermissionError(

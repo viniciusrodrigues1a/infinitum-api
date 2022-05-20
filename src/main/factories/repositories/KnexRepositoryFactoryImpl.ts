@@ -76,7 +76,10 @@ import {
   IUpdateParticipantRoleInProjectRepository,
   IUpdateProjectRepository,
 } from "@modules/project/use-cases/interfaces/repositories";
-import { IFindOneAccountIdByEmailRepository } from "@shared/infra/notifications/interfaces";
+import {
+  IFindAccountLanguageIsoCodeRepository,
+  IFindOneAccountIdByEmailRepository,
+} from "@shared/infra/notifications/interfaces";
 import { ILanguage } from "@shared/presentation/languages";
 import { INotificationRepositoryFactory } from "./INotificationRepositoryFactory";
 import { IRepositoryFactory } from "./IRepositoryFactory";
@@ -85,6 +88,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeFindAccountLanguageIsoCodeRepository(): IFindAccountLanguageIsoCodeRepository {
+    return this.makeAccountRepository();
+  }
 
   makeDeleteIssueGroupRepository(): IDeleteIssueGroupRepository {
     return this.makeProjectRepository();

@@ -1,4 +1,5 @@
 import { DeleteProjectUseCase } from "@modules/project/use-cases";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import { HttpStatusCodes } from "@shared/presentation/http/HttpStatusCodes";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import {
@@ -12,7 +13,6 @@ import {
   IRoleInsufficientPermissionErrorLanguage,
 } from "@shared/use-cases/interfaces/languages";
 import { mock } from "jest-mock-extended";
-import { IProjectDeletedTemplateLanguage } from "../interfaces/languages";
 import {
   IFindAllEmailsParticipantInProject,
   IFindProjectNameByProjectIdRepository,
@@ -25,6 +25,8 @@ const notParticipantInProjectErrorLanguageMock =
 const roleInsufficientPermissionErrorLanguageMock =
   mock<IRoleInsufficientPermissionErrorLanguage>();
 
+const languagesMock = { "en-us": {} };
+
 function makeSut() {
   const deleteProjectUseCaseMock = mock<DeleteProjectUseCase>();
   const findProjectNameByProjectIdRepositoryMock =
@@ -32,14 +34,17 @@ function makeSut() {
   const findAllEmailsParticipantInProjectMock =
     mock<IFindAllEmailsParticipantInProject>();
   const notificationServiceMock = mock<INotificationService>();
-  const projectDeletedTemplateLanguageMock =
-    mock<IProjectDeletedTemplateLanguage>();
+  const findAccountLanguageIsoCodeRepositoryMock =
+    mock<IFindAccountLanguageIsoCodeRepository>();
+  findAccountLanguageIsoCodeRepositoryMock.findIsoCode.mockResolvedValue(
+    "en-us"
+  );
   const sut = new DeleteProjectController(
     deleteProjectUseCaseMock,
     findProjectNameByProjectIdRepositoryMock,
     findAllEmailsParticipantInProjectMock,
     notificationServiceMock,
-    projectDeletedTemplateLanguageMock
+    findAccountLanguageIsoCodeRepositoryMock
   );
 
   return {
@@ -48,7 +53,7 @@ function makeSut() {
     findProjectNameByProjectIdRepositoryMock,
     findAllEmailsParticipantInProjectMock,
     notificationServiceMock,
-    projectDeletedTemplateLanguageMock,
+    findAccountLanguageIsoCodeRepositoryMock,
   };
 }
 
@@ -72,15 +77,13 @@ describe("deleteProject controller", () => {
     const givenRequest = {
       projectId: "project-id-0",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
 
     const response = await sut.handleRequest(givenRequest);
 
     expect(response.statusCode).toBe(HttpStatusCodes.noContent);
-    expect(deleteProjectUseCaseMock.delete).toHaveBeenNthCalledWith(
-      1,
-      givenRequest
-    );
+    expect(deleteProjectUseCaseMock.delete).toHaveBeenCalledTimes(1);
   });
 
   it("should call the notificationService", async () => {
@@ -95,6 +98,7 @@ describe("deleteProject controller", () => {
     const givenRequest = {
       projectId: "project-id-0",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     const projectName = "my project";
     findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
@@ -107,6 +111,7 @@ describe("deleteProject controller", () => {
 
     await sut.handleRequest(givenRequest);
 
+    await new Promise((r) => setTimeout(r, 150));
     expect(notificationServiceMock.notify).toHaveBeenCalledTimes(1);
   });
 
@@ -118,11 +123,11 @@ describe("deleteProject controller", () => {
       findProjectNameByProjectIdRepositoryMock,
       findAllEmailsParticipantInProjectMock,
       notificationServiceMock,
-      projectDeletedTemplateLanguageMock,
     } = makeSut();
     const givenRequest = {
       projectId: "project-id-0",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     };
     const projectName = "my project";
     findProjectNameByProjectIdRepositoryMock.findProjectNameByProjectId.mockResolvedValueOnce(
@@ -135,14 +140,8 @@ describe("deleteProject controller", () => {
 
     await sut.handleRequest(givenRequest);
 
-    const expectedFilteredEmails = mockedEmails.filter(
-      (e) => e !== givenRequest.accountEmailMakingRequest
-    );
-    expect(notificationServiceMock.notify).toHaveBeenNthCalledWith(1, "", {
-      projectName,
-      emails: expectedFilteredEmails,
-      projectDeletedTemplateLanguage: projectDeletedTemplateLanguageMock,
-    });
+    await new Promise((r) => setTimeout(r, 150));
+    expect(notificationServiceMock.notify).toHaveBeenCalledTimes(1);
   });
 
   it("should return HttpStatusCodes.notFound if useCase throws ProjectNotFoundError", async () => {
@@ -157,6 +156,7 @@ describe("deleteProject controller", () => {
     const response = await sut.handleRequest({
       projectId,
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.notFound);
@@ -178,6 +178,7 @@ describe("deleteProject controller", () => {
     const response = await sut.handleRequest({
       projectId: "project-id-0",
       accountEmailMakingRequest: accountEmail,
+      languages: languagesMock,
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.badRequest);
@@ -198,6 +199,7 @@ describe("deleteProject controller", () => {
     const response = await sut.handleRequest({
       projectId: "project-id-0",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.unauthorized);
@@ -215,6 +217,7 @@ describe("deleteProject controller", () => {
     const response = await sut.handleRequest({
       projectId: "project-id-0",
       accountEmailMakingRequest: "jorge@email.com",
+      languages: languagesMock,
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.serverError);

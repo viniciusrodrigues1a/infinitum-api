@@ -7,7 +7,6 @@ import { SendProjectDeletedEmailJob } from "../../jobs";
 
 type Payload = {
   projectName: string;
-  emails: string[];
   projectDeletedTemplateLanguage: IProjectDeletedTemplateLanguage;
 };
 
@@ -19,27 +18,25 @@ export class NodemailerProjectDeletedNotificationService
     private readonly shouldAccountReceiveNotification: IShouldAccountReceiveNotificationRepository
   ) {}
 
-  async notify(_: string, payload: Payload): Promise<void> {
-    payload.emails.forEach(async (e) => {
-      const shouldNotify =
-        await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
-          e,
-          "projectDeleted",
-          "email"
-        );
-      if (!shouldNotify) return;
+  async notify(email: string, payload: Payload): Promise<void> {
+    const shouldNotify =
+      await this.shouldAccountReceiveNotification.shouldAccountReceiveNotification(
+        email,
+        "projectDeleted",
+        "email"
+      );
+    if (!shouldNotify) return;
 
-      const { projectName, projectDeletedTemplateLanguage: lang } = payload;
+    const { projectName, projectDeletedTemplateLanguage: lang } = payload;
 
-      const html = new ProjectDeletedTemplate().parseTemplate({
-        projectDeletedText: lang.getProjectDeletedText(projectName),
-      });
+    const html = new ProjectDeletedTemplate().parseTemplate({
+      projectDeletedText: lang.getProjectDeletedText(projectName),
+    });
 
-      this.queue.add(new SendProjectDeletedEmailJob().key, {
-        subject: lang.getProjectDeletedEmailSubject(),
-        email: e,
-        html,
-      });
+    this.queue.add(new SendProjectDeletedEmailJob().key, {
+      subject: lang.getProjectDeletedEmailSubject(),
+      email,
+      html,
     });
   }
 }

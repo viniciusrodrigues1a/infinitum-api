@@ -6,6 +6,7 @@ import {
   CannotUpdateRoleToOwnerError,
   CannotUpdateYourOwnRoleError,
 } from "@modules/project/use-cases/errors";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import {
   badRequestResponse,
   noContentResponse,
@@ -22,11 +23,12 @@ import {
   ProjectNotFoundError,
   RoleInsufficientPermissionError,
 } from "@shared/use-cases/errors";
-import {
-  IRoleUpdatedAdminTemplateLanguage,
-  IRoleUpdatedTemplateLanguage,
-} from "../interfaces/languages";
 import { IFindAllEmailsOfOwnersAndAdminsOfProjectRepository } from "../interfaces/repositories";
+
+type UpdateParticipantRoleInProjectControllerRequest =
+  UpdateParticipantRoleInProjectUseCaseDTO & {
+    languages: any;
+  };
 
 export class UpdateParticipantRoleInProjectController implements IController {
   constructor(
@@ -35,12 +37,11 @@ export class UpdateParticipantRoleInProjectController implements IController {
     private readonly validation: IValidation,
     private readonly notifyUserNotificationService: INotificationService,
     private readonly notifyAdminsNotificationService: INotificationService,
-    private readonly roleUpdatedTemplateLanguage: IRoleUpdatedTemplateLanguage,
-    private readonly roleUpdatedAdminTemplateLanguage: IRoleUpdatedAdminTemplateLanguage
+    private readonly findAccountIsoCodeRepository: IFindAccountLanguageIsoCodeRepository
   ) {}
 
   async handleRequest(
-    request: UpdateParticipantRoleInProjectUseCaseDTO
+    request: UpdateParticipantRoleInProjectControllerRequest
   ): Promise<HttpResponse> {
     try {
       const validationError = this.validation.validate(request);
@@ -62,19 +63,24 @@ export class UpdateParticipantRoleInProjectController implements IController {
       );
 
       filteredEmails.forEach(async (e: string) => {
+        const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(e);
+        const lang = request.languages[isoCode];
         await this.notifyAdminsNotificationService.notify(e, {
           emailWhoseRoleHasBeenUpdated: request.accountEmail,
           projectId: request.projectId,
           roleName: request.roleName,
-          roleUpdatedAdminTemplateLanguage:
-            this.roleUpdatedAdminTemplateLanguage,
+          roleUpdatedAdminTemplateLanguage: lang,
         });
       });
 
+      const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(
+        request.accountEmail
+      );
+      const lang = request.languages[isoCode];
       await this.notifyUserNotificationService.notify(request.accountEmail, {
         projectId: request.projectId,
         roleName: request.roleName,
-        roleUpdatedTemplateLanguage: this.roleUpdatedTemplateLanguage,
+        roleUpdatedTemplateLanguage: lang,
       });
 
       return noContentResponse();

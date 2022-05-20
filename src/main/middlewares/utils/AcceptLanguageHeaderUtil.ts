@@ -15,7 +15,7 @@ const ptBR = languagesFactory.makePTBRLanguage();
 const enUS = languagesFactory.makeENUSLanguage();
 
 class AcceptLanguageHeaderUtil {
-  private languages: Languages = {
+  public languages: Languages = {
     "pt-br": ptBR,
     pt: ptBR,
     "en-us": enUS,

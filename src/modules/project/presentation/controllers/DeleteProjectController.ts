@@ -1,5 +1,6 @@
 import { DeleteProjectUseCase } from "@modules/project/use-cases";
 import { DeleteProjectDTO } from "@modules/project/use-cases/DTOs/DeleteProjectDTO";
+import { IFindAccountLanguageIsoCodeRepository } from "@shared/infra/notifications/interfaces";
 import {
   badRequestResponse,
   noContentResponse,
@@ -15,11 +16,14 @@ import {
   ProjectNotFoundError,
 } from "@shared/use-cases/errors";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
-import { IProjectDeletedTemplateLanguage } from "../interfaces/languages";
 import {
   IFindAllEmailsParticipantInProject,
   IFindProjectNameByProjectIdRepository,
 } from "../interfaces/repositories";
+
+type DeleteProjectControllerRequest = DeleteProjectDTO & {
+  languages: any;
+};
 
 export class DeleteProjectController implements IController {
   constructor(
@@ -27,13 +31,14 @@ export class DeleteProjectController implements IController {
     private readonly findProjectNameByProjectIdRepository: IFindProjectNameByProjectIdRepository,
     private readonly findAllEmailsParticipantInProject: IFindAllEmailsParticipantInProject,
     private readonly notificationService: INotificationService,
-    private readonly projectDeletedTemplateLanguage: IProjectDeletedTemplateLanguage
+    private readonly findAccountIsoCodeRepository: IFindAccountLanguageIsoCodeRepository
   ) {}
 
   async handleRequest({
     projectId,
     accountEmailMakingRequest,
-  }: DeleteProjectDTO): Promise<HttpResponse> {
+    languages,
+  }: DeleteProjectControllerRequest): Promise<HttpResponse> {
     try {
       const emails = await this.findAllEmailsParticipantInProject.findAllEmails(
         projectId
@@ -52,10 +57,13 @@ export class DeleteProjectController implements IController {
         (e) => e !== accountEmailMakingRequest
       );
 
-      await this.notificationService.notify("", {
-        emails: emailsWithoutAccountEmailMakingRequest,
-        projectName,
-        projectDeletedTemplateLanguage: this.projectDeletedTemplateLanguage,
+      emailsWithoutAccountEmailMakingRequest.forEach(async (e: string) => {
+        const isoCode = await this.findAccountIsoCodeRepository.findIsoCode(e);
+        const lang = languages[isoCode];
+        await this.notificationService.notify(e, {
+          projectName,
+          projectDeletedTemplateLanguage: lang,
+        });
       });
 
       return noContentResponse();
