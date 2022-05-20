@@ -83,16 +83,17 @@ export class Server {
   }
 
   private startSocketServer(): void {
-    this.socketServer.on("connection", (socket) => {
-      socket.on("newUser", async (email) => {
-        this.addNewUser(email, socket.id);
+    this.socketServer.on("connection", async (socket) => {
+      const { email: e } = socket.handshake.headers;
+      if (typeof e === "string") {
+        this.addNewUser(e, socket.id);
 
         const notifications = await mongoDBNotificationRepositoryFactoryImpl
           .makeFindAllNotificationsRepository()
-          .findAllNotifications(email);
+          .findAllNotifications(e);
 
         socket.emit("loadNotifications", notifications);
-      });
+      }
 
       socket.on("addUserToProjectListener", async ({ email, projectId }) => {
         this.addUserToProjectListener(email, projectId);
