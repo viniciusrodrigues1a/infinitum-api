@@ -29,3 +29,10 @@ authRoutes.get(
   ),
   (_, res) => res.end()
 );
+
+authRoutes.post(
+  "/refresh",
+  ExpressControllerAdapter((language) =>
+    knexControllerFactoryImpl.makeRefreshTokenController(language)
+  )
+);

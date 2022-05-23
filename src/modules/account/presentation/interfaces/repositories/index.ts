@@ -5,3 +5,4 @@ export * from "./IUpdateAccountImageRepository";
 export * from "./IListLanguagesRepository";
 export * from "./IFindAccountImageDataURLRepository";
 export * from "./IFindAccountLanguageIdRepository";
+export * from "./IRefreshTokenRepository";

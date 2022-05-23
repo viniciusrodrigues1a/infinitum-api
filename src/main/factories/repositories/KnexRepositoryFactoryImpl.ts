@@ -3,11 +3,13 @@ import {
   KnexLoginRepository,
   KnexRegisterRepository,
 } from "@modules/account/infra/repositories";
+import { KnexRefreshTokenRepository } from "@modules/account/infra/repositories/KnexRefreshTokenRepository";
 import {
   IFindAccountImageDataURLRepository,
   IFindAccountLanguageIdRepository,
   IListLanguagesRepository,
   ILoginRepository,
+  IRefreshTokenRepository,
   IRegisterRepository,
   IUpdateAccountImageRepository,
   IUpdateAccountRepository,
@@ -88,6 +90,10 @@ import { mongoDBNotificationRepositoryFactoryImpl } from "./MongoDBNotificationR
 class KnexRepositoryFactoryImpl implements IRepositoryFactory {
   private notificationRepository: INotificationRepositoryFactory =
     mongoDBNotificationRepositoryFactoryImpl;
+
+  makeRefreshTokenRepository(): IRefreshTokenRepository {
+    return new KnexRefreshTokenRepository();
+  }
 
   makeFindAccountLanguageIsoCodeRepository(): IFindAccountLanguageIsoCodeRepository {
     return this.makeAccountRepository();

@@ -15,6 +15,24 @@ type Field = {
 };
 
 export class ControllerValidationFactory {
+  makeRefreshTokenControllerValidation(
+    language: ILanguage
+  ): ValidationComposite {
+    const requiredAndStringFields = [
+      {
+        accessor: "token",
+        i18n: language.getTokenParamMessage(),
+      },
+    ];
+
+    const required = this.makeAllRequired(requiredAndStringFields, language);
+    const string = this.makeAllString(requiredAndStringFields, language);
+
+    const validations = [...required, ...string];
+
+    return new ValidationComposite(validations);
+  }
+
   makeAssignIssueToAccountControllerValidation(
     language: ILanguage
   ): ValidationComposite {

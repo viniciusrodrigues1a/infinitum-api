@@ -4,6 +4,10 @@ import { ILanguage } from "./ILanguage";
 export class ENUSLanguage implements ILanguage {
   constructor(private readonly dateProvider: IDateProvider) {}
 
+  getTokenParamMessage(): string {
+    return "token";
+  }
+
   getRoleUpdatedAdminText(
     email: string,
     projectName: string,

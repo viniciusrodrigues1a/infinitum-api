@@ -13,4 +13,5 @@ export interface IParamsLanguage {
   getIssueIdParamMessage(): string;
   getCompletedParamMessage(): string;
   getAssignedToEmailParamMessage(): string;
+  getTokenParamMessage(): string;
 }

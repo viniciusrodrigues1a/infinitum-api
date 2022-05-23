@@ -3,3 +3,4 @@ export * from "./LoginController";
 export * from "./FindOneAccountController";
 export * from "./UpdateAccountController";
 export * from "./ListLanguagesController";
+export * from "./RefreshTokenController";

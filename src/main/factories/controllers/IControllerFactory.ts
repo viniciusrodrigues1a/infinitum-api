@@ -2,6 +2,7 @@ import {
   FindOneAccountController,
   ListLanguagesController,
   LoginController,
+  RefreshTokenController,
   RegisterController,
   UpdateAccountController,
 } from "@modules/account/presentation/controllers";
@@ -93,4 +94,5 @@ export interface IControllerFactory {
   makeDeleteIssueGroupController(
     language: ILanguage
   ): DeleteIssueGroupController;
+  makeRefreshTokenController(language: ILanguage): RefreshTokenController;
 }

@@ -12,6 +12,7 @@ import {
   FindOneAccountController,
   ListLanguagesController,
   LoginController,
+  RefreshTokenController,
   RegisterController,
   UpdateAccountController,
 } from "@modules/account/presentation/controllers";
@@ -70,6 +71,13 @@ class KnexControllerFactoryImpl implements IControllerFactory {
   private useCaseFactory: IUseCaseFactory = knexUseCaseFactoryImpl;
   private validationFactory: ControllerValidationFactory =
     controllerValidationFactory;
+
+  makeRefreshTokenController(language: ILanguage): RefreshTokenController {
+    return new RefreshTokenController(
+      this.repositoryFactory.makeRefreshTokenRepository(),
+      this.validationFactory.makeRefreshTokenControllerValidation(language)
+    );
+  }
 
   makeDeleteIssueGroupController(
     language: ILanguage

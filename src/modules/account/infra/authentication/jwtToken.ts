@@ -12,7 +12,7 @@ class JwtToken {
     publicKey: process.env.JWT_PUBLIC_KEY as Secret,
     signOptions: {
       algorithm: "RS256",
-      expiresIn: "6h",
+      expiresIn: "15m",
     },
   };
 

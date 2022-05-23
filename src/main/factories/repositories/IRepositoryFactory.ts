@@ -3,6 +3,7 @@ import {
   IFindAccountLanguageIdRepository,
   IListLanguagesRepository,
   ILoginRepository,
+  IRefreshTokenRepository,
   IRegisterRepository,
   IUpdateAccountImageRepository,
   IUpdateAccountRepository,
@@ -135,4 +136,5 @@ export interface IRepositoryFactory {
   makeFindOneProjectIdByInvitationTokenRepository(): IFindOneProjectIdByInvitationTokenRepository;
   makeDeleteIssueGroupRepository(): IDeleteIssueGroupRepository;
   makeFindAccountLanguageIsoCodeRepository(): IFindAccountLanguageIsoCodeRepository;
+  makeRefreshTokenRepository(): IRefreshTokenRepository;
 }
