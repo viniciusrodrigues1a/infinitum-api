@@ -38,9 +38,12 @@ services:
       - "mongodb:mongohost"
       - "redis-queue:redishost"
     depends_on:
-      - postgres
-      - mongodb
-      - redis-queue
+      postgres:
+        condition: service_started
+      mongodb:
+        condition: service_healthy
+      redis-queue:
+        condition: service_started
 
   queue:
     build: ./docker/queue
