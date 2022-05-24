@@ -249,6 +249,11 @@ export class KnexProjectRepository
   async findProjectImageDataURL(
     projectId: string
   ): Promise<string | undefined> {
+    const doesProjectExist = await this.doesProjectExist(projectId);
+    if (!doesProjectExist) {
+      return undefined;
+    }
+
     const { image: buffer } = await connection("project")
       .select("image")
       .where({ id: projectId })
