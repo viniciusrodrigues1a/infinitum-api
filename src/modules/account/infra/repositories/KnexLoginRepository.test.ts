@@ -1,5 +1,6 @@
 import { IInvalidCredentialsErrorLanguage } from "@modules/account/presentation/languages";
 import { IFindOneAccountRepository } from "@modules/account/use-cases/interfaces/repositories/IFindOneAccountRepository";
+import { connection, configuration } from "@shared/infra/database/connection";
 import { mock } from "jest-mock-extended";
 import { jwtToken } from "../authentication";
 import { pbkdf2 } from "../cryptography/Pbkdf2";
@@ -19,6 +20,18 @@ function makeSut() {
 }
 
 describe("login repository using Knex and JWT", () => {
+  beforeEach(async () => {
+    await connection.migrate.latest(configuration.migrations);
+  });
+
+  afterEach(async () => {
+    await connection.migrate.rollback(configuration.migrations);
+  });
+
+  afterAll(async () => {
+    await connection.destroy();
+  });
+
   beforeAll(() => {
     jwtToken._config.signOptions.algorithm = "HS256";
     jwtToken._config.privateKey = "secret-key";
@@ -41,9 +54,9 @@ describe("login repository using Knex and JWT", () => {
 
     jest.spyOn(pbkdf2, "compare").mockReturnValueOnce(true);
 
-    const token = await sut.login(credentials);
+    const tokens = await sut.login(credentials);
 
-    const decoded = await jwtToken.verify(token);
+    const decoded = await jwtToken.verify(tokens.accessToken);
     expect(decoded.email).toBe(credentials.email);
   });
 

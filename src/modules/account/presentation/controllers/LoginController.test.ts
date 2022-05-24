@@ -38,7 +38,10 @@ describe("login controller", () => {
 
     const { sut, loginRepositoryMock } = makeSut();
     const token = "my-auth-token";
-    loginRepositoryMock.login.mockResolvedValueOnce(token);
+    loginRepositoryMock.login.mockResolvedValueOnce({
+      accessToken: token,
+      refreshToken: "refresh-token-0",
+    });
 
     const response = await sut.handleRequest({
       email: "jorge@email.com",
@@ -46,7 +49,7 @@ describe("login controller", () => {
     });
 
     expect(response.statusCode).toBe(HttpStatusCodes.ok);
-    expect(response.body.token).toBe(token);
+    expect(response.body.accessToken).toBe(token);
   });
 
   it("should return HttpStatusCodes.badRequest when InvalidCredentialsError is thrown", async () => {

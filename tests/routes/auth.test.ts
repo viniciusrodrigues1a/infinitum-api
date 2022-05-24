@@ -81,7 +81,7 @@ describe("/auth/ endpoint", () => {
       const response = await api.post("/auth/login/").send(body);
 
       expect(response.statusCode).toBe(200);
-      expect(typeof response.body.token).toBe("string");
+      expect(typeof response.body.accessToken).toBe("string");
     });
 
     it("should return 400 if email is wrong", async () => {
