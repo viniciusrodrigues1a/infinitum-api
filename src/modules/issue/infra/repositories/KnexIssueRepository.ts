@@ -231,13 +231,13 @@ export class KnexIssueRepository
     const lang =
       issuesWeeklyOverviewWeekdaysLanguage.getIssuesWeeklyOverviewWeekdays();
     const formattedWeekOverview: IssuesWeeklyOverviewMetrics = [
-      { date: lang[6], value: completed[6] },
-      { date: lang[0], value: completed[0] },
-      { date: lang[1], value: completed[1] },
-      { date: lang[2], value: completed[2] },
-      { date: lang[3], value: completed[3] },
-      { date: lang[4], value: completed[4] },
-      { date: lang[5], value: completed[5] },
+      { date: lang[0], value: completed[6] },
+      { date: lang[1], value: completed[0] },
+      { date: lang[2], value: completed[1] },
+      { date: lang[3], value: completed[2] },
+      { date: lang[4], value: completed[3] },
+      { date: lang[5], value: completed[4] },
+      { date: lang[6], value: completed[5] },
     ];
 
     return formattedWeekOverview;
