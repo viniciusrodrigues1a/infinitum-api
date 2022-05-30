@@ -213,31 +213,34 @@ export class KnexIssueRepository
       accountEmailMakingRequest
     );
 
-    const completed = [0, 0, 0, 0, 0, 0, 0, 0];
-
-    const monday = moment(date).weekday(1).format("YYYY-MM-DD");
-    const sunday = moment(date).weekday(7).format("YYYY-MM-DD");
+    const sunday = moment(date)
+      .weekday(1)
+      .subtract(1, "day")
+      .format("YYYY-MM-DD");
+    const saturday = moment(date).weekday(6).format("YYYY-MM-DD");
 
     const issues = await connection("issue")
       .select("*")
-      .whereBetween("expires_at", [monday, sunday])
+      .whereBetween("expires_at", [sunday, saturday])
       .andWhere({ assigned_to_account_id: accountId, completed: true });
+
+    const completed = [0, 0, 0, 0, 0, 0, 0, 0];
 
     issues.forEach((issue) => {
       const expiresAt = moment(issue.expires_at);
-      completed[expiresAt.day() - 1] += 1;
+      completed[expiresAt.day()] += 1;
     });
 
     const lang =
       issuesWeeklyOverviewWeekdaysLanguage.getIssuesWeeklyOverviewWeekdays();
     const formattedWeekOverview: IssuesWeeklyOverviewMetrics = [
-      { date: lang[0], value: completed[6] },
-      { date: lang[1], value: completed[0] },
-      { date: lang[2], value: completed[1] },
-      { date: lang[3], value: completed[2] },
-      { date: lang[4], value: completed[3] },
-      { date: lang[5], value: completed[4] },
-      { date: lang[6], value: completed[5] },
+      { date: lang[0], value: completed[0] },
+      { date: lang[1], value: completed[1] },
+      { date: lang[2], value: completed[2] },
+      { date: lang[3], value: completed[3] },
+      { date: lang[4], value: completed[4] },
+      { date: lang[5], value: completed[5] },
+      { date: lang[6], value: completed[6] },
     ];
 
     return formattedWeekOverview;
