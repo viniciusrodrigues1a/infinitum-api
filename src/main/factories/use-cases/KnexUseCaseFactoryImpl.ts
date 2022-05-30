@@ -218,6 +218,8 @@ class KnexUseCaseFactoryImpl implements IUseCaseFactory {
       this.repositoryFactory.makeFindStartDateByProjectIdRepository(),
       this.repositoryFactory.makeIsProjectArchivedRepository(),
       this.repositoryFactory.makeFindParticipantRoleInProjectRepository(),
+      this.repositoryFactory.makeShouldIssueGroupUpdateIssuesToCompletedRepository(),
+      this.repositoryFactory.makeUpdateIssueRepository(),
       language,
       language,
       language,

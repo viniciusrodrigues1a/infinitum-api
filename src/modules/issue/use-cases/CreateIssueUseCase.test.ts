@@ -18,6 +18,7 @@ import {
   ProjectNotFoundError,
 } from "@shared/use-cases/errors";
 import * as RoleModule from "@modules/project/entities/value-objects";
+import * as IssueModule from "@modules/issue/entities";
 import { RoleInsufficientPermissionError } from "@shared/use-cases/errors/RoleInsufficientPermissionError";
 import {
   IProjectHasntBegunErrorLanguage,
@@ -27,9 +28,14 @@ import {
   ProjectHasntBegunError,
   ProjectIsArchivedError,
 } from "@modules/project/use-cases/errors";
-import { ICreateIssueRepository } from "./interfaces/repositories";
+import {
+  ICreateIssueRepository,
+  IShouldIssueGroupUpdateIssuesToCompletedRepository,
+  IUpdateIssueRepository,
+} from "./interfaces/repositories";
 import { CreateIssueUseCase } from "./CreateIssueUseCase";
 import { Issue } from "../entities";
+import { IssueDTO } from "../entities/DTOs";
 
 jest.mock("../../project/entities/value-objects/Role");
 jest.mock("../entities/Issue");
@@ -46,6 +52,9 @@ function makeSut() {
   const isProjectArchivedRepositoryMock = mock<IIsProjectArchivedRepository>();
   const findParticipantRoleInProjectRepositoryMock =
     mock<IFindParticipantRoleInProjectRepository>();
+  const shouldIssueGroupUpdateIssuesToCompletedRepositoryMock =
+    mock<IShouldIssueGroupUpdateIssuesToCompletedRepository>();
+  const updateIssueRepositoryMock = mock<IUpdateIssueRepository>();
   const projectNotFoundErrorLanguageMock =
     mock<IProjectNotFoundErrorLanguage>();
   const notParticipantInProjectErrorLanguageMock =
@@ -66,6 +75,8 @@ function makeSut() {
     findStartDateByProjectIdRepositoryMock,
     isProjectArchivedRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
+    shouldIssueGroupUpdateIssuesToCompletedRepositoryMock,
+    updateIssueRepositoryMock,
     projectNotFoundErrorLanguageMock,
     notParticipantInProjectErrorLanguageMock,
     projectHasntBegunErrorLanguageMock,
@@ -83,6 +94,8 @@ function makeSut() {
     findStartDateByProjectIdRepositoryMock,
     isProjectArchivedRepositoryMock,
     findParticipantRoleInProjectRepositoryMock,
+    shouldIssueGroupUpdateIssuesToCompletedRepositoryMock,
+    updateIssueRepositoryMock,
   };
 }
 describe("createIssue use-case", () => {
@@ -316,5 +329,54 @@ describe("createIssue use-case", () => {
     await sut.create(givenIssue);
 
     expect(Issue).toHaveBeenCalledTimes(1);
+  });
+
+  it("should update issue to completed if IShouldIssueGroupUpdateIssuesToCompletedRepository returns true", async () => {
+    expect.assertions(1);
+
+    const {
+      sut,
+      findProjectIdByIssueGroupIdRepositoryMock,
+      doesParticipantExistRepositoryMock,
+      hasProjectBegunRepositoryMock,
+      isProjectArchivedRepositoryMock,
+      findParticipantRoleInProjectRepositoryMock,
+      shouldIssueGroupUpdateIssuesToCompletedRepositoryMock,
+      updateIssueRepositoryMock,
+    } = makeSut();
+    findProjectIdByIssueGroupIdRepositoryMock.findProjectIdByIssueGroupId.mockResolvedValueOnce(
+      "project-id-0"
+    );
+    doesParticipantExistRepositoryMock.doesParticipantExist.mockResolvedValueOnce(
+      true
+    );
+    hasProjectBegunRepositoryMock.hasProjectBegun.mockResolvedValueOnce(true);
+    isProjectArchivedRepositoryMock.isProjectArchived.mockResolvedValueOnce(
+      false
+    );
+    findParticipantRoleInProjectRepositoryMock.findParticipantRole.mockResolvedValueOnce(
+      "roleWithPermission"
+    );
+    shouldIssueGroupUpdateIssuesToCompletedRepositoryMock.shouldIssueGroupUpdateIssues.mockResolvedValueOnce(
+      true
+    );
+    const issueSpy = jest.spyOn(IssueModule, "Issue");
+    const mockedIssueId = "issue-id-123";
+    issueSpy.mockImplementationOnce(
+      (data: IssueDTO) => ({ ...data, issueId: mockedIssueId } as Issue)
+    );
+    const givenIssue = {
+      issueGroupId: "ig-id-0",
+      title: "My issue",
+      description: "My issue's description",
+      accountEmailMakingRequest: "jorge@email.com",
+    };
+
+    await sut.create(givenIssue);
+
+    expect(updateIssueRepositoryMock.updateIssue).toHaveBeenNthCalledWith(1, {
+      issueId: mockedIssueId,
+      newCompleted: true,
+    });
   });
 });

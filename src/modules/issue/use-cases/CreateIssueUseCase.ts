@@ -28,7 +28,11 @@ import {
 } from "@shared/use-cases/interfaces/languages";
 import { Issue } from "../entities";
 import { CreateIssueUseCaseDTO } from "./DTOs";
-import { ICreateIssueRepository } from "./interfaces/repositories";
+import {
+  ICreateIssueRepository,
+  IShouldIssueGroupUpdateIssuesToCompletedRepository,
+  IUpdateIssueRepository,
+} from "./interfaces/repositories";
 
 export class CreateIssueUseCase {
   constructor(
@@ -39,6 +43,8 @@ export class CreateIssueUseCase {
     private readonly findStartDateByProjectIdRepository: IFindStartDateByProjectIdRepository,
     private readonly isProjectArchivedRepository: IIsProjectArchivedRepository,
     private readonly findParticipantRoleInProjectRepository: IFindParticipantRoleInProjectRepository,
+    private readonly shouldIssueGroupUpdateIssuesToCompleted: IShouldIssueGroupUpdateIssuesToCompletedRepository,
+    private readonly updateIssueRepository: IUpdateIssueRepository,
     private readonly projectNotFoundErrorLanguage: IProjectNotFoundErrorLanguage,
     private readonly notParticipantInProjectErrorLanguage: INotParticipantInProjectErrorLanguage,
     private readonly projectHasntBegunErrorLanguage: IProjectHasntBegunErrorLanguage,
@@ -116,6 +122,17 @@ export class CreateIssueUseCase {
       createdAt: issue.createdAt,
       issueGroupId,
     });
+
+    const shouldUpdateIssue =
+      await this.shouldIssueGroupUpdateIssuesToCompleted.shouldIssueGroupUpdateIssues(
+        issueGroupId
+      );
+    if (shouldUpdateIssue) {
+      await this.updateIssueRepository.updateIssue({
+        issueId: issue.issueId,
+        newCompleted: true,
+      });
+    }
 
     return issue.issueId;
   }
