@@ -317,6 +317,16 @@ export class KnexProjectRepository
         account_id: accountId,
       })
       .del();
+
+    const issueGroups = await connection("issue_group")
+      .select("id")
+      .where({ project_id: projectId });
+    const issueGroupIds = issueGroups.map((i) => i.id);
+
+    await connection("issue")
+      .whereIn("issue_group_id", issueGroupIds)
+      .andWhere({ assigned_to_account_id: accountId })
+      .update({ assigned_to_account_id: null });
   }
 
   async acceptInvitationToken(token: string): Promise<void> {
