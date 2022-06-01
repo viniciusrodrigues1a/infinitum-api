@@ -35,7 +35,7 @@ export class PushRoleUpdatedNotificationService
       );
     if (!shouldNotify) return;
 
-    const { projectId, roleName, roleUpdatedTemplateLanguage: lang } = payload;
+    const { projectId, roleName } = payload;
 
     const accountId =
       await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
@@ -49,13 +49,14 @@ export class PushRoleUpdatedNotificationService
       );
 
     const type = "ROLE_UPDATED";
-    const message = lang.getRoleUpdatedText(projectName, roleName);
 
     const createdAt = new Date().getTime();
     const notification = {
-      message,
       type: type as Notification["type"],
-      metadata: {},
+      metadata: {
+        projectName,
+        roleName,
+      },
       createdAt,
     };
 

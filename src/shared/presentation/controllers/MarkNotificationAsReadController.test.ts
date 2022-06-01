@@ -55,7 +55,6 @@ describe("mark notification as read controller", () => {
     const notification: Notification = {
       user_id: "user-id-0",
       type: "INVITATION",
-      message: "msg",
       metadata: {},
       read: false,
       id: givenRequest.notificationId,
@@ -114,7 +113,6 @@ describe("mark notification as read controller", () => {
     const notification: Notification = {
       user_id: "user-id-0912383120",
       type: "INVITATION",
-      message: "msg",
       metadata: {},
       read: false,
       id: givenRequest.notificationId,
@@ -147,7 +145,6 @@ describe("mark notification as read controller", () => {
     const notification: Notification = {
       user_id: "user-id-0",
       type: "INVITATION",
-      message: "msg",
       metadata: {},
       read: false,
       id: givenRequest.notificationId,

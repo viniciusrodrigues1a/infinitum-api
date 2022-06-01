@@ -6,11 +6,9 @@ import {
 } from "@shared/infra/notifications/interfaces";
 import { INotificationService } from "@shared/presentation/interfaces/notifications";
 import { Notification } from "@shared/infra/mongodb/models";
-import { IProjectDeletedTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 
 type Payload = {
   projectName: string;
-  projectDeletedTemplateLanguage: IProjectDeletedTemplateLanguage;
 };
 
 export class PushProjectDeletedNotificationService
@@ -38,11 +36,12 @@ export class PushProjectDeletedNotificationService
       );
     if (!accountId) return;
 
-    const { projectName, projectDeletedTemplateLanguage: lang } = payload;
+    const { projectName } = payload;
     const notification: Omit<Notification, "user_id"> = {
-      message: lang.getProjectDeletedText(projectName),
       type: "PROJECT_DELETED",
-      metadata: {},
+      metadata: {
+        projectName,
+      },
       createdAt: new Date().getTime(),
     };
 

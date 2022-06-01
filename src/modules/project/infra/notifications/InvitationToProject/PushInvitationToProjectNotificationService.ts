@@ -12,7 +12,6 @@ import { Notification } from "@shared/infra/mongodb/models";
 type Payload = {
   token: string;
   projectId: string;
-  invitationTemplateLanguage: IInvitationTemplateLanguage;
 };
 
 export class PushInvitationToProjectNotificationService
@@ -35,7 +34,7 @@ export class PushInvitationToProjectNotificationService
       );
     if (!shouldNotify) return;
 
-    const { token, projectId, invitationTemplateLanguage: lang } = payload;
+    const { token, projectId } = payload;
 
     const accountId =
       await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
@@ -49,15 +48,14 @@ export class PushInvitationToProjectNotificationService
       );
 
     const type = "INVITATION";
-    const message = lang.getInvitationText(projectName);
     const metadata = {
       acceptInvitationLink: `/invitation/${token}`,
       declineInvitationLink: `/revoke/${projectId}`,
+      projectName,
     };
 
     const createdAt = new Date().getTime();
     const notification = {
-      message,
       type: type as Notification["type"],
       metadata,
       createdAt,

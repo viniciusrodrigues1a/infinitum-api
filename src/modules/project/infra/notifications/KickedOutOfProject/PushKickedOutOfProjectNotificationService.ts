@@ -11,7 +11,6 @@ import { Notification } from "@shared/infra/mongodb/models";
 
 type Payload = {
   projectId: string;
-  kickedTemplateLanguage: IKickedTemplateLanguage;
 };
 
 export class PushKickedOutOfProjectNotificationService
@@ -34,7 +33,7 @@ export class PushKickedOutOfProjectNotificationService
       );
     if (!shouldNotify) return;
 
-    const { projectId, kickedTemplateLanguage: lang } = payload;
+    const { projectId } = payload;
 
     const accountId =
       await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
@@ -48,13 +47,13 @@ export class PushKickedOutOfProjectNotificationService
       );
 
     const type = "KICKED";
-    const message = lang.getKickedText(projectName);
 
     const createdAt = new Date().getTime();
     const notification = {
-      message,
       type: type as Notification["type"],
-      metadata: {},
+      metadata: {
+        projectName,
+      },
       createdAt,
     };
 

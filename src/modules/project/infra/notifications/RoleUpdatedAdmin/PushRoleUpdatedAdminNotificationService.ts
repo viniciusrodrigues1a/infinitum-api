@@ -36,12 +36,7 @@ export class PushRoleUpdatedAdminNotificationService
       );
     if (!shouldNotify) return;
 
-    const {
-      emailWhoseRoleHasBeenUpdated,
-      projectId,
-      roleName,
-      roleUpdatedAdminTemplateLanguage: lang,
-    } = payload;
+    const { emailWhoseRoleHasBeenUpdated, projectId, roleName } = payload;
 
     const accountId =
       await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
@@ -55,13 +50,12 @@ export class PushRoleUpdatedAdminNotificationService
       );
 
     const notification: Omit<Notification, "user_id"> = {
-      message: lang.getRoleUpdatedAdminText(
+      type: "ROLE_UPDATED_ADMIN",
+      metadata: {
         emailWhoseRoleHasBeenUpdated,
         projectName,
-        roleName
-      ),
-      type: "ROLE_UPDATED_ADMIN",
-      metadata: {},
+        roleName,
+      },
       createdAt: new Date().getTime(),
     };
 

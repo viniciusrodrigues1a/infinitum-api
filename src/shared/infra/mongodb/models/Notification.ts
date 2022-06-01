@@ -1,6 +1,5 @@
 export type Notification = {
   user_id: string;
-  message: string;
   read?: boolean;
   type:
     | "INVITATION"

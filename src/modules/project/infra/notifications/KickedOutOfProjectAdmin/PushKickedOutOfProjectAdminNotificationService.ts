@@ -1,4 +1,3 @@
-import { IKickedAdminTemplateLanguage } from "@modules/project/presentation/interfaces/languages";
 import { IFindProjectNameByProjectIdRepository } from "@modules/project/presentation/interfaces/repositories";
 import { Notification } from "@shared/infra/mongodb/models";
 import {
@@ -12,7 +11,6 @@ import { INotificationService } from "@shared/presentation/interfaces/notificati
 type Payload = {
   projectId: string;
   emailKicked: string;
-  kickedAdminTemplateLanguage: IKickedAdminTemplateLanguage;
 };
 
 export class PushKickedOutOfProjectAdminNotificationService
@@ -35,11 +33,7 @@ export class PushKickedOutOfProjectAdminNotificationService
       );
     if (!shouldNotify) return;
 
-    const {
-      projectId,
-      emailKicked,
-      kickedAdminTemplateLanguage: lang,
-    } = payload;
+    const { projectId, emailKicked } = payload;
 
     const accountId =
       await this.findOneAccountIdByEmailRepository.findOneAccountIdByEmail(
@@ -53,13 +47,14 @@ export class PushKickedOutOfProjectAdminNotificationService
       );
 
     const type = "KICKED_ADMIN";
-    const message = lang.getKickedAdminText(emailKicked, projectName);
 
     const createdAt = new Date().getTime();
     const notification = {
-      message,
       type: type as Notification["type"],
-      metadata: {},
+      metadata: {
+        emailKicked,
+        projectName,
+      },
       createdAt,
     };
 
